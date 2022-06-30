@@ -27,17 +27,15 @@
         v-model:selected="selected"
       />
       <div>
-        <q-btn label="Submit" type="submit" color="primary" />
+        <q-btn label="Enviar" type="submit" color="primary" />
         <q-btn
-          label="Reset"
+          label="Limpar"
           type="reset"
           color="primary"
           flat
           class="q-ml-sm"
         />
       </div>
-
-      <div class="q-mt-md">Selected: {{ JSON.stringify(selected) }}</div>
     </q-form>
   </div>
 </template>

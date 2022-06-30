@@ -20,19 +20,19 @@
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
       <div class="q-pa-sm" style="max-width: 350px">
         <q-list class="rounded-borders">
-          <q-item class="q-mb-sm" clickable v-ripple>
-            <q-item-section avatar>
-              <q-avatar>
-                <img src="https://cdn.quasar.dev/img/avatar4.jpg" />
-              </q-avatar>
-            </q-item-section>
+          <q-item class="q-mb-sm">
+            <div class="row">
+              <q-item-section avatar>
+                <q-avatar>
+                  <img src="https://cdn.quasar.dev/img/avatar4.jpg" />
+                </q-avatar>
+              </q-item-section>
 
-            <q-item-section>
-              <q-item-label>Henrique Puppo Boueri</q-item-label>
-              <q-item-label caption lines="1"
-                >henrique.puppo@ufjf.br</q-item-label
-              >
-            </q-item-section>
+              <q-item-section>
+                <q-item-label>Henrique Puppo Boueri</q-item-label>
+                <q-item-label caption>henrique.puppo@ufjf.br</q-item-label>
+              </q-item-section>
+            </div>
           </q-item>
           <q-separator spaced />
           <q-expansion-item
