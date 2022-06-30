@@ -67,6 +67,7 @@ if ($_POST)
                     <option value="Email" <?php echo ($info['source']=='Email')?'selected="selected"':''; ?>><?php echo __('Email');?></option>
                     <option value="Web"   <?php echo ($info['source']=='Web')?'selected="selected"':''; ?>><?php echo __('Web');?></option>
                     <option value="API"   <?php echo ($info['source']=='API')?'selected="selected"':''; ?>><?php echo __('API');?></option>
+                    <option value="App"   <?php echo ($info['source']=='App')?'selected="selected"':''; ?>><?php echo __('App');?></option>
                     <option value="Other" <?php echo ($info['source']=='Other')?'selected="selected"':''; ?>><?php echo __('Other');?></option>
                 </select>
                 &nbsp;<font class="error"><b>*</b>&nbsp;<?php echo $errors['source']; ?></font>
