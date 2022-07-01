@@ -30,9 +30,12 @@ const routes = [
     children: [
       { path: '', component: () => import('src/components/inventarios/InventarioLista.vue') },
       { path: 'novo', component: () => import('src/components/inventarios/InventarioCad.vue'), },
+      { path: 'lista', component: () => import('src/components/inventarios/InventarioLista.vue'), },
+      { path: 'items', component: () => import('src/components/inventarios/items/ItemsLista.vue'), },
+      { path: 'coletados', component: () => import('src/components/inventarios/items/ItemsColetados.vue'), },
+      { path: ':id', component: () => import('src/components/inventarios/InventarioCad.vue'), },
     ],
   },
-
   // Always leave this as last one,
   // but you can also remove it
   {

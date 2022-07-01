@@ -101,12 +101,28 @@
               <q-item-section>Novo inventário</q-item-section>
             </q-item>
 
-            <q-item clickable v-ripple>
+            <q-item to="/inventario/lista" clickable v-ripple>
               <q-item-section avatar>
                 <q-icon text-color="white" name="fa-solid fa-book-open" />
               </q-item-section>
 
               <q-item-section>Visualizar/editar</q-item-section>
+            </q-item>
+
+            <q-item to="/inventario/items" clickable v-ripple>
+              <q-item-section avatar>
+                <q-icon text-color="white" name="fa-solid fa-list" />
+              </q-item-section>
+
+              <q-item-section>Items dos inventários</q-item-section>
+            </q-item>
+
+            <q-item to="/inventario/coletados" clickable v-ripple>
+              <q-item-section avatar>
+                <q-icon text-color="white" name="fa-solid fa-list" />
+              </q-item-section>
+
+              <q-item-section>Items coletados</q-item-section>
             </q-item>
           </q-expansion-item>
 

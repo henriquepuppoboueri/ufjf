@@ -22,9 +22,6 @@
         :rows="inventarios"
         :columns="colunas"
         row-key="name"
-        :selected-rows-label="getSelectedString"
-        selection="multiple"
-        v-model:selected="selected"
       />
       <div>
         <q-btn label="Enviar" type="submit" color="primary" />
@@ -41,8 +38,7 @@
 </template>
 
 <script setup>
-import { onBeforeMount, onMounted, ref } from "vue";
-import inventariosDb from "../../store/inventarios";
+import { ref, onMounted } from "vue";
 
 // onMounted(() => {
 //   Object.assign(inventarios, inventariosDb);
@@ -51,36 +47,7 @@ import inventariosDb from "../../store/inventarios";
 const selected = ref([]);
 const nome = ref("");
 const email = ref("");
-const inventarios = ref([
-  {
-    id: "1",
-    nome: "Inventário 001",
-    criador: "Marjory",
-    dataCriacao: Date.now(),
-    status: "Encerrado",
-  },
-  {
-    id: "2",
-    nome: "Inventário 002",
-    criador: "Marjory",
-    dataCriacao: Date.now(),
-    status: "Suspenso",
-  },
-  {
-    id: "3",
-    nome: "Inventário 003",
-    criador: "Marjory",
-    dataCriacao: Date.now(),
-    status: "Aberto",
-  },
-  {
-    id: "4",
-    nome: "Inventário 004",
-    criador: "Marjory",
-    dataCriacao: Date.now(),
-    status: "Em andamento",
-  },
-]);
+const inventarios = ref([]);
 
 const colunas = ref([
   {
@@ -96,12 +63,4 @@ const colunas = ref([
     field: "status",
   },
 ]);
-
-const getSelectedString = () => {
-  return selected.value.length === 0
-    ? ""
-    : `${selected.value.length} record${
-        selected.value.length > 1 ? "s" : ""
-      } selected of ${rows.length}`;
-};
 </script>

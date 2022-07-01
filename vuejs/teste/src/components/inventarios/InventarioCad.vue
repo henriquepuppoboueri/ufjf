@@ -1,7 +1,7 @@
 <template>
   <div class="q-pa-md">
     <!-- <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md"> -->
-    <q-form class="q-gutter-md">
+    <q-form @submit.prevent="onSubmit" class="q-gutter-md">
       <q-input outlined v-model="nomeInventario" label="Nome do inventário" />
 
       <q-select
@@ -35,15 +35,6 @@
       </q-input>
 
       <q-editor v-model="inventarioDescricao" min-height="5rem" />
-
-      <!-- <q-table
-        title="Usuários e permissões"
-        :rows="inventarios"
-        :columns="colunas"
-        row-key="name"
-        :selected-rows-label="getSelectedString"
-        v-model:selected="selected"
-      /> -->
 
       <q-btn
         outline
@@ -111,28 +102,82 @@
 </template>
 
 <script setup>
-import { onBeforeMount, ref, reactive } from "vue";
-import inventariosDb from "../../store/inventarios";
+import { ref, reactive, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import axios from "axios";
+import { API_URL } from "../../helper/constants.js";
+import { date, Notify } from "quasar";
 
-onBeforeMount(() => {
-  // Object.assign(inventarios, inventariosDb);
+onMounted(() => {
+  if ("id" in route.params) {
+    // modo de edição
+    modoEdicao.value = true;
+    id.value = +route.params.id;
+
+    axios.get(`${API_URL}v1/restrito/inventario/${id.value}`).then((res) => {
+      const inventario = res.data;
+      nomeInventario.value = inventario.nome;
+      dataCriacao.value = date.formatDate(
+        inventario.dataCadastro,
+        "DD/MM/YYYY"
+      );
+      statusAtual.value = inventario.situacaoInventario;
+      inventarioDescricao.value = inventario.descricao;
+    });
+  } else {
+    return;
+  }
 });
 
-const mostrarTblPermissoes = ref(true);
+function onSubmit() {
+  const inventario = {
+    id: id.value,
+    nome: nomeInventario.value,
+    situacaoInventario: statusAtual.value,
+    descricao: inventarioDescricao.value,
+  };
+  if (modoEdicao.value) {
+    axios
+      .put(`${API_URL}v1/restrito/inventario/${id.value}`, inventario)
+      .then((_) => {
+        Notify.create({ color: "green", message: "Inventário atualizado!" });
+        setTimeout(() => {
+          router.push("/inventario/lista");
+        }, 3000);
+      })
+      .catch((err) => {
+        Notify.create({ color: "red", message: `Erro: ${err}` });
+      });
+  } else {
+    axios
+      .post(`${API_URL}v1/restrito/inventario}`, inventario)
+      .then((_) => {
+        Notify.create({ color: "green", message: "Inventário cadastrado!" });
+        setTimeout(() => {
+          router.push("/inventario/lista");
+        }, 3000);
+      })
+      .catch((err) => {
+        Notify.create({ color: "red", message: `Erro: ${err}` });
+      });
+  }
+}
+
+const id = ref(0);
+const modoEdicao = ref(false);
+const route = useRoute();
+const router = useRouter();
+const mostrarTblPermissoes = ref(false);
 const dataCriacao = ref("30/06/2022");
 const selected = reactive([]);
-const inventarioDescricao = ref(
-  "Este é um <strong>teste</strong> <br> de descrição"
-);
+const inventarioDescricao = ref("");
 const statusAtual = ref("");
 const statusOpcoes = reactive([
-  "Aberto",
-  "Em andamento",
-  "Suspenso",
-  "Encerrado",
+  "PREPARANDO",
+  "INVENTARIANDO",
+  "SUSPENSO",
+  "FECHADO",
 ]);
-const name = ref("");
-const age = ref("");
 const nomeInventario = ref("");
 const usuarios = ref([
   {
@@ -228,12 +273,4 @@ const colunas = ref([
     sortable: true,
   },
 ]);
-
-const getSelectedString = () => {
-  return selected.value.length === 0
-    ? ""
-    : `${selected.value.length} record${
-        selected.value.length > 1 ? "s" : ""
-      } selected of ${rows.length}`;
-};
 </script>
