@@ -9,7 +9,7 @@
     v-model:selected="inventarioSelecionado"
   />
   <q-table
-    v-if="idSelecionado"
+    v-if="idInventarioSelecionado"
     class="q-mt-lg"
     title="Items coletados"
     :rows="itemsInventario"
@@ -19,32 +19,41 @@
     v-model:selected="itemSelecionado"
   />
   <q-btn
-    class="q-mt-md"
-    :disabled="!itemSelecionado"
+    v-if="habilitarEdicaoItem"
+    class="q-mt-md q-ml-md"
+    :disabled="!habilitarEdicaoItem"
     color="primary"
     icon="check"
-    label="Editar/visualizar item"
-    @click="onClick"
+    label="Salvar"
   />
+  <ItemCad v-if="habilitarEdicaoItem" ItemCad :id="idItemSelecionado">
+  </ItemCad>
 </template>
 
 <script setup>
 import { onMounted, ref, reactive, watch, computed } from "vue";
 import axios from "axios";
 import { API_URL } from "../../../helper/constants.js";
+import ItemCad from "./item/ItemCad.vue";
 
 const inventarios = reactive([]);
 const inventarioSelecionado = ref([]);
 const itemSelecionado = ref([]);
 const itemsInventario = ref([]);
-const dialog = ref(false);
 
-const idSelecionado = computed(() => {
+const idInventarioSelecionado = computed(() => {
   if (inventarioSelecionado.value.length === 0) {
     return 0;
   }
 
   return +inventarioSelecionado.value[0].id;
+});
+const idItemSelecionado = computed(() => {
+  if (itemSelecionado.value.length === 0) {
+    return 0;
+  }
+
+  return +itemSelecionado.value[0].id;
 });
 
 // watch(itemSelecionado, () => {
@@ -57,14 +66,20 @@ const idSelecionado = computed(() => {
 //   return true;
 // });
 
-watch(itemSelecionado, (_) => {
-  console.log(itemSelecionado.value[0]);
+const habilitarEdicaoItem = computed((_) => {
+  return (
+    itemSelecionado.value.length > 0 && inventarioSelecionado.value.length > 0
+  );
 });
 
-watch(idSelecionado, (_) => {
-  if (idSelecionado.value === 0) return;
+watch(idInventarioSelecionado, (_) => {
+  if (idInventarioSelecionado.value === 0) {
+    itemSelecionado.value = [];
+    return;
+  }
+
   axios
-    .get(`${API_URL}v1/restrito/item/coleta/${idSelecionado.value}`)
+    .get(`${API_URL}v1/restrito/item/coleta/${idInventarioSelecionado.value}`)
     .then((res) => {
       itemsInventario.value = res.data;
     });

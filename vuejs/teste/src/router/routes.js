@@ -17,6 +17,13 @@ const routes = [
     ],
   },
   {
+    path: '/auth',
+    component: () => import('layouts/AuthPage.vue'),
+    children: [
+      { path: '', component: () => import('src/components/auth/AuthLogin.vue') },
+    ],
+  },
+  {
     path: '/unidade',
     component: () => import('layouts/MainLayout.vue'),
     children: [

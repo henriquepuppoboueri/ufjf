@@ -2,13 +2,7 @@
   <div class="q-pa-md">
     <!-- <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md"> -->
     <q-form class="q-gutter-md">
-      <q-input
-        outlined
-        v-model="nome"
-        label="Nome de usuário"
-        lazy-rules
-        :rules="[(val) => (val && val.length > 0) || 'Please type something']"
-      />
+      <q-input outlined v-model="nome" label="Nome de usuário" />
 
       <q-input
         type="e-mail"
@@ -18,7 +12,7 @@
       />
 
       <q-table
-        title="Inventários"
+        title="Inventários vinculados"
         :rows="inventarios"
         :columns="colunas"
         row-key="name"
@@ -38,7 +32,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 
 // onMounted(() => {
 //   Object.assign(inventarios, inventariosDb);
