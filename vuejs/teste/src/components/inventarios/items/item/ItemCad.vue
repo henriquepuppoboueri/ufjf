@@ -1,53 +1,21 @@
 <template>
   <q-form class="col q-ma-md q-gutter-y-md">
-    <q-editor
-      v-model="itemDescricao"
-      min-height="5rem"
-      placeholder="Descrição"
-    />
-    <q-select
-      outlined
-      v-model="setorAtual"
-      :options="setorLista"
-      label="Setor"
-    />
-    <q-select
-      outlined
-      v-model="dependenciaAtual"
-      :options="dependenciaLista"
-      label="Dependência"
-    />
+    <q-editor v-model="itemDescricao" min-height="5rem" placeholder="Descrição" />
+    <q-select outlined v-model="setorAtual" :options="setorLista" label="Setor" />
+    <q-select outlined v-model="dependenciaAtual" :options="dependenciaLista" label="Dependência" />
     <q-input outlined v-model="empenho" label="Empenho" />
-    <q-select
-      outlined
-      v-model="estadoPlaquetaAtual"
-      :options="estadoPlaquetaLista"
-      label="Estado da plaqueta"
-    />
+    <q-select outlined v-model="estadoPlaquetaAtual" :options="estadoPlaquetaLista" label="Estado da plaqueta" />
     <q-input outlined v-model="nomeFornecedor" label="Fornecedor" />
-    <q-editor
-      v-model="itemLocalizacao"
-      min-height="5rem"
-      placeholder="Localização"
-    />
-    <q-editor
-      v-model="itemObservacao"
-      min-height="5rem"
-      placeholder="Observação"
-    />
+    <q-editor v-model="itemLocalizacao" min-height="5rem" placeholder="Localização" />
+    <q-editor v-model="itemObservacao" min-height="5rem" placeholder="Observação" />
     <q-input outlined v-model="patrimonio" label="Patrimônio" />
-    <q-select
-      outlined
-      v-model="situacaoAtual"
-      :options="situacaoLista"
-      label="Situação"
-    />
+    <q-select outlined v-model="situacaoAtual" :options="situacaoLista" label="Situação" />
     <q-input outlined disabled v-model="usuario" label="Usuário" />
   </q-form>
 </template>
 
 <script setup>
-import { ref, defineProps, onMounted, onUpdated } from "vue";
+import { ref, onMounted, onUpdated } from "vue";
 
 const itemDescricao = ref("");
 const setorAtual = ref("");

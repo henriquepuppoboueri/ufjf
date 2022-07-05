@@ -1,54 +1,85 @@
-
 const routes = [
   {
-    path: '/',
-    component: () => import('layouts/MainLayout.vue'),
+    path: "/",
+    component: () => import("layouts/MainLayout.vue"),
     children: [
-      { path: '', component: () => import('pages/IndexPage.vue') },
-      { path: 'teste', component: () => import('pages/IndexPage.vue'), },
+      { path: "", component: () => import("pages/IndexPage.vue") },
+      { path: "teste", component: () => import("pages/IndexPage.vue") },
     ],
   },
   {
-    path: '/usuario',
-    component: () => import('layouts/MainLayout.vue'),
+    path: "/usuario",
+    component: () => import("layouts/MainLayout.vue"),
     children: [
-      { path: '', component: () => import('src/components/usuarios/UsuarioLista.vue') },
-      { path: 'novo', component: () => import('src/components/usuarios/UsuarioCad.vue'), },
+      {
+        path: "",
+        component: () => import("src/components/usuarios/UsuarioLista.vue"),
+      },
+      {
+        path: "novo",
+        component: () => import("src/components/usuarios/UsuarioCad.vue"),
+      },
     ],
   },
   {
-    path: '/auth',
-    component: () => import('layouts/AuthPage.vue'),
+    path: "/login",
+    component: () => import("layouts/MainLayout.vue"),
+    children: [{ path: "", component: () => import("pages/LoginPage.vue") }],
+  },
+  {
+    path: "/unidade",
+    component: () => import("layouts/MainLayout.vue"),
     children: [
-      { path: '', component: () => import('src/components/auth/AuthLogin.vue') },
+      {
+        path: "",
+        component: () => import("src/components/unidades/UnidadeLista.vue"),
+      },
+      {
+        path: "novo",
+        component: () => import("src/components/unidades/UnidadeCad.vue"),
+      },
     ],
   },
   {
-    path: '/unidade',
-    component: () => import('layouts/MainLayout.vue'),
+    path: "/inventario",
+    component: () => import("layouts/MainLayout.vue"),
     children: [
-      { path: '', component: () => import('src/components/unidades/UnidadeLista.vue') },
-      { path: 'novo', component: () => import('src/components/unidades/UnidadeCad.vue'), },
-    ],
-  },
-  {
-    path: '/inventario',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [
-      { path: '', component: () => import('src/components/inventarios/InventarioLista.vue') },
-      { path: 'novo', component: () => import('src/components/inventarios/InventarioCad.vue'), },
-      { path: 'lista', component: () => import('src/components/inventarios/InventarioLista.vue'), },
-      { path: 'items', component: () => import('src/components/inventarios/items/ItemsLista.vue'), },
-      { path: 'coletados', component: () => import('src/components/inventarios/items/ItemsColetados.vue'), },
-      { path: ':id', component: () => import('src/components/inventarios/InventarioCad.vue'), },
+      {
+        path: "",
+        component: () =>
+          import("src/components/inventarios/InventarioLista.vue"),
+      },
+      {
+        path: "novo",
+        component: () => import("src/components/inventarios/InventarioCad.vue"),
+      },
+      {
+        path: "lista",
+        component: () =>
+          import("src/components/inventarios/InventarioLista.vue"),
+      },
+      {
+        path: "items",
+        component: () =>
+          import("src/components/inventarios/items/ItemsLista.vue"),
+      },
+      {
+        path: "coletados",
+        component: () =>
+          import("src/components/inventarios/items/ItemsColetados.vue"),
+      },
+      {
+        path: ":id",
+        component: () => import("src/components/inventarios/InventarioCad.vue"),
+      },
     ],
   },
   // Always leave this as last one,
   // but you can also remove it
   {
-    path: '/:catchAll(.*)*',
-    component: () => import('pages/ErrorNotFound.vue')
-  }
-]
+    path: "/:catchAll(.*)*",
+    component: () => import("pages/ErrorNotFound.vue"),
+  },
+];
 
-export default routes
+export default routes;

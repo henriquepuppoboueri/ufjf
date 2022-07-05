@@ -2,14 +2,7 @@
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
       <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
+        <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
 
         <q-toolbar-title class="flex flex-center">
           Controle de Inventário - UFJF
@@ -18,30 +11,20 @@
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
-      <div class="q-pa-sm" style="max-width: 350px">
+      <div class="q-pa-xs" style="max-width: 350px">
         <q-list class="rounded-borders">
-          <q-item class="q-mb-sm">
-            <div class="row">
-              <q-item-section avatar>
-                <q-avatar>
-                  <img src="https://cdn.quasar.dev/img/avatar4.jpg" />
-                </q-avatar>
-              </q-item-section>
-
-              <q-item-section>
-                <q-item-label>Henrique Puppo Boueri</q-item-label>
-                <q-item-label caption>henrique.puppo@ufjf.br</q-item-label>
-              </q-item-section>
-            </div>
+          <q-item>
+            <q-item-section class="col-grow">
+              <q-item-label>{{ nome }}</q-item-label>
+              <q-item-label caption> {{ email }} </q-item-label>
+            </q-item-section>
+            <q-item-section class="col-auto">
+              <router-link to="/logout">Sair</router-link>
+            </q-item-section>
           </q-item>
           <q-separator spaced />
-          <q-expansion-item
-            expand-separator
-            icon="fa-solid fa-user"
-            label="Usuários"
-            caption="Controle de usuários"
-            :content-inset-level="0.5"
-          >
+          <q-expansion-item expand-separator icon="fa-solid fa-user" label="Usuários" caption="Controle de usuários"
+            :content-inset-level="0.5">
             <q-item clickable v-ripple to="/usuario/novo">
               <q-item-section avatar>
                 <q-icon text-color="white" name="fa-solid fa-user-plus" />
@@ -59,13 +42,8 @@
             </q-item>
           </q-expansion-item>
 
-          <q-expansion-item
-            expand-separator
-            icon="fa-solid fa-building"
-            label="Unidades e dependências"
-            caption="Unidades e dependências"
-            :content-inset-level="0.5"
-          >
+          <q-expansion-item expand-separator icon="fa-solid fa-building" label="Unidades e dependências"
+            caption="Unidades e dependências" :content-inset-level="0.5">
             <q-item clickable v-ripple to="/unidade/novo">
               <q-item-section avatar>
                 <q-icon text-color="white" name="fa-solid fa-plus" />
@@ -83,19 +61,11 @@
             </q-item>
           </q-expansion-item>
 
-          <q-expansion-item
-            expand-separator
-            icon="fa-solid fa-book"
-            label="Inventários"
-            caption="Controle de Inventários"
-            :content-inset-level="0.5"
-          >
+          <q-expansion-item expand-separator icon="fa-solid fa-book" label="Inventários"
+            caption="Controle de Inventários" :content-inset-level="0.5">
             <q-item clickable v-ripple to="/inventario/novo">
               <q-item-section avatar>
-                <q-icon
-                  text-color="white"
-                  name="fa-solid fa-file-circle-plus"
-                />
+                <q-icon text-color="white" name="fa-solid fa-file-circle-plus" />
               </q-item-section>
 
               <q-item-section>Novo inventário</q-item-section>
@@ -126,12 +96,8 @@
             </q-item>
           </q-expansion-item>
 
-          <q-expansion-item
-            expand-separator
-            icon="fa-solid fa-receipt"
-            label="Relatórios"
-            caption="Emissão de relatórios"
-          >
+          <q-expansion-item expand-separator icon="fa-solid fa-receipt" label="Relatórios"
+            caption="Emissão de relatórios">
           </q-expansion-item>
         </q-list>
       </div>
@@ -143,23 +109,17 @@
   </q-layout>
 </template>
 
-<script>
-import { defineComponent, ref } from "vue";
+<script setup>
+import { storeToRefs } from "pinia";
+import { useStore } from "src/stores/usuarioLogado";
+import { ref } from "vue";
 
-export default defineComponent({
-  name: "MainLayout",
+const leftDrawerOpen = ref(false);
+const store = useStore();
+const { nome, email } = storeToRefs(store);
 
-  components: {},
+function toggleLeftDrawer() {
+  leftDrawerOpen.value = !leftDrawerOpen.value;
+}
 
-  setup() {
-    const leftDrawerOpen = ref(false);
-
-    return {
-      leftDrawerOpen,
-      toggleLeftDrawer() {
-        leftDrawerOpen.value = !leftDrawerOpen.value;
-      },
-    };
-  },
-});
 </script>

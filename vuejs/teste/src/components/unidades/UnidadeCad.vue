@@ -2,68 +2,32 @@
   <div class="q-pa-md">
     <!-- <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md"> -->
     <q-form class="q-gutter-md">
-      <q-input
-        outlined
-        v-model="name"
-        label="Nome da unidade"
-        lazy-rules
-        :rules="[(val) => (val && val.length > 0) || 'Não pode ser vazio.']"
-      />
+      <q-input outlined v-model="name" label="Nome da unidade" lazy-rules
+        :rules="[(val) => (val && val.length > 0) || 'Não pode ser vazio.']" />
 
       <q-editor v-model="unidadeDescricao" min-height="5rem" />
-      <q-btn
-        outline
-        dense
-        @click="mostrarTblDependencias = !mostrarTblDependencias"
-      >
-        {{ mostrarTblDependencias ? "Ocultar" : "Mostrar" }} dependências</q-btn
-      >
+      <q-btn outline dense @click="mostrarTblDependencias = !mostrarTblDependencias">
+        {{ mostrarTblDependencias ? "Ocultar" : "Mostrar" }} dependências</q-btn>
       <div v-if="mostrarTblDependencias">
         <q-separator></q-separator>
         <div class="row q-my-md items-stretch">
           <div class="col">
-            <q-input
-              outlined
-              v-model="novaDependencia"
-              label="Adicionar dependência"
-              lazy-rules
-              :rules="[
-                (val) => (val && val.length > 0) || 'Não pode ser vazio.',
-              ]"
-            >
+            <q-input outlined v-model="novaDependencia" label="Adicionar dependência" lazy-rules :rules="[
+              (val) => (val && val.length > 0) || 'Não pode ser vazio.',
+            ]">
             </q-input>
           </div>
 
-          <q-btn
-            :disabled="novaDependencia.length === 0"
-            @click="addDependencia"
-            class="q-ml-md"
-            label="Adicionar"
-            type="button"
-            color="primary"
-            :style="'height: 56px'"
-          />
+          <q-btn :disabled="novaDependencia.length === 0" @click="addDependencia" class="q-ml-md" label="Adicionar"
+            type="button" color="primary" :style="'height: 56px'" />
         </div>
 
-        <q-table
-          title="Dependências"
-          :rows="dependencias"
-          :columns="colunas"
-          row-key="name"
-          :selected-rows-label="getSelectedString"
-          selection="multiple"
-          v-model:selected="selected"
-        />
+        <q-table title="Dependências" :rows="dependencias" :columns="colunas" row-key="name"
+          :selected-rows-label="getSelectedString" selection="multiple" v-model:selected="selected" />
       </div>
       <div>
         <q-btn label="Enviar" type="submit" color="primary" />
-        <q-btn
-          label="Limpar"
-          type="reset"
-          color="primary"
-          flat
-          class="q-ml-sm"
-        />
+        <q-btn label="Limpar" type="reset" color="primary" flat class="q-ml-sm" />
       </div>
     </q-form>
   </div>
@@ -71,7 +35,6 @@
 
 <script setup>
 import { onBeforeMount, ref, reactive } from "vue";
-import inventariosDb from "../../store/inventarios";
 
 onBeforeMount(() => {
   // Object.assign(inventarios, inventariosDb);
@@ -135,9 +98,8 @@ const colunas = ref([
 const getSelectedString = () => {
   return selected.value.length === 0
     ? ""
-    : `${selected.value.length} record${
-        selected.value.length > 1 ? "s" : ""
-      } selected of ${rows.length}`;
+    : `${selected.value.length} record${selected.value.length > 1 ? "s" : ""
+    } selected of ${rows.length}`;
 };
 
 const addDependencia = () => {
