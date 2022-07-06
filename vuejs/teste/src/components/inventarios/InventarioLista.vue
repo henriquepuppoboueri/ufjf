@@ -1,24 +1,56 @@
 <template>
-  <q-table
-    title="Inventários"
-    :rows="inventarios"
-    :columns="colunas"
-    row-key="id"
-    selection="single"
-    v-model:selected="inventarioSelecionado"
-  />
-  <q-btn
-    class="q-mt-md q-ml-md"
-    :disabled="inventarioSelecionado.length === 0"
-    color="primary"
-    icon="check"
-    label="Editar/visualizar item"
-    @click="editarInventario"
-  />
+  <q-card square>
+    <q-card-section>
+      <q-table
+        flat
+        title="Inventários"
+        :rows="inventarios"
+        :columns="colunas"
+        row-key="id"
+        selection="single"
+        v-model:selected="inventarioSelecionado"
+        :bordered="false"
+      />
+    </q-card-section>
+    <q-card-actions>
+      <q-btn
+        flat
+        dense
+        :disabled="isEditavel"
+        color="primary"
+        label="Visualizar"
+        @click="verInventario"
+      />
+      <q-btn
+        flat
+        dense
+        :disabled="isEditavel"
+        color="primary"
+        label="Editar"
+        @click="editarInventario"
+      />
+      <q-btn
+        flat
+        dense
+        :disabled="!isEditavel"
+        color="primary"
+        label="Novo"
+        @click="novoInventario"
+      />
+      <q-btn
+        flat
+        dense
+        :disabled="isEditavel"
+        color="primary"
+        label="Excluir"
+        @click="editarInventario"
+      />
+    </q-card-actions>
+  </q-card>
 </template>
 
 <script setup>
-import { onMounted, ref, reactive } from "vue";
+import { onMounted, ref, reactive, computed } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
 import { API_URL } from "../../helper/constants.js";
@@ -70,10 +102,24 @@ const colunas = reactive([
   },
 ]);
 
-function editarInventario() {
-  const id = inventarioSelecionado.value[0].id;
-  useRouter("/");
+const isEditavel = computed(() => {
+  return !inventarioSelecionado.value.length > 0;
+});
+
+function verInventario() {
+  const _id = inventarioSelecionado.value[0].id;
+  // router.push(`view/${inventarioSelecionado.value[0].id}`);
+  router.push(`/inventario/view/${inventarioSelecionado.value[0].id}`);
 }
+
+function editarInventario() {
+  router.push(`/inventario/edit/${inventarioSelecionado.value[0].id}`);
+}
+
+function novoInventario() {
+  router.push({ path: "novo" });
+}
+
 onMounted(() => {
   axios
     .get(`${API_URL}v1/restrito/inventario`)

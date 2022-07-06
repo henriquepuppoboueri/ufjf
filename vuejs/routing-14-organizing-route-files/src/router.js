@@ -49,7 +49,7 @@ const router = createRouter({
   }
 });
 
-router.beforeEach(function(to, from, next) {
+router.beforeEach(function (to, from, next) {
   console.log('Global beforeEach');
   console.log(to, from);
   if (to.meta.needsAuth) {
@@ -66,7 +66,7 @@ router.beforeEach(function(to, from, next) {
   // next();
 });
 
-router.afterEach(function(to, from) {
+router.afterEach(function (to, from) {
   // sending analytics data
   console.log('Global afterEach');
   console.log(to, from);

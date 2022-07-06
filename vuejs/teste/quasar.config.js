@@ -62,8 +62,8 @@ module.exports = configure(function (/* ctx */) {
 
       // publicPath: '/',
       // analyze: true,
-      // env: { API_URL: 'http://10.1.2.90:9001/' },
-      env: { API_URL: "http://localhost:9001/" },
+      env: { API_URL: 'http://10.1.2.90:9001/' },
+      // env: { API_URL: "http://localhost:9001/" },
       // rawDefine: {}
       // ignorePublicFolder: true,
       // minify: false,

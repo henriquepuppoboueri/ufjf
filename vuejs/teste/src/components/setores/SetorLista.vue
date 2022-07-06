@@ -47,11 +47,11 @@
 
   <q-table
     v-if="idInventarioSelecionado !== 0"
-    :loading="loadingItems"
+    :loading="loadingSetores"
     class="q-mt-lg"
-    title="Items coletados"
-    :rows="itemsInventario"
-    :columns="colunasItems"
+    title="Setores do inventário"
+    :rows="setoresInventario"
+    :columns="colunasSetores"
     row-key="id"
     separator="cell"
     :wrap-cells="true"
@@ -73,11 +73,11 @@
         <q-td auto-width>
           <q-btn
             size="sm"
-            :color="props.row.id === idItemSelecionado ? 'red' : 'green'"
+            :color="props.row.id === idSetorSelecionado ? 'red' : 'green'"
             round
             dense
-            @click="selecionaItem(props.row.id)"
-            :icon="props.row.id === idItemSelecionado ? 'remove' : 'add'"
+            @click="selecionaSetor(props.row.id)"
+            :icon="props.row.id === idSetorSelecionado ? 'remove' : 'add'"
           />
         </q-td>
         <q-td
@@ -96,6 +96,59 @@
       </q-tr>
     </template>
   </q-table>
+
+  <q-table
+    v-if="idSetorSelecionado !== 0"
+    :loading="loadingDependencias"
+    class="q-mt-lg"
+    title="Dependências do setor"
+    :rows="dependenciasSetor"
+    :columns="colunasSetores"
+    row-key="id"
+    separator="cell"
+    :wrap-cells="true"
+    no-data-label="Não foram encontrados dados."
+    rows-per-page-label="Registros por página:"
+    :selected-rows-label="registroPortugues"
+  >
+    <template v-slot:header="props">
+      <q-tr :props="props">
+        <q-th auto-width />
+        <q-th v-for="col in props.cols" :key="col.name" :props="props">
+          {{ col.label }}
+        </q-th>
+      </q-tr>
+    </template>
+
+    <template v-slot:body="props">
+      <q-tr :props="props">
+        <q-td auto-width>
+          <q-btn
+            size="sm"
+            :color="props.row.id === idDependenciaSelecionada ? 'red' : 'green'"
+            round
+            dense
+            @click="selecionaDependencia(props.row.id)"
+            :icon="props.row.id === idDependenciaSelecionada ? 'remove' : 'add'"
+          />
+        </q-td>
+        <q-td
+          v-for="col in props.cols"
+          :key="col.name"
+          :props="props"
+          @click="props.expand = !props.expand"
+        >
+          {{ col.value }}
+        </q-td>
+      </q-tr>
+      <q-tr v-show="props.expand" :props="props">
+        <q-td colspan="100%">
+          <div class="text-left">{{ "Nada a exibir" }}</div>
+        </q-td>
+      </q-tr>
+    </template>
+  </q-table>
+
   <q-btn
     v-if="habilitaBtnSalvar"
     class="q-mt-md q-ml-md"
@@ -104,38 +157,55 @@
     icon="check"
     label="Salvar"
   />
-  <ItemCad v-if="idItemSelecionado !== 0" :id="idItemSelecionado"> </ItemCad>
+  <ItemCad v-if="idDependenciaSelecionada !== 0" :id="idDependenciaSelecionada">
+  </ItemCad>
 </template>
 
 <script setup>
 import { onMounted, ref, reactive, watch, computed } from "vue";
 import axios from "axios";
-import { API_URL } from "../../../helper/constants.js";
-import ItemCad from "./item/ItemCad.vue";
+import { API_URL } from "src/helper/constants.js";
+import ItemCad from "../inventarios/items/item/ItemCad.vue";
 
 function selecionaInventario(idInventario) {
-  idItemSelecionado.value = 0;
+  idSetorSelecionado.value = 0;
   if (idInventarioSelecionado.value === idInventario) {
     idInventarioSelecionado.value = 0;
     return;
   }
-  // idItemSelecionado.value = 0;
   idInventarioSelecionado.value = idInventario;
-  loadingItems.value = true;
+  loadingSetores.value = true;
   axios
-    .get(`${API_URL}v1/restrito/item/coleta/${idInventarioSelecionado.value}`)
+    .get(
+      `${API_URL}v1/restrito/setor/inventario/${idInventarioSelecionado.value}`
+    )
     .then((res) => {
-      itemsInventario.value = res.data;
+      setoresInventario.value = res.data;
     });
-  loadingItems.value = false;
+  loadingSetores.value = false;
 }
 
-function selecionaItem(idItem) {
-  if (idItemSelecionado.value === idItem) {
-    idItemSelecionado.value = 0;
+function selecionaSetor(idSetor) {
+  if (idSetorSelecionado.value === idSetor) {
+    idSetorSelecionado.value = 0;
     return;
   }
-  idItemSelecionado.value = idItem;
+  idSetorSelecionado.value = idSetor;
+  loadingDependencias.value = true;
+  axios
+    .get(`${API_URL}v1/restrito/dependencia/setor/${idSetor}`)
+    .then((res) => {
+      dependenciasSetor.value = res.data;
+    });
+  loadingDependencias.value = false;
+}
+
+function selecionaDependencia(idDependencia) {
+  if (idDependenciaSelecionada.value === idDependencia) {
+    idDependenciaSelecionada.value = 0;
+    return;
+  }
+  idDependenciaSelecionada.value = idDependencia;
 }
 
 function expandirLinha(id) {
@@ -143,7 +213,7 @@ function expandirLinha(id) {
 }
 
 const habilitaBtnSalvar = computed(() => {
-  return idItemSelecionado.value !== 0 && idInventarioSelecionado.value !== 0;
+  return idSetorSelecionado.value !== 0 && idInventarioSelecionado.value !== 0;
 });
 
 function registroPortugues(reg) {
@@ -153,12 +223,16 @@ function registroPortugues(reg) {
 }
 
 const inventarios = reactive([]);
-const itemsInventario = ref([]);
 const idInventarioSelecionado = ref(0);
-const idItemSelecionado = ref(0);
-
 const loadingInventarios = ref(false);
-const loadingItems = ref(false);
+
+const setoresInventario = ref([]);
+const idSetorSelecionado = ref(0);
+const loadingSetores = ref(false);
+
+const dependenciasSetor = ref([]);
+const idDependenciaSelecionada = ref(0);
+const loadingDependencias = ref(false);
 
 const colunasInventarios = reactive([
   {
@@ -177,19 +251,22 @@ const colunasInventarios = reactive([
   },
 ]);
 
-const colunasItems = reactive([
+const colunasSetores = reactive([
   {
-    name: "patrimonio",
-    align: "left",
-    label: "Patrimônio",
-    field: "patrimonio",
+    name: "nome",
+    align: "center",
+    label: "Nome",
+    field: "nome",
     sortable: true,
   },
+]);
+
+const colunasDependencias = reactive([
   {
-    name: "descricao",
-    align: "left",
-    label: "Descrição",
-    field: "descricao",
+    name: "nome",
+    align: "center",
+    label: "Nome",
+    field: "nome",
     sortable: true,
   },
 ]);

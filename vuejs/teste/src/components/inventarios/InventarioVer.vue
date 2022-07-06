@@ -94,12 +94,11 @@
       <div>
         <q-btn label="Enviar" type="submit" color="primary" />
         <q-btn
-          label="Voltar"
+          label="Limpar"
           type="reset"
           color="primary"
           flat
           class="q-ml-sm"
-          @click="router.go(-1)"
         />
       </div>
     </q-form>
@@ -146,7 +145,9 @@ function onSubmit() {
       .put(`${API_URL}v1/restrito/inventario/${id.value}`, inventario)
       .then((_) => {
         Notify.create({ color: "green", message: "Inventário atualizado!" });
-        router.push("/inventario/lista");
+        setTimeout(() => {
+          router.push("/inventario/lista");
+        }, 3000);
       })
       .catch((err) => {
         Notify.create({ color: "red", message: `Erro: ${err}` });
@@ -156,7 +157,9 @@ function onSubmit() {
       .post(`${API_URL}v1/restrito/inventario}`, inventario)
       .then((_) => {
         Notify.create({ color: "green", message: "Inventário cadastrado!" });
-        router.go(-1);
+        setTimeout(() => {
+          router.push("/inventario/lista");
+        }, 3000);
       })
       .catch((err) => {
         Notify.create({ color: "red", message: `Erro: ${err}` });
@@ -180,7 +183,74 @@ const statusOpcoes = reactive([
   "FECHADO",
 ]);
 const nomeInventario = ref("");
-
+const usuarios = ref([
+  {
+    id: Math.random(),
+    usuario: "João",
+    siape: "1234567",
+    email: "joao@ufjf.br",
+  },
+  {
+    id: Math.random(),
+    usuario: "João",
+    siape: "1234567",
+    email: "joao@ufjf.br",
+  },
+  {
+    id: Math.random(),
+    usuario: "João",
+    siape: "1234567",
+    email: "joao@ufjf.br",
+  },
+  {
+    id: Math.random(),
+    usuario: "João",
+    siape: "1234567",
+    email: "joao@ufjf.br",
+  },
+  {
+    id: Math.random(),
+    usuario: "João",
+    siape: "1234567",
+    email: "joao@ufjf.br",
+  },
+  {
+    id: Math.random(),
+    usuario: "João",
+    siape: "1234567",
+    email: "joao@ufjf.br",
+  },
+  {
+    id: Math.random(),
+    usuario: "João",
+    siape: "1234567",
+    email: "joao@ufjf.br",
+  },
+  {
+    id: Math.random(),
+    usuario: "João",
+    siape: "1234567",
+    email: "joao@ufjf.br",
+  },
+  {
+    id: Math.random(),
+    usuario: "João",
+    siape: "1234567",
+    email: "joao@ufjf.br",
+  },
+  {
+    id: Math.random(),
+    usuario: "João",
+    siape: "1234567",
+    email: "joao@ufjf.br",
+  },
+  {
+    id: Math.random(),
+    usuario: "João",
+    siape: "1234567",
+    email: "joao@ufjf.br",
+  },
+]);
 const colunas = ref([
   {
     name: "usuario",

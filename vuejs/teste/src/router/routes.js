@@ -1,10 +1,9 @@
 const routes = [
   {
-    path: "/",
+    path: "/", redirect: '/inventario',
     component: () => import("layouts/MainLayout.vue"),
     children: [
       { path: "", component: () => import("pages/IndexPage.vue") },
-      { path: "teste", component: () => import("pages/IndexPage.vue") },
     ],
   },
   {
@@ -27,16 +26,16 @@ const routes = [
     children: [{ path: "", component: () => import("pages/LoginPage.vue") }],
   },
   {
-    path: "/unidade",
+    path: "/setor",
     component: () => import("layouts/MainLayout.vue"),
     children: [
       {
         path: "",
-        component: () => import("src/components/unidades/UnidadeLista.vue"),
+        component: () => import("src/components/setores/SetorLista.vue"),
       },
       {
         path: "novo",
-        component: () => import("src/components/unidades/UnidadeCad.vue"),
+        component: () => import("src/components/setores/SetorCad.vue"),
       },
     ],
   },
@@ -50,7 +49,7 @@ const routes = [
           import("src/components/inventarios/InventarioLista.vue"),
       },
       {
-        path: "novo",
+        path: "/novo",
         component: () => import("src/components/inventarios/InventarioCad.vue"),
       },
       {
@@ -69,7 +68,11 @@ const routes = [
           import("src/components/inventarios/items/ItemsColetados.vue"),
       },
       {
-        path: ":id",
+        path: "view/:id",
+        component: () => import("src/components/inventarios/InventarioVer.vue"),
+      },
+      {
+        path: "edit/:id",
         component: () => import("src/components/inventarios/InventarioCad.vue"),
       },
     ],
