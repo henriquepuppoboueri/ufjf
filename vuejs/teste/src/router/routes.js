@@ -49,7 +49,7 @@ const routes = [
           import("src/components/inventarios/InventarioLista.vue"),
       },
       {
-        path: "/novo",
+        path: "novo",
         component: () => import("src/components/inventarios/InventarioCad.vue"),
       },
       {
