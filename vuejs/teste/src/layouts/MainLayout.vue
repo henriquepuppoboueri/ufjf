@@ -54,7 +54,7 @@
             </q-item>
           </q-expansion-item>
 
-          <q-expansion-item
+          <!-- <q-expansion-item
             expand-separator
             icon="fa-solid fa-building"
             label="Setores e dependências"
@@ -76,7 +76,7 @@
 
               <q-item-section>Dependências</q-item-section>
             </q-item>
-          </q-expansion-item>
+          </q-expansion-item> -->
 
           <q-expansion-item
             expand-separator
@@ -103,7 +103,7 @@
 
               <q-item-section>Visualizar/editar</q-item-section>
             </q-item>
-
+            <!--
             <q-item to="/inventario/items" clickable v-ripple>
               <q-item-section avatar>
                 <q-icon text-color="white" name="fa-solid fa-list" />
@@ -118,7 +118,7 @@
               </q-item-section>
 
               <q-item-section>Items coletados</q-item-section>
-            </q-item>
+            </q-item>-->
           </q-expansion-item>
 
           <q-expansion-item

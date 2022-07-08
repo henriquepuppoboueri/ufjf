@@ -1,47 +1,15 @@
 <template>
   <div class="q-pa-md">
-    <!-- <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md"> -->
     <q-form @submit.prevent="onSubmit" class="q-gutter-md">
       <q-input outlined v-model="nomeInventario" label="Nome do inventário" />
       <q-input
         standout
-        v-model="statusAtual.nome"
-        label="Status"
+        outlined
         disable
         readonly
-      />
-
-      <!-- <q-select
-        outlined
-        v-model="statusAtual"
-        :options="statusOpcoes"
-        option-label="nome"
+        v-model="statusAtual.nome"
         label="Status do inventário"
-      /> -->
-
-      <!-- <q-input
-        readonly
-        outlined
-        v-model="dataCriacao"
-        mask="##/##/####"
-        label="Data de criação"
-      >
-        <template v-slot:append>
-          <q-icon name="event" class="cursor-pointer">
-            <q-popup-proxy
-              cover
-              transition-show="scale"
-              transition-hide="scale"
-            >
-              <q-date readonly v-model="dataCriacao" mask="yyyy-MM-dd">
-                <div class="row items-center justify-end">
-                  <q-btn v-close-popup label="Close" color="primary" flat />
-                </div>
-              </q-date>
-            </q-popup-proxy>
-          </q-icon>
-        </template>
-      </q-input> -->
+      />
 
       <q-editor
         v-model="inventarioDescricao"
@@ -148,10 +116,6 @@ onMounted(() => {
     return;
   }
 });
-
-// watch(statusAtual, (novo, velho) => {
-//   console.log(novo);
-// });
 
 function onSubmit() {
   const inventario = {
