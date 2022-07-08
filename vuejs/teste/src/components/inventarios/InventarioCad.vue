@@ -130,7 +130,7 @@ function onSubmit() {
       .then((_) => {
         Notify.create({ color: "green", message: "Inventário atualizado!" });
         router.push("/inventario/lista");
-        router.go(-1);
+        // router.go(-1);
       })
       .catch((err) => {
         Notify.create({ color: "red", message: `Erro: ${err}` });
@@ -140,7 +140,8 @@ function onSubmit() {
       .post(`${API_URL}v1/restrito/inventario`, inventario)
       .then((_) => {
         Notify.create({ color: "green", message: "Inventário cadastrado!" });
-        router.go(-1);
+        // router.go(-1);
+        router.push("/inventario/lista");
       })
       .catch((err) => {
         Notify.create({ color: "red", message: `Erro: ${err}` });
