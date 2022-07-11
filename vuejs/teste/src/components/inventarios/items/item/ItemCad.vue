@@ -49,6 +49,7 @@
 <script setup>
 import { ref, onMounted, onUpdated } from "vue";
 
+const props = defineProps({ id: Number });
 const itemDescricao = ref("");
 const setorAtual = ref("");
 const setorLista = ref([]);
@@ -64,7 +65,6 @@ const patrimonio = ref([]);
 const situacaoAtual = ref("");
 const situacaoLista = ref([]);
 const usuario = ref("");
-const props = defineProps({ id: Number });
 
 onMounted(() => {
   const item = buscarItemPorId(props.id);

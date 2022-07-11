@@ -2,7 +2,11 @@
   <q-table
     v-if="idInventario !== 0"
     :loading="loadingItems"
-    title="Items coletados"
+    :title="
+      props.origem === 'itens_coletados'
+        ? 'Itens coletados'
+        : 'Itens importados'
+    "
     :rows="itemsInventario"
     :columns="colunasItems"
     row-key="id"
@@ -31,6 +35,7 @@
             dense
             @click="selecionaItem(props.row.id)"
             :icon="props.row.id === idItemSelecionado ? 'remove' : 'add'"
+            :disabled="props.origem === 'itens_originais'"
           />
         </q-td>
         <q-td
@@ -63,7 +68,15 @@
 </template>
 
 <script setup>
-import { onMounted, ref, reactive, watch, computed } from "vue";
+import {
+  onUnmounted,
+  onUpdated,
+  onBeforeUpdate,
+  ref,
+  reactive,
+  watch,
+  computed,
+} from "vue";
 import axios from "axios";
 import { API_URL } from "../../../helper/constants.js";
 import ItemCad from "./item/ItemCad.vue";
@@ -71,10 +84,10 @@ import { useRoute } from "vue-router";
 import { diminuiTexto, registroPortugues } from "src/helper/functions";
 import { Notify } from "quasar";
 
+const props = defineProps({ origem: String, id: Number });
 const setores = ref([]);
 const dependencias = ref([]);
 const route = useRoute();
-// const props = defineProps({ idInventario: String });
 const inventarios = reactive([]);
 const itemsInventario = ref([]);
 const idInventario = ref(0);
@@ -114,26 +127,40 @@ const colunasItems = reactive([
   },
 ]);
 
-onMounted(() => {
-  const id = "id" in route.params ? +route.params.id : 0;
-  if (!id) {
+watch(props, (newV, oldV) => {
+  if (newV.id === 0) return;
+
+  renderPage(newV.id, newV.origem);
+});
+
+function renderPage(id, origem) {
+  if (!id || !origem) {
     return;
   }
 
+  let urlDestino = "";
+  if (origem === "itens_originais") urlDestino = "itens";
+  else urlDestino = "coleta";
+
   loadingItems.value = true;
   axios
-    .get(`${API_URL}v1/restrito/inventario/setor/${id}`)
+    .get(`${API_URL}v1/restrito/inventario/setor/dependencia/${id}`)
     .then((res) => {
       setores.value = res.data;
       idInventario.value = id;
-      return axios.get(`${API_URL}v1/restrito/item/coleta/${id}`);
+      return axios.get(`${API_URL}v1/restrito/item/${urlDestino}/${id}`);
     })
-    .then((coleta) => {
-      if (coleta.data.length > 0) {
-        const resData = coleta.data.map((item) => {
+    .then((res) => {
+      if (res.data.length > 0) {
+        const resData = res.data.map((item) => {
           return {
             ...item,
             setor: setores.value.find((setor) => setor.id === item.setor).nome,
+            dependencia: setores.value
+              .find((setor) => setor.id === item.setor)
+              .dependencias.find(
+                (dependencia) => dependencia.id === item.dependencia
+              ).nome,
           };
         });
         itemsInventario.value = resData;
@@ -144,7 +171,7 @@ onMounted(() => {
     });
 
   loadingItems.value = false;
-});
+}
 
 function selecionaItem(idItem) {
   if (idItemSelecionado.value === idItem) {
