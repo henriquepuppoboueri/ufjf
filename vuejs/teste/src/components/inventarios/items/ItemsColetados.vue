@@ -98,6 +98,13 @@ const loadingItems = ref(false);
 
 const colunasItems = reactive([
   {
+    name: "id",
+    align: "left",
+    label: "ID",
+    field: "id",
+    sortable: true,
+  },
+  {
     name: "patrimonio",
     align: "left",
     label: "Patrimônio",
