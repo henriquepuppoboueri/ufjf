@@ -124,16 +124,16 @@ const isEditavel = computed(() => {
 
 function verInventario() {
   const _id = inventarioSelecionado.value[0].id;
-  router.push(`/inventario/view/${_id}`);
+  router.push(`/inventario/view/${_id}/`);
 }
 
 function editarInventario() {
   const _id = inventarioSelecionado.value[0].id;
-  router.push(`/inventario/edit/${_id}`);
+  router.push(`/inventario/edit/${_id}/`);
 }
 
 function novoInventario() {
-  router.push({ path: "/inventario/novo" });
+  router.push({ path: "/inventario/novo/" });
 }
 
 function excluirInventario() {

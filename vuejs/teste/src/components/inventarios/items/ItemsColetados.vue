@@ -2,11 +2,7 @@
   <q-table
     v-if="idInventario !== 0"
     :loading="loadingItems"
-    :title="
-      props.origem === 'itens_coletados'
-        ? 'Itens coletados'
-        : 'Itens importados'
-    "
+    :title="origem === 'lancados' ? 'Itens coletados' : 'Itens importados'"
     :rows="itemsInventario"
     :columns="colunasItems"
     row-key="id"
@@ -15,6 +11,7 @@
     no-data-label="Não foram encontrados dados."
     rows-per-page-label="Registros por página:"
     :selected-rows-label="registroPortugues"
+    :filter="filtro"
   >
     <template v-slot:header="props">
       <q-tr :props="props">
@@ -23,6 +20,20 @@
           {{ col.label }}
         </q-th>
       </q-tr>
+    </template>
+
+    <template v-slot:top-right>
+      <q-input
+        borderless
+        dense
+        debounce="300"
+        v-model="filtro"
+        placeholder="Filtrar"
+      >
+        <template v-slot:append>
+          <q-icon name="search" />
+        </template>
+      </q-input>
     </template>
 
     <template v-slot:body="props">
@@ -64,7 +75,8 @@
     icon="check"
     label="Salvar"
   />
-  <ItemCad v-if="idItemSelecionado !== 0" :id="idItemSelecionado"> </ItemCad>
+  <!-- <ItemCad v-if="idItemSelecionado !== 0" :id="idItemSelecionado"> </ItemCad> -->
+  <router-view></router-view>
 </template>
 
 <script setup>
@@ -76,6 +88,7 @@ import {
   reactive,
   watch,
   computed,
+  onMounted,
 } from "vue";
 import axios from "axios";
 import { API_URL } from "../../../helper/constants.js";
@@ -84,7 +97,7 @@ import { useRoute } from "vue-router";
 import { diminuiTexto, registroPortugues } from "src/helper/functions";
 import { Notify } from "quasar";
 
-const props = defineProps({ origem: String, id: Number });
+const filtro = ref("");
 const setores = ref([]);
 const dependencias = ref([]);
 const route = useRoute();
@@ -92,6 +105,7 @@ const inventarios = reactive([]);
 const itemsInventario = ref([]);
 const idInventario = ref(0);
 const idItemSelecionado = ref(0);
+const origem = ref("");
 
 const loadingInventarios = ref(false);
 const loadingItems = ref(false);
@@ -134,20 +148,23 @@ const colunasItems = reactive([
   },
 ]);
 
-watch(props, (newV, oldV) => {
-  if (newV.id === 0) return;
-
-  renderPage(newV.id, newV.origem);
+onMounted(() => {
+  renderPage();
 });
 
-function renderPage(id, origem) {
-  if (!id || !origem) {
-    return;
-  }
+watch(route, () => {
+  renderPage();
+});
+
+function renderPage() {
+  const id = route.params.idInventario || false;
+  origem.value = route.query.origem || false;
+
+  if (!id || !origem.value) return;
 
   let urlDestino = "";
-  if (origem === "itens_originais") urlDestino = "itens";
-  else urlDestino = "coleta";
+  if (origem.value === "lancados") urlDestino = "coleta";
+  else urlDestino = "itens";
 
   loadingItems.value = true;
   axios
@@ -160,14 +177,26 @@ function renderPage(id, origem) {
     .then((res) => {
       if (res.data.length > 0) {
         const resData = res.data.map((item) => {
+          const setor =
+            setores.value.find((setor) => setor.id === item.setor) ||
+            "Sem unidade";
+
+          let dependencia_ = "Sem dependência";
+          if (
+            setor !== "Sem unidade" &&
+            setor.hasOwnProperty("dependencias") &&
+            setor.dependencias.length > 0
+          ) {
+            dependencia_ =
+              setor.dependencias.find(
+                (dependencia) => dependencia.id === item.dependencia
+              ).nome || "Sem dependência";
+          }
+
           return {
             ...item,
-            setor: setores.value.find((setor) => setor.id === item.setor).nome,
-            dependencia: setores.value
-              .find((setor) => setor.id === item.setor)
-              .dependencias.find(
-                (dependencia) => dependencia.id === item.dependencia
-              ).nome,
+            setor: setor.nome || "Sem unidade",
+            dependencia: dependencia_,
           };
         });
         itemsInventario.value = resData;

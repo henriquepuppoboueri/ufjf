@@ -5,36 +5,30 @@
   <q-tabs v-model="tabSelecionada" dense class="bg-red text-white shadow-none">
     <q-btn-dropdown auto-close stretch flat label="Itens">
       <q-list>
-        <q-item clickable @click="tabSelecionada = 'itens_originais'">
+        <q-item clickable :to="`items?origem=importados`">
           <q-item-section>Itens originais (importados)</q-item-section>
         </q-item>
-
-        <q-item clickable @click="tabSelecionada = 'itens_coletados'">
+        <q-item clickable :to="`items?origem=lancados`">
           <q-item-section>Itens coletados (lançados)</q-item-section>
         </q-item>
       </q-list>
     </q-btn-dropdown>
-    <q-tab name="unid_depend" label="Dependências" />
+    <q-btn class="btn-nav" :to="{ name: 'unidades' }">DEPENDÊNCIAS</q-btn>
   </q-tabs>
   <div class="q-px-none">
-    <div v-if="isItem">
-      <items-coletados :origem="tabSelecionada" :id="id"></items-coletados>
-    </div>
-    <div v-if="!isItem">
-      <dependencia-lista :idInventario="id"></dependencia-lista>
-    </div>
+    <router-view></router-view>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, watch, computed } from "vue";
+import { ref, reactive, onMounted, onUpdated, watch, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import axios from "axios";
 import { date, Notify } from "quasar";
 import { API_URL } from "../../helper/constants.js";
 
 import ItemsColetados from "../inventarios/items/ItemsColetados.vue";
-import DependenciaLista from "./setores/dependencias/DepartamentoLista.vue";
+import DependenciaLista from "./unidades/UnidadesLista.vue";
 
 const tabSelecionada = ref("itens_coletados");
 const id = ref(0);
@@ -46,43 +40,6 @@ const dataCriacao = ref("30/06/2022");
 const selected = reactive([]);
 const inventarioDescricao = ref("");
 const statusAtual = ref("");
-
-// const columns = ref([
-//   {
-//     name: "name",
-//     required: true,
-//     label: "Dessert (100g serving)",
-//     align: "left",
-//     field: "name",
-//     sortable: true,
-//   },
-//   {
-//     name: "calories",
-//     align: "center",
-//     label: "Calories",
-//     field: "calories",
-//     sortable: true,
-//   },
-//   { name: "fat", label: "Fat (g)", field: "fat", sortable: true },
-//   { name: "carbs", label: "Carbs (g)", field: "carbs" },
-//   { name: "protein", label: "Protein (g)", field: "protein" },
-//   { name: "sodium", label: "Sodium (mg)", field: "sodium" },
-//   {
-//     name: "calcium",
-//     label: "Calcium (%)",
-//     field: "calcium",
-//     sortable: true,
-//     sort: (a, b) => parseInt(a, 10) - parseInt(b, 10),
-//   },
-//   {
-//     name: "iron",
-//     label: "Iron (%)",
-//     field: "iron",
-//     sortable: true,
-//     sort: (a, b) => parseInt(a, 10) - parseInt(b, 10),
-//   },
-// ]);
-
 const nomeInventario = ref("");
 const usuarios = ref([]);
 const colunas = ref([
@@ -118,7 +75,7 @@ const isItem = computed(() => {
 
 onMounted(() => {
   if ("id" in route.params) {
-    // modo de edição
+    // modo de edição ou visualização
     id.value = +route.params.id;
 
     axios.get(`${API_URL}v1/restrito/inventario/${id.value}`).then((res) => {
@@ -129,6 +86,14 @@ onMounted(() => {
     return;
   }
 });
-
 function onSubmit() {}
 </script>
+
+<style>
+.q-btn:before {
+  border-radius: 0;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+</style>

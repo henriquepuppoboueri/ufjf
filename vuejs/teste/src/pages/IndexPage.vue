@@ -15,3 +15,9 @@ export default defineComponent({
   name: "IndexPage",
 });
 </script>
+
+<style>
+img {
+  opacity: 0.1;
+}
+</style>

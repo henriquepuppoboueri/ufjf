@@ -67,16 +67,16 @@ const situacaoLista = ref([]);
 const usuario = ref("");
 
 onMounted(() => {
-  const item = buscarItemPorId(props.id);
-  itemDescricao.value = item.descricao;
+  // const item = buscarItemPorId(props.id);
+  // itemDescricao.value = item.descricao;
 });
 
 onUpdated(() => {
-  const item = buscarItemPorId(props.id);
-  itemDescricao.value = item.descricao;
+  // const item = buscarItemPorId(props.id);
+  // itemDescricao.value = item.descricao;
 });
 
-function buscarItemPorId(id) {
-  return itemsColetados.value.find((i) => i.id === id);
-}
+// function buscarItemPorId(id) {
+//   return itemsColetados.value.find((i) => i.id === id);
+// }
 </script>

@@ -1,11 +1,15 @@
 <script setup>
 import { computed, onMounted, ref, watch } from "vue";
+import { useRoute } from "vue-router";
 import axios from "axios";
 
 import { API_URL } from "src/helper/constants";
 import { Notify } from "quasar";
 
-const mostrarDialog = ref(false);
+const route = useRoute();
+const idInventario = ref(null);
+const mostrarDialogAdicao = ref(false);
+const mostrarDialogEdicao = ref(false);
 const name = ref("");
 const setores = ref([]);
 const keySelecionada = ref(null);
@@ -15,11 +19,14 @@ const unidadeSelecionada = ref({
   dependencias: [],
   isSetor: true,
 });
-const props = defineProps({ idInventario: Number });
-const isBtnEditarHabilitado = ref(false);
-const isBtnExcluirHabilitado = ref(false);
+const novaUnidade = ref({
+  id: 0,
+  nome: "",
+  dependencias: [],
+  isSetor: true,
+});
 
-function novaUnidade() {
+function addUnidade() {
   let url = "";
   if (unidadeSelecionada.value.id === 0) {
     unidadeSelecionada.value = {
@@ -32,11 +39,11 @@ function novaUnidade() {
     // const unidadeTemp = { ...unidadeSelecionada.value };
     // unidadeSelecionada.value = { id: 0, nome: "" };
   }
-  mostrarDialog.value = true;
+  mostrarDialogAdicao.value = true;
 }
 
 function editarUnidade() {
-  mostrarDialog.value = true;
+  mostrarDialogEdicao.value = true;
   // const unidade = {
   //   idInventario: props.idInventario,
   //   nome: unidadeSelecionada.value.nome,
@@ -69,7 +76,7 @@ function deletarUnidade() {
     });
 }
 
-function salvarUnidade(isEditando) {
+function salvarAddUnidade(isEditando) {
   const unidade = {
     idInventario: props.idInventario,
     nome: unidadeSelecionada.value.nome,
@@ -110,11 +117,13 @@ function salvarUnidade(isEditando) {
     });
 }
 onMounted(() => {
-  if (!props.idInventario || props.idInventario === 0) return;
+  idInventario.value = +route.params.idInventario || false;
+
+  if (!idInventario.value) return;
 
   axios
     .get(
-      `${API_URL}v1/restrito/inventario/setor/dependencia/${props.idInventario}`
+      `${API_URL}v1/restrito/inventario/setor/dependencia/${idInventario.value}`
     )
     .then((res) => {
       setores.value = res.data.map((setor) => {
@@ -177,7 +186,8 @@ function onSelecionaUnidade(selected) {
 </script>
 
 <template>
-  <q-dialog v-model="mostrarDialog">
+  <!-- Dialog Edição -->
+  <q-dialog v-model="mostrarDialogEdicao">
     <q-card>
       <q-card-section>
         <p class="text-center text-h6">{{ dialogLbl }}</p>
@@ -194,7 +204,31 @@ function onSelecionaUnidade(selected) {
           size="sm"
           color="green"
           label="Salvar"
-          @click="salvarUnidade"
+          @click="salvarEditarUnidade"
+        />
+        <q-btn size="sm" color="red" label="Cancelar" />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+  <!-- Dialog Adição -->
+  <q-dialog v-model="mostrarDialogAdicao">
+    <q-card>
+      <q-card-section>
+        <p class="text-center text-h6">{{ dialogLbl }}</p>
+        <q-input
+          id="inputUnidade"
+          outlined
+          v-model="novaUnidade.nome"
+          label="Unidade/dependência"
+        />
+      </q-card-section>
+      <q-card-actions class="flex-center q-gutter-md">
+        <q-btn
+          v-if="!!novaUnidade.nome"
+          size="sm"
+          color="green"
+          label="Salvar"
+          @click="salvarAddUnidade"
         />
         <q-btn size="sm" color="red" label="Cancelar" />
       </q-card-actions>
@@ -207,14 +241,14 @@ function onSelecionaUnidade(selected) {
         size="sm"
         color="green"
         label="+ unidade"
-        @click="novaUnidade"
+        @click="addUnidade"
       />
       <q-btn
         v-if="keySelecionada"
         size="sm"
         color="green"
         label="+ depend."
-        @click="novaUnidade"
+        @click="addUnidade"
       />
       <q-btn
         v-if="keySelecionada"

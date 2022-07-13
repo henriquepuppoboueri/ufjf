@@ -1,6 +1,6 @@
 export function diminuiTexto(text) {
   const limiteCaracteres = 250;
-  if (text.length > limiteCaracteres) {
+  if (text && text.length > limiteCaracteres) {
     return text.substr(0, limiteCaracteres) + " <clique para expandir>";
   }
   return text;
