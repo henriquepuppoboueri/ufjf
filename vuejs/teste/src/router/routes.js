@@ -49,6 +49,14 @@ const routes = [
         component: () => import("src/components/inventarios/InventarioVer.vue"),
         children: [
           {
+            path: '',
+            component: () => import('src/components/inventarios/InventarioStats.vue'),
+          },
+          {
+            path: 'resumo',
+            component: () => import('src/components/inventarios/InventarioStats.vue'),
+          },
+          {
             path: 'unidades',
             name: 'unidades',
             component: () => import('src/components/inventarios/unidades/UnidadesLista.vue'),

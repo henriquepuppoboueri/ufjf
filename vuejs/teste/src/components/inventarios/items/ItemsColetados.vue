@@ -150,6 +150,10 @@ const colunasItems = reactive([
 
 onMounted(() => {
   renderPage();
+
+  // setTimeout(() => {
+  //   loadingItems.value = true;
+  // }, 5000);
 });
 
 watch(route, () => {
@@ -157,10 +161,13 @@ watch(route, () => {
 });
 
 function renderPage() {
+  itemsInventario.value = [];
   const id = route.params.idInventario || false;
   origem.value = route.query.origem || false;
 
-  if (!id || !origem.value) return;
+  if (!id || !origem.value) {
+    return;
+  }
 
   let urlDestino = "";
   if (origem.value === "lancados") urlDestino = "coleta";
@@ -201,12 +208,11 @@ function renderPage() {
         });
         itemsInventario.value = resData;
       }
+      loadingItems.value = false;
     })
     .catch((err) => {
       Notify.create({ color: "red", message: `Erro: ${err}` });
     });
-
-  loadingItems.value = false;
 }
 
 function selecionaItem(idItem) {

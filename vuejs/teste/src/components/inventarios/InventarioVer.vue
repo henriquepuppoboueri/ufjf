@@ -1,8 +1,7 @@
 <template>
-  <p class="text-h4 text-center q-mt-md">
-    {{ "Inventário 001".toUpperCase() }}
-  </p>
+  <p class="text-h4 text-center q-mt-md">{{ nomeInventario }}</p>
   <q-tabs v-model="tabSelecionada" dense class="bg-red text-white shadow-none">
+    <q-btn class="btn-nav" :to="'resumo'">RESUMO</q-btn>
     <q-btn-dropdown auto-close stretch flat label="Itens">
       <q-list>
         <q-item clickable :to="`items?origem=importados`">
@@ -69,14 +68,10 @@ const colunas = ref([
   },
 ]);
 
-const isItem = computed(() => {
-  return ["itens_originais", "itens_coletados"].includes(tabSelecionada.value);
-});
-
 onMounted(() => {
-  if ("id" in route.params) {
+  if ("idInventario" in route.params) {
     // modo de edição ou visualização
-    id.value = +route.params.id;
+    id.value = +route.params.idInventario;
 
     axios.get(`${API_URL}v1/restrito/inventario/${id.value}`).then((res) => {
       const inventario = res.data;
@@ -86,7 +81,6 @@ onMounted(() => {
     return;
   }
 });
-function onSubmit() {}
 </script>
 
 <style>

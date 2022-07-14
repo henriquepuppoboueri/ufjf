@@ -37,7 +37,7 @@
             caption="Controle de usuários"
             :content-inset-level="0.5"
           >
-            <q-item clickable v-ripple to="/usuario/novo">
+            <q-item dense clickable v-ripple to="/usuario/novo">
               <q-item-section avatar>
                 <q-icon text-color="white" name="fa-solid fa-user-plus" />
               </q-item-section>
@@ -45,7 +45,7 @@
               <q-item-section>Novo usuário</q-item-section>
             </q-item>
 
-            <q-item clickable v-ripple>
+            <q-item dense clickable v-ripple>
               <q-item-section avatar>
                 <q-icon text-color="white" name="fa-solid fa-user-pen" />
               </q-item-section>
@@ -85,7 +85,7 @@
             caption="Controle de Inventários"
             :content-inset-level="0.5"
           >
-            <q-item clickable v-ripple to="/inventario/novo">
+            <q-item dense clickable v-ripple to="/inventario/novo">
               <q-item-section avatar>
                 <q-icon
                   text-color="white"
@@ -96,7 +96,7 @@
               <q-item-section>Novo inventário</q-item-section>
             </q-item>
 
-            <q-item to="/inventario" clickable v-ripple>
+            <q-item dense to="/inventario" clickable v-ripple>
               <q-item-section avatar>
                 <q-icon text-color="white" name="fa-solid fa-book-open" />
               </q-item-section>
@@ -123,10 +123,34 @@
 
           <q-expansion-item
             expand-separator
+            icon="fa-solid fa-gear"
+            label="Ferramentas"
+            caption="Importação de arquivos"
+            :content-inset-level="0.5"
+          >
+            <q-item dense clickable v-ripple to="/ferramentas">
+              <q-item-section avatar>
+                <q-icon text-color="white" name="fa-solid fa-upload" />
+              </q-item-section>
+
+              <q-item-section>Importar arquivo do SIGA</q-item-section>
+            </q-item>
+          </q-expansion-item>
+
+          <q-expansion-item
+            expand-separator
             icon="fa-solid fa-receipt"
             label="Relatórios"
             caption="Emissão de relatórios"
+            :content-inset-level="0.5"
           >
+            <q-item dense clickable v-ripple to="/relatorios">
+              <q-item-section avatar>
+                <q-icon text-color="white" name="fa-solid fa-chart-line" />
+              </q-item-section>
+
+              <q-item-section>Relatório consolidado</q-item-section>
+            </q-item>
           </q-expansion-item>
         </q-list>
       </div>
@@ -151,3 +175,9 @@ function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 }
 </script>
+
+<style>
+.q-item {
+  /* margin: 0.2rem; */
+}
+</style>
