@@ -11,20 +11,15 @@
         label="E-mail (@ufjf.br)"
       />
 
-      <q-table
-        title="Inventários vinculados"
-        :rows="inventarios"
-        :columns="colunas"
-        row-key="name"
-      />
       <div>
-        <q-btn label="Enviar" type="submit" color="primary" />
+        <q-btn label="Salvar" type="submit" color="primary" />
         <q-btn
-          label="Limpar"
+          label="Voltar"
           type="reset"
           color="primary"
           flat
           class="q-ml-sm"
+          to="/usuario"
         />
       </div>
     </q-form>
@@ -32,29 +27,32 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { onMounted, reactive, ref } from "vue";
+import { useRoute } from "vue-router";
+import { api } from "boot/axios";
 
-// onMounted(() => {
-//   Object.assign(inventarios, inventariosDb);
-// });
-
-const selected = ref([]);
+const isModoEdicao = ref(false);
+const route = useRoute();
 const nome = ref("");
 const email = ref("");
-const inventarios = ref([]);
+const usuario = reactive(null);
+const id = ref(null);
 
-const colunas = ref([
-  {
-    name: "nome",
-    align: "left",
-    label: "Nome",
-    field: "nome",
-  },
-  {
-    name: "status",
-    align: "left",
-    label: "Status",
-    field: "status",
-  },
-]);
+onMounted(() => {
+  // modo.value = !!+route.params.id;
+
+  if (
+    route.params.hasOwnProperty("id") &&
+    typeof +route.params.id === "number"
+  ) {
+    id.value = route.params.id;
+    isModoEdicao.value = id.value !== 0;
+  }
+
+  if (isModoEdicao.value) {
+    api.get(`v1/restrito/usuarios/${id.value}`).then((res) => {
+      usuario = res.data;
+    });
+  }
+});
 </script>

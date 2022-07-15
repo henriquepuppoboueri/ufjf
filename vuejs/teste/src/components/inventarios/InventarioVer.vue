@@ -22,9 +22,8 @@
 <script setup>
 import { ref, reactive, onMounted, onUpdated, watch, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import axios from "axios";
+import { api } from "boot/axios";
 import { date, Notify } from "quasar";
-import { API_URL } from "../../helper/constants.js";
 
 import ItemsColetados from "../inventarios/items/ItemsColetados.vue";
 import DependenciaLista from "./unidades/UnidadesLista.vue";
@@ -73,7 +72,7 @@ onMounted(() => {
     // modo de edição ou visualização
     id.value = +route.params.idInventario;
 
-    axios.get(`${API_URL}v1/restrito/inventario/${id.value}`).then((res) => {
+    api.get(`v1/restrito/inventario/${id.value}`).then((res) => {
       const inventario = res.data;
       nomeInventario.value = inventario.nome;
     });

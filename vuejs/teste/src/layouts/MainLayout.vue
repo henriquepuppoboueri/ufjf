@@ -45,7 +45,7 @@
               <q-item-section>Novo usuário</q-item-section>
             </q-item>
 
-            <q-item dense clickable v-ripple>
+            <q-item dense clickable v-ripple to="/usuario">
               <q-item-section avatar>
                 <q-icon text-color="white" name="fa-solid fa-user-pen" />
               </q-item-section>

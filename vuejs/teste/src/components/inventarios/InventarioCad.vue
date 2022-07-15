@@ -87,8 +87,7 @@
 <script setup>
 import { ref, reactive, onMounted, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import axios from "axios";
-import { API_URL } from "../../helper/constants.js";
+import { api } from "boot/axios";
 import { date, Notify } from "quasar";
 
 onMounted(() => {
@@ -97,8 +96,8 @@ onMounted(() => {
     modoEdicao.value = true;
     id.value = +route.params.id;
 
-    axios
-      .get(`${API_URL}v1/restrito/inventario/${id.value}`)
+    api
+      .get(`v1/restrito/inventario/${id.value}`)
       .then((res) => {
         const inventario = res.data;
         nomeInventario.value = inventario.nome;
@@ -125,8 +124,8 @@ function onSubmit() {
     descricao: inventarioDescricao.value,
   };
   if (modoEdicao.value) {
-    axios
-      .put(`${API_URL}v1/restrito/inventario/${id.value}`, inventario)
+    api
+      .put(`v1/restrito/inventario/${id.value}`, inventario)
       .then((_) => {
         Notify.create({ color: "green", message: "Inventário atualizado!" });
         router.push("/inventario/lista");
@@ -136,8 +135,8 @@ function onSubmit() {
         Notify.create({ color: "red", message: `Erro: ${err}` });
       });
   } else {
-    axios
-      .post(`${API_URL}v1/restrito/inventario`, inventario)
+    api
+      .post(`L}v1/restrito/inventario`, inventario)
       .then((_) => {
         Notify.create({ color: "green", message: "Inventário cadastrado!" });
         // router.go(-1);

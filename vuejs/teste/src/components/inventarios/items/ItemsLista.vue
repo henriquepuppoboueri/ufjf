@@ -19,8 +19,7 @@
 
 <script setup>
 import { onMounted, ref, reactive, watch, computed } from "vue";
-import axios from "axios";
-import { API_URL } from "../../../helper/constants.js";
+import { api } from "boot/axios";
 
 const inventarios = reactive([]);
 const inventarioSelecionado = ref([]);
@@ -36,11 +35,9 @@ const idSelecionado = computed(() => {
 
 watch(idSelecionado, (_) => {
   if (idSelecionado.value === 0) return;
-  axios
-    .get(`${API_URL}v1/restrito/item/itens/${idSelecionado.value}`)
-    .then((res) => {
-      itemsInventario.value = res.data;
-    });
+  api.get(`}v1/restrito/item/itens/${idSelecionado.value}`).then((res) => {
+    itemsInventario.value = res.data;
+  });
 });
 
 const colunasInventarios = reactive([
@@ -74,8 +71,8 @@ const colunasItems = reactive([
 ]);
 
 onMounted(() => {
-  axios
-    .get(`${API_URL}v1/restrito/inventario`)
+  api
+    .get(`v1/restrito/inventario`)
     .then((res) => {
       Object.assign(inventarios, res.data);
     })

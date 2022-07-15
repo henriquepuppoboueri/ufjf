@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
-import axios from "axios";
+import { api } from "boot/axios";
 
 import { API_URL } from "src/helper/constants";
 import { Notify } from "quasar";
@@ -49,8 +49,8 @@ function editarUnidade() {
   //   nome: unidadeSelecionada.value.nome,
   //   id: unidadeSelecionada.value.id,
   // };
-  // axios
-  //   .put(`${API_URL}v1/restrito/setor/${unidadeSelecionada.value.id}`, unidade)
+  // api
+  //   .put(`v1/restrito/setor/${unidadeSelecionada.value.id}`, unidade)
   //   .then((res) => {
   //     Notify.create({
   //       color: "green",
@@ -63,8 +63,8 @@ function editarUnidade() {
 }
 
 function deletarUnidade() {
-  axios
-    .delete(`${API_URL}v1/restrito/setor/${unidadeSelecionada.value.id}`)
+  api
+    .delete(`v1/restrito/setor/${unidadeSelecionada.value.id}`)
     .then((res) => {
       Notify.create({
         color: "green",
@@ -91,7 +91,7 @@ function salvarAddUnidade(isEditando) {
       console.log("Editando unidade");
     } else {
       console.log("Cadastrando unidade");
-      promise = axios.post(`${API_URL}v1/restrito/setor`, unidade);
+      promise = api.post(`v1/restrito/setor`, unidade);
     }
   } else {
     if (isEditando) {
@@ -103,8 +103,8 @@ function salvarAddUnidade(isEditando) {
 
   return;
 
-  axios
-    .post(`${API_URL}v1/restrito/setor`, unidade)
+  api
+    .post(`v1/restrito/setor`, unidade)
     .then((res) => {
       Notify.create({
         color: "green",
@@ -121,10 +121,8 @@ onMounted(() => {
 
   if (!idInventario.value) return;
 
-  axios
-    .get(
-      `${API_URL}v1/restrito/inventario/setor/dependencia/${idInventario.value}`
-    )
+  api
+    .get(`v1/restrito/inventario/setor/dependencia/${idInventario.value}`)
     .then((res) => {
       setores.value = res.data.map((setor) => {
         const novoSetor = {

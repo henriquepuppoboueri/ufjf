@@ -163,7 +163,7 @@
 
 <script setup>
 import { onMounted, ref, reactive, watch, computed } from "vue";
-import axios from "axios";
+import { api } from "boot/axios";
 import { API_URL } from "src/helper/constants.js";
 import ItemCad from "../inventarios/items/item/ItemCad.vue";
 
@@ -175,10 +175,8 @@ function selecionaInventario(idInventario) {
   }
   idInventarioSelecionado.value = idInventario;
   loadingSetores.value = true;
-  axios
-    .get(
-      `${API_URL}v1/restrito/setor/inventario/${idInventarioSelecionado.value}`
-    )
+  api
+    .get(`v1/restrito/setor/inventario/${idInventarioSelecionado.value}`)
     .then((res) => {
       setoresInventario.value = res.data;
     });
@@ -192,11 +190,9 @@ function selecionaSetor(idSetor) {
   }
   idSetorSelecionado.value = idSetor;
   loadingDependencias.value = true;
-  axios
-    .get(`${API_URL}v1/restrito/dependencia/setor/${idSetor}`)
-    .then((res) => {
-      dependenciasSetor.value = res.data;
-    });
+  api.get(`v1/restrito/dependencia/setor/${idSetor}`).then((res) => {
+    dependenciasSetor.value = res.data;
+  });
   loadingDependencias.value = false;
 }
 
@@ -273,8 +269,8 @@ const colunasDependencias = reactive([
 
 onMounted(() => {
   loadingInventarios.value = true;
-  axios
-    .get(`${API_URL}v1/restrito/inventario`)
+  api
+    .get(`v1/restrito/inventario`)
     .then((res) => {
       Object.assign(inventarios, res.data);
     })

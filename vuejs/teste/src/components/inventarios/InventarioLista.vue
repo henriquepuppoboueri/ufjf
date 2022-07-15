@@ -65,43 +65,13 @@
 <script setup>
 import { onMounted, ref, reactive, computed } from "vue";
 import { useRouter } from "vue-router";
-import axios from "axios";
+import { api } from "boot/axios";
 import { Notify } from "quasar";
-import { API_URL } from "../../helper/constants.js";
 import { useQuasar } from "quasar";
 
 const $q = useQuasar();
 const inventarioSelecionado = ref([]);
-const inventarios = reactive([
-  // {
-  //   id: "1",
-  //   nome: "Inventário 001",
-  //   criador: "Marjory",
-  //   dataCriacao: Date.now(),
-  //   status: "Encerrado",
-  // },
-  // {
-  //   id: "2",
-  //   nome: "Inventário 002",
-  //   criador: "Marjory",
-  //   dataCriacao: Date.now(),
-  //   status: "Suspenso",
-  // },
-  // {
-  //   id: "3",
-  //   nome: "Inventário 003",
-  //   criador: "Marjory",
-  //   dataCriacao: Date.now(),
-  //   status: "Aberto",
-  // },
-  // {
-  //   id: "4",
-  //   nome: "Inventário 004",
-  //   criador: "Marjory",
-  //   dataCriacao: Date.now(),
-  //   status: "Em andamento",
-  // },
-]);
+const inventarios = reactive([]);
 const router = useRouter();
 const colunas = ref([
   {
@@ -142,8 +112,8 @@ function excluirInventario() {
     title: "Exclusão de inventário",
     message: "Tem certeza de que deseja excluir o inventário?",
   }).onOk(() => {
-    axios
-      .delete(`${API_URL}v1/restrito/inventario/${_id}`)
+    api
+      .delete(`v1/restrito/inventario/${_id}`)
       .then((_) => {
         Notify.create({ color: "green", message: "Inventário excluído!" });
         router.go();
@@ -155,37 +125,6 @@ function excluirInventario() {
         });
       });
   });
-}
-
-function mudarSituacaoInventario() {
-  const situacaoAtual = inventarioSelecionado.value[0].situacaoInventario.nome;
-  const _id = inventarioSelecionado.value[0].id;
-  if (situacaoAtual === "Preparando") {
-    axios
-      .patch(`${API_URL}v1/restrito/inventario/liberar/${_id}`)
-      .then((res) => {
-        Notify.create({ color: "green", message: "Inventário liberado!" });
-        router.go();
-      })
-      .catch((err) => {
-        Notify.create({
-          color: "red",
-          message: `Erro ao liberar inventário: ${err}`,
-        });
-      });
-  } else if (situacaoAtual === "Inventariando") {
-    axios
-      .patch(`${API_URL}v1/restrito/inventario/fechar/${_id}`)
-      .then((res) => {
-        Notify.create({ color: "green", message: "Inventário fechado!" });
-      })
-      .catch((err) => {
-        Notify.create({
-          color: "red",
-          message: `Erro ao fechar inventário: ${err}`,
-        });
-      });
-  }
 }
 
 const statusInventarioBtn = computed(() => {
@@ -203,11 +142,42 @@ const statusInventarioBtn = computed(() => {
 });
 
 onMounted(() => {
-  axios
-    .get(`${API_URL}v1/restrito/inventario`)
+  api
+    .get(`v1/restrito/inventario`)
     .then((res) => {
       Object.assign(inventarios, res.data);
     })
     .catch(console.log);
 });
+
+function mudarSituacaoInventario() {
+  const situacaoAtual = inventarioSelecionado.value[0].situacaoInventario.nome;
+  const _id = inventarioSelecionado.value[0].id;
+  if (situacaoAtual === "Preparando") {
+    api
+      .patch(`v1/restrito/usuario/liberar/${_id}`)
+      .then((res) => {
+        Notify.create({ color: "green", message: "Inventário liberado!" });
+        router.go();
+      })
+      .catch((err) => {
+        Notify.create({
+          color: "red",
+          message: `Erro ao liberar inventário: ${err}`,
+        });
+      });
+  } else if (situacaoAtual === "Inventariando") {
+    api
+      .patch(`v1/restrito/inventario/fechar/${_id}`)
+      .then((res) => {
+        Notify.create({ color: "green", message: "Inventário fechado!" });
+      })
+      .catch((err) => {
+        Notify.create({
+          color: "red",
+          message: `Erro ao fechar inventário: ${err}`,
+        });
+      });
+  }
+}
 </script>

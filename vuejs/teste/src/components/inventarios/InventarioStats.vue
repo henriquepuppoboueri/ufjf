@@ -16,8 +16,7 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
-import axios from "axios";
-import { API_URL } from "../../helper/constants.js";
+import { api } from "boot/axios";
 
 const route = useRoute();
 const resumo = ref([]);
@@ -27,9 +26,8 @@ onMounted(() => {
     // modo de edição ou visualização
     const id = +route.params.idInventario;
 
-    axios.get(`${API_URL}v1/restrito/item/qtde/${id}`).then((res) => {
+    api.get(`v1/restrito/item/qtde/${id}`).then((res) => {
       resumo.value = res.data;
-      console.log(resumo.value.setores);
     });
   } else {
     return;

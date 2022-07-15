@@ -18,6 +18,10 @@ const routes = [
         path: "novo",
         component: () => import("src/components/usuarios/UsuarioCad.vue"),
       },
+      {
+        path: ":id",
+        component: () => import("src/components/usuarios/UsuarioCad.vue"),
+      },
     ],
   },
   {

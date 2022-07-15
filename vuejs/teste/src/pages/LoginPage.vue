@@ -3,16 +3,33 @@
     <h1>IsInit: {{ Vue3GoogleOauth.isInit }}</h1>
     <h1>IsAuthorized: {{ Vue3GoogleOauth.isAuthorized }}</h1>
     <h2 v-if="user">signed user: {{ user }}</h2>
-    <button @click="handleClickSignIn" :disabled="!Vue3GoogleOauth.isInit || Vue3GoogleOauth.isAuthorized">sign
-      in</button>
-    <button @click="handleClickGetAuthCode" :disabled="!Vue3GoogleOauth.isInit">get authCode</button>
-    <button @click="handleClickSignOut" :disabled="!Vue3GoogleOauth.isAuthorized">sign out</button>
-    <button @click="handleClickDisconnect" :disabled="!Vue3GoogleOauth.isAuthorized">disconnect</button>
+    <button
+      @click="handleClickSignIn"
+      :disabled="!Vue3GoogleOauth.isInit || Vue3GoogleOauth.isAuthorized"
+    >
+      sign in
+    </button>
+    <button @click="handleClickGetAuthCode" :disabled="!Vue3GoogleOauth.isInit">
+      get authCode
+    </button>
+    <button
+      @click="handleClickSignOut"
+      :disabled="!Vue3GoogleOauth.isAuthorized"
+    >
+      sign out
+    </button>
+    <button
+      @click="handleClickDisconnect"
+      :disabled="!Vue3GoogleOauth.isAuthorized"
+    >
+      disconnect
+    </button>
   </div>
 </template>
 
 <script>
 import { inject, toRefs } from "vue";
+import { gAuth } from "boot/oauth";
 
 export default {
   name: "HelloWorld",
@@ -22,8 +39,8 @@ export default {
 
   data() {
     return {
-      user: '',
-    }
+      user: "",
+    };
   },
 
   methods: {
@@ -42,7 +59,6 @@ export default {
           "getAuthResponse",
           this.$gAuth.instance.currentUser.get().getAuthResponse()
         );
-
       } catch (error) {
         //on fail do something
         console.error(error);
@@ -79,7 +95,7 @@ export default {
     const { isSignIn } = toRefs(props);
     const Vue3GoogleOauth = inject("Vue3GoogleOauth");
 
-    const handleClickLogin = () => { };
+    const handleClickLogin = () => {};
     return {
       Vue3GoogleOauth,
       handleClickLogin,

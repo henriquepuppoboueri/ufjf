@@ -90,7 +90,7 @@ import {
   computed,
   onMounted,
 } from "vue";
-import axios from "axios";
+import { api } from "boot/axios";
 import { API_URL } from "../../../helper/constants.js";
 import ItemCad from "./item/ItemCad.vue";
 import { useRoute } from "vue-router";
@@ -174,12 +174,12 @@ function renderPage() {
   else urlDestino = "itens";
 
   loadingItems.value = true;
-  axios
-    .get(`${API_URL}v1/restrito/inventario/setor/dependencia/${id}`)
+  api
+    .get(`v1/restrito/inventario/setor/dependencia/${id}`)
     .then((res) => {
       setores.value = res.data;
       idInventario.value = id;
-      return axios.get(`${API_URL}v1/restrito/item/${urlDestino}/${id}`);
+      return api.get(`v1/restrito/item/${urlDestino}/${id}`);
     })
     .then((res) => {
       if (res.data.length > 0) {
