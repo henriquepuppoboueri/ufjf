@@ -2,13 +2,18 @@
   <div class="q-pa-md">
     <h3>Estatísticas</h3>
     <!-- <h4>{{ resumo.inventario.nome }} - {{ resumo.qtde }}</h4> -->
-    <div v-for="item in resumo.setores" :key="item.setor.id">
-      <h5>Setor: {{ item.setor.nome }} - {{ item.qtde }}</h5>
-      <div>
-        <p v-for="dep in item.dependencias" :key="dep.nomeDependencia">
-          {{ dep.nomeDependencia }} - {{ dep.qtde }}
-        </p>
+    <div v-if="temDados">
+      <div v-for="item in resumo.setores" :key="item.setor.id">
+        <h5>Setor: {{ item.setor.nome }} - {{ item.qtde }}</h5>
+        <div>
+          <p v-for="dep in item.dependencias" :key="dep.nomeDependencia">
+            {{ dep.nomeDependencia }} - {{ dep.qtde }}
+          </p>
+        </div>
       </div>
+    </div>
+    <div v-if="!temDados">
+      <p>Nada a exibir.</p>
     </div>
   </div>
 </template>
@@ -20,6 +25,7 @@ import { api } from "boot/axios";
 
 const route = useRoute();
 const resumo = ref([]);
+const temDados = ref(false);
 
 onMounted(() => {
   if ("idInventario" in route.params) {
@@ -28,6 +34,7 @@ onMounted(() => {
 
     api.get(`v1/restrito/item/qtde/${id}`).then((res) => {
       resumo.value = res.data;
+      temDados.value = !!resumo.value.qtde;
     });
   } else {
     return;

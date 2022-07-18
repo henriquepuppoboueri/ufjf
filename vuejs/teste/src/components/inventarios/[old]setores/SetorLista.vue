@@ -204,10 +204,6 @@ function selecionaDependencia(idDependencia) {
   idDependenciaSelecionada.value = idDependencia;
 }
 
-function expandirLinha(id) {
-  console.log(id);
-}
-
 const habilitaBtnSalvar = computed(() => {
   return idSetorSelecionado.value !== 0 && idInventarioSelecionado.value !== 0;
 });

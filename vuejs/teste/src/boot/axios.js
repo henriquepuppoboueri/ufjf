@@ -3,10 +3,15 @@ import axios from 'axios'
 
 const api_options = { baseURL: 'http://10.1.2.90:9001' }
 const api = axios.create(api_options)
-api.interceptors.request.use(config => {
-  config.headers.Authorization = 'asasas'
-  return config
-})
+
+const usuarioLogado = sessionStorage.getItem('usuarioLogado') || false;
+if (usuarioLogado) {
+  const usuarioJSON = JSON.parse(usuarioLogado);
+  api.interceptors.request.use(config => {
+    config.headers.Authorization = `Bearer ${usuarioJSON.token}`
+    return config
+  })
+}
 
 export default boot(({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api

@@ -1,3 +1,5 @@
+import { createRouter, createWebHistory } from 'vue-router';
+
 const routes = [
   {
     path: "/", redirect: '/inventario',
@@ -12,21 +14,21 @@ const routes = [
     children: [
       {
         path: "",
-        component: () => import("src/components/usuarios/UsuarioLista.vue"),
+        component: () => import("components/usuarios/UsuarioLista.vue"),
       },
       {
         path: "novo",
-        component: () => import("src/components/usuarios/UsuarioCad.vue"),
+        component: () => import("components/usuarios/UsuarioCad.vue"),
       },
       {
         path: ":id",
-        component: () => import("src/components/usuarios/UsuarioCad.vue"),
+        component: () => import("components/usuarios/UsuarioCad.vue"),
       },
     ],
   },
   {
     path: "/login",
-    component: () => import("layouts/MainLayout.vue"),
+    component: () => import("layouts/LoginLayout.vue"),
     children: [{ path: "", component: () => import("pages/LoginPage.vue") }],
   },
   {
@@ -36,57 +38,57 @@ const routes = [
       {
         path: "",
         component: () =>
-          import("src/components/inventarios/InventarioLista.vue"),
+          import("components/inventarios/InventarioLista.vue"),
       },
       {
         path: "novo",
-        component: () => import("src/components/inventarios/InventarioCad.vue"),
+        component: () => import("components/inventarios/InventarioCad.vue"),
       },
       {
         path: "lista",
         component: () =>
-          import("src/components/inventarios/InventarioLista.vue"),
+          import("components/inventarios/InventarioLista.vue"),
       },
       {
         path: "view/:idInventario",
         name: 'view',
-        component: () => import("src/components/inventarios/InventarioVer.vue"),
+        component: () => import("components/inventarios/InventarioVer.vue"),
         children: [
           {
             path: '',
-            component: () => import('src/components/inventarios/InventarioStats.vue'),
+            component: () => import('components/inventarios/InventarioStats.vue'),
           },
           {
             path: 'resumo',
-            component: () => import('src/components/inventarios/InventarioStats.vue'),
+            component: () => import('components/inventarios/InventarioStats.vue'),
           },
           {
             path: 'unidades',
             name: 'unidades',
-            component: () => import('src/components/inventarios/unidades/UnidadesLista.vue'),
+            component: () => import('components/inventarios/unidades/UnidadesLista.vue'),
           },
           {
             path: 'items',
             name: 'items',
-            component: () => import('src/components/inventarios/items/ItemsColetados.vue'),
+            component: () => import('components/inventarios/items/ItemsColetados.vue'),
           },
           {
             path: 'items/item/:idItem',
-            component: () => import('src/components/inventarios/items/item/ItemCad.vue'),
+            component: () => import('components/inventarios/items/item/ItemCad.vue'),
           }
           //   children: [{
           //     path: '',
-          //     component: () => import('src/components/inventarios/items/item/ItemCad.vue'),
+          //     component: () => import('components/inventarios/items/item/ItemCad.vue'),
           //   },
           //   {
           //     path: 'item/:idItem',
-          //     component: () => import('src/components/inventarios/items/item/ItemCad.vue'),
+          //     component: () => import('components/inventarios/items/item/ItemCad.vue'),
           //   }]
         ]
       },
       {
         path: "edit/:id",
-        component: () => import("src/components/inventarios/InventarioCad.vue"),
+        component: () => import("components/inventarios/InventarioCad.vue"),
       },
     ],
   },
@@ -97,5 +99,12 @@ const routes = [
     component: () => import("pages/ErrorNotFound.vue"),
   },
 ];
+
+const router = createRouter({ history: createWebHistory(), routes })
+
+router.beforeEach((to, from, next) => {
+  // to and from are both route objects. must call `next`.
+  console.log('beforeEach');;
+})
 
 export default routes;

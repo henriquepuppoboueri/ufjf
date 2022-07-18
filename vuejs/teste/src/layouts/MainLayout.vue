@@ -22,8 +22,8 @@
         <q-list class="rounded-borders">
           <q-item>
             <q-item-section class="col-grow">
-              <q-item-label>{{ nome }}</q-item-label>
-              <q-item-label caption> {{ email }} </q-item-label>
+              <q-item-label>{{ usuario.nome }}</q-item-label>
+              <q-item-label caption> {{ usuario.email }} </q-item-label>
             </q-item-section>
             <q-item-section class="col-auto">
               <router-link to="/logout">Sair</router-link>
@@ -164,12 +164,16 @@
 
 <script setup>
 import { storeToRefs } from "pinia";
-import { useStore } from "src/stores/usuarioLogado";
-import { ref } from "vue";
+import { useAuthStore } from "src/stores/auth";
+import { onBeforeMount, reactive, ref, watch } from "vue";
 
+console.log("MainLayout");
+const authStore = useAuthStore();
+const { usuario, carregando, erro } = storeToRefs(authStore);
 const leftDrawerOpen = ref(false);
-const store = useStore();
-const { nome, email } = storeToRefs(store);
+
+// usuarioLogado.email = authStore.usuario.email;
+// usuarioLogado.nome = authStore.usuario.nome;
 
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;

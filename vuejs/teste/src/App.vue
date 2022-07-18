@@ -2,10 +2,12 @@
   <router-view />
 </template>
 
-<script>
-import { defineComponent } from 'vue'
+<script setup>
+import { onBeforeMount } from "@vue/runtime-core";
+import { useAuthStore } from "./stores/auth";
 
-export default defineComponent({
-  name: 'App'
-})
+onBeforeMount(() => {
+  const authStore = useAuthStore();
+  authStore.carregarToken();
+});
 </script>
