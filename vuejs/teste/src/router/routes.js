@@ -27,6 +27,11 @@ const routes = [
     ],
   },
   {
+    path: "/logout",
+    name: 'Logout',
+    component: () => import("pages/LogoutPage.vue"),
+  },
+  {
     path: "/login",
     name: 'Login',
     component: () => import("layouts/LoginLayout.vue"),
@@ -101,12 +106,5 @@ const routes = [
     component: () => import("pages/ErrorNotFound.vue"),
   },
 ];
-
-const router = createRouter({ history: createWebHistory(), routes })
-
-router.beforeEach((to, from, next) => {
-  // to and from are both route objects. must call `next`.
-  console.log('beforeEach');;
-})
 
 export default routes;

@@ -155,7 +155,7 @@ function mudarSituacaoInventario() {
   const _id = inventarioSelecionado.value[0].id;
   if (situacaoAtual === "Preparando") {
     api
-      .patch(`v1/restrito/usuario/liberar/${_id}`)
+      .patch(`v1/restrito/inventario/liberar/${_id}`)
       .then((res) => {
         Notify.create({ color: "green", message: "Inventário liberado!" });
         router.go();

@@ -30,12 +30,12 @@ export default route(function (/* { store, ssrContext } */) {
   Router.beforeEach((to, from, next) => {
     // to and from are both route objects. must call `next`.
     const authStore = useAuthStore();
+
     if (to.meta.restrito && !authStore.isUsuarioLogado) {
-      { return { name: 'Login' } }
+      next('/login')
+    } else  {
+      next()
     }
-    // console.log(to);
-    // console.log(from);
-    next()
   })
 
   return Router

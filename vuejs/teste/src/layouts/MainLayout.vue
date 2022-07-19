@@ -22,8 +22,12 @@
         <q-list class="rounded-borders">
           <q-item>
             <q-item-section class="col-grow">
-              <q-item-label>{{ usuario.nome }}</q-item-label>
-              <q-item-label caption> {{ usuario.email }} </q-item-label>
+              <q-item-label>{{
+                usuario ? usuario.nome : "Visitante"
+              }}</q-item-label>
+              <q-item-label caption>
+                {{ usuario ? usuario.email : "" }}
+              </q-item-label>
             </q-item-section>
             <q-item-section class="col-auto">
               <router-link to="/logout">Sair</router-link>

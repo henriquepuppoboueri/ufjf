@@ -17,8 +17,8 @@
         placeholder="Descrição"
       />
 
-      <q-btn outline dense @click="togglePermissoes">
-        {{ mostrarTblPermissoes ? "Ocultar" : "Mostrar" }} usuários e
+      <q-btn flat dense @click="togglePermissoes">
+        {{ mostrarTblPermissoes ? "-Ocultar" : "+Mostrar" }} usuários e
         permissões</q-btn
       >
       <div class="col permissoes q-gutter-y-md" v-if="mostrarTblPermissoes">
@@ -228,7 +228,7 @@ function filterFn(val, update, abort) {
 
   update(() => {
     if (val === "") {
-      novoUsuario.value = {};
+      novoUsuario.value = null;
       usuariosListaFiltro.value = usuariosLista.value;
     } else {
       const needle = val.toLowerCase();
@@ -245,6 +245,11 @@ function togglePermissoes() {
   if (mostrarTblPermissoes.value) {
     api.get(`v1/restrito/usuarios`).then((res) => {
       usuariosLista.value = res.data;
+      return api
+        .get(`v1/restrito/inventario/usuario/${id.value}`)
+        .then((res) => {
+          usuariosInventario.value = res.data;
+        });
     });
   }
 }

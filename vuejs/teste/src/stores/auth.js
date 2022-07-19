@@ -34,6 +34,21 @@ export const useAuthStore = defineStore({
       } else {
         useRouter().push('/login')
       }
+    },
+    deslogar() {
+      try {
+        api.post(`restrito/logout`).then(_ => {
+          sessionStorage.removeItem('usuarioLogado')
+          this.usuario = null
+        }).catch(error => {
+          throw new Error(error.message)
+        })
+      } catch (error) {
+        console.log(error)
+      } finally {
+        useRouter().push('/login')
+      }
+
     }
   }
 })
