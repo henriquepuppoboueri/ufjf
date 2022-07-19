@@ -35,7 +35,7 @@ const idSelecionado = computed(() => {
 
 watch(idSelecionado, (_) => {
   if (idSelecionado.value === 0) return;
-  api.get(`}v1/restrito/item/itens/${idSelecionado.value}`).then((res) => {
+  api.get(`v1/restrito/item/itens/${idSelecionado.value}`).then((res) => {
     itemsInventario.value = res.data;
   });
 });

@@ -37,7 +37,7 @@
             caption="Controle de usuários"
             :content-inset-level="0.5"
           >
-            <q-item dense clickable v-ripple to="/usuario/novo">
+            <q-item dense clickable v-ripple to="/usuario/novo" exact>
               <q-item-section avatar>
                 <q-icon text-color="white" name="fa-solid fa-user-plus" />
               </q-item-section>
@@ -45,7 +45,7 @@
               <q-item-section>Novo usuário</q-item-section>
             </q-item>
 
-            <q-item dense clickable v-ripple to="/usuario">
+            <q-item dense clickable v-ripple to="/usuario" exact>
               <q-item-section avatar>
                 <q-icon text-color="white" name="fa-solid fa-user-pen" />
               </q-item-section>
@@ -85,7 +85,7 @@
             caption="Controle de Inventários"
             :content-inset-level="0.5"
           >
-            <q-item dense clickable v-ripple to="/inventario/novo">
+            <q-item dense clickable v-ripple to="/inventario/novo" exact>
               <q-item-section avatar>
                 <q-icon
                   text-color="white"
@@ -96,7 +96,7 @@
               <q-item-section>Novo inventário</q-item-section>
             </q-item>
 
-            <q-item dense to="/inventario" clickable v-ripple>
+            <q-item dense to="/inventario" exact clickable v-ripple>
               <q-item-section avatar>
                 <q-icon text-color="white" name="fa-solid fa-book-open" />
               </q-item-section>
@@ -167,13 +167,9 @@ import { storeToRefs } from "pinia";
 import { useAuthStore } from "src/stores/auth";
 import { onBeforeMount, reactive, ref, watch } from "vue";
 
-console.log("MainLayout");
 const authStore = useAuthStore();
 const { usuario, carregando, erro } = storeToRefs(authStore);
 const leftDrawerOpen = ref(false);
-
-// usuarioLogado.email = authStore.usuario.email;
-// usuarioLogado.nome = authStore.usuario.nome;
 
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;

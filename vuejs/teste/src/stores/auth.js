@@ -28,10 +28,9 @@ export const useAuthStore = defineStore({
       }
     },
     carregarToken() {
-      console.log('CarregarToken');
       const usuarioSession = sessionStorage.getItem('usuarioLogado')
       if (usuarioSession) {
-        this.usuario = usuarioSession
+        this.usuario = JSON.parse(usuarioSession)
       } else {
         useRouter().push('/login')
       }

@@ -1,6 +1,7 @@
 import { route } from 'quasar/wrappers'
 import { createRouter, createMemoryHistory, createWebHistory, createWebHashHistory } from 'vue-router'
 import routes from './routes'
+import { useAuthStore } from 'src/stores/auth'
 
 /*
  * If not building with SSR mode, you can
@@ -28,6 +29,12 @@ export default route(function (/* { store, ssrContext } */) {
 
   Router.beforeEach((to, from, next) => {
     // to and from are both route objects. must call `next`.
+    const authStore = useAuthStore();
+    if (to.meta.restrito && !authStore.isUsuarioLogado) {
+      { return { name: 'Login' } }
+    }
+    // console.log(to);
+    // console.log(from);
     next()
   })
 

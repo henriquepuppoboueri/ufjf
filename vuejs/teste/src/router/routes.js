@@ -28,12 +28,14 @@ const routes = [
   },
   {
     path: "/login",
+    name: 'Login',
     component: () => import("layouts/LoginLayout.vue"),
     children: [{ path: "", component: () => import("pages/LoginPage.vue") }],
   },
   {
     path: "/inventario",
     component: () => import("layouts/MainLayout.vue"),
+    meta: { restrito: true },
     children: [
       {
         path: "",
