@@ -68,10 +68,12 @@ import { useRouter } from "vue-router";
 import { api } from "boot/axios";
 import { Notify } from "quasar";
 import { useQuasar } from "quasar";
+import { useInventariosStore } from "src/stores/inventarios";
 
+const inventariosStore = useInventariosStore();
 const $q = useQuasar();
 const inventarioSelecionado = ref([]);
-const inventarios = reactive([]);
+const inventarios = ref([]);
 const router = useRouter();
 const colunas = ref([
   {
@@ -111,19 +113,25 @@ function excluirInventario() {
   $q.dialog({
     title: "Exclusão de inventário",
     message: "Tem certeza de que deseja excluir o inventário?",
-  }).onOk(() => {
-    api
-      .delete(`v1/restrito/inventario/${_id}`)
-      .then((_) => {
-        Notify.create({ color: "green", message: "Inventário excluído!" });
-        router.go();
-      })
-      .catch((err) => {
-        Notify.create({
-          color: "red",
-          message: `Erro ao excluir inventário: ${err}`,
-        });
-      });
+  }).onOk(async () => {
+    const status = await inventariosStore.delInventario(_id);
+    if (status === 204) {
+      Notify.create({ color: "green", message: "Inventário excluído!" });
+      router.go();
+    }
+
+    // api
+    //   .delete(`v1/restrito/inventario/${_id}`)
+    //   .then((_) => {
+    //     Notify.create({ color: "green", message: "Inventário excluído!" });
+    //     router.go();
+    //   })
+    //   .catch((err) => {
+    //     Notify.create({
+    //       color: "red",
+    //       message: `Erro ao excluir inventário: ${err}`,
+    //     });
+    //   });
   });
 }
 
@@ -141,13 +149,15 @@ const statusInventarioBtn = computed(() => {
   return lblTemp;
 });
 
-onMounted(() => {
-  api
-    .get(`v1/restrito/inventario`)
-    .then((res) => {
-      Object.assign(inventarios, res.data);
-    })
-    .catch(console.log);
+onMounted(async () => {
+  await inventariosStore.buscarInventarios();
+  inventarios.value = inventariosStore.inventarios;
+  // api
+  //   .get(`v1/restrito/inventario`)
+  //   .then((res) => {
+  //     Object.assign(inventarios, res.data);
+  //   })
+  //   .catch(console.log);
 });
 
 function mudarSituacaoInventario() {

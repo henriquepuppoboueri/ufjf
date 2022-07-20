@@ -13,15 +13,39 @@ export const useInventariosStore = defineStore({
   getters: {
   },
   actions: {
-    addInventario() { },
-    delInventario() { },
-    editInventario() { },
-    buscarInventarios() { },
+    async addInventario(inventario) {
+      const inventarioResponse = await api
+        .post(`v1/restrito/inventario`, inventario)
+    },
+
+    async delInventario(idInventario) {
+      const res = await api
+        .delete(`v1/restrito/inventario/${idInventario}`)
+      return res.status
+    },
+
+    async editInventario(idInventario, inventario) {
+      await api
+        .put(`v1/restrito/inventario/${idInventario}`, inventario)
+    },
+
     async buscarInventario(idInventario) {
+      const inventarioResponse = await api.get(
+        `v1/restrito/inventario/${idInventario}`
+      );
+      this.inventario = inventarioResponse.data
+    },
+
+    async buscarInventarios() {
+      const inventariosResponse = await api.get(`v1/restrito/inventario`)
+      this.inventarios = inventariosResponse.data
+    },
+
+    async buscarUsuariosInventario(idInventario) {
       const usuariosInventarioResponse = await api.get(
         `v1/restrito/inventario/usuario/${idInventario}`
       );
-      usuariosInventario = usuariosInventarioResponse.data;
+      this.usuariosInventario = usuariosInventarioResponse.data
     },
 
   }
