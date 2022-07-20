@@ -1,6 +1,6 @@
 <template>
-  <div class="q-pa-md">
-    <q-form @submit.prevent="onSubmit" class="q-gutter-md">
+  <div class="q-pa-sm">
+    <q-form @submit.prevent="onSubmit" class="q-gutter-sm">
       <q-input outlined v-model="nomeInventario" label="Nome do inventário" />
       <q-input
         standout
@@ -16,85 +16,6 @@
         min-height="5rem"
         placeholder="Descrição"
       />
-
-      <q-btn flat dense @click="togglePermissoes">
-        {{ mostrarTblPermissoes ? "-Ocultar" : "+Mostrar" }} usuários e
-        permissões</q-btn
-      >
-      <div class="col permissoes q-gutter-y-md" v-if="mostrarTblPermissoes">
-        <div class="row q-gutter-x-md justify-between no-wrap">
-          <q-select
-            class="fit"
-            outlined
-            v-model="novoUsuario"
-            use-input
-            hide-selected
-            fill-input
-            input-debounce="300"
-            label="Adicionar usuário"
-            :options="usuariosListaFiltro"
-            :option-label="(row) => row.nome"
-            @filter="filterFn"
-          >
-            <template v-slot:no-option>
-              <q-item>
-                <q-item-section class="text-grey"> No results </q-item-section>
-              </q-item>
-            </template>
-          </q-select>
-          <q-btn
-            :disable="!novoUsuario"
-            outline
-            icon="add"
-            color="primary"
-            @click="addUsuarioInventario"
-          />
-        </div>
-        <q-table
-          flat
-          bordered
-          title="Usuários e permissões"
-          :rows="usuariosInventario"
-          :columns="colunasTblUsuarios"
-          row-key="id"
-        >
-          <template v-slot:header="props">
-            <q-tr :props="props">
-              <q-th auto-width />
-              <q-th v-for="col in props.cols" :key="col.name" :props="props">
-                {{ col.label }}
-              </q-th>
-            </q-tr>
-          </template>
-
-          <template v-slot:body="props">
-            <q-tr :props="props">
-              <q-td auto-width>
-                <q-btn
-                  size="sm"
-                  color="red"
-                  round
-                  dense
-                  @click="props.expand = !props.expand"
-                  :icon="props.expand ? 'remove' : 'add'"
-                />
-              </q-td>
-              <q-td v-for="col in props.cols" :key="col.name" :props="props">
-                {{ col.value }}
-              </q-td>
-            </q-tr>
-            <q-tr v-show="props.expand" :props="props">
-              <q-td colspan="100%">
-                <div class="column">
-                  <q-toggle :model-value="true" label="Pode editar" />
-                  <q-toggle :model-value="false" label="Pode cadastrar items" />
-                  <q-toggle :model-value="true" label="Pode editar" />
-                </div>
-              </q-td>
-            </q-tr>
-          </template>
-        </q-table>
-      </div>
 
       <div>
         <q-btn outline label="Enviar" type="submit" color="primary" />
@@ -117,17 +38,11 @@ import { useRoute, useRouter } from "vue-router";
 import { api } from "boot/axios";
 import { date, Notify } from "quasar";
 
-const id = ref(0);
 const modoEdicao = ref(false);
-const novoUsuario = ref(null);
-const usuariosLista = ref([]);
-const usuariosListaFiltro = ref([]);
-const usuariosInventario = ref([]);
+const idInventario = ref(null);
 const route = useRoute();
 const router = useRouter();
-const mostrarTblPermissoes = ref(false);
 const dataCriacao = ref("30/06/2022");
-const selected = reactive([]);
 const inventarioDescricao = ref("");
 const statusAtual = ref({ id: 1, nome: "Preparando" });
 const statusOpcoes = reactive([
@@ -138,41 +53,14 @@ const statusOpcoes = reactive([
 ]);
 const nomeInventario = ref("");
 
-const colunasTblUsuarios = ref([
-  {
-    name: "login",
-    required: true,
-    label: "Login",
-    align: "left",
-    // field: (row) => row.name,
-    field: "login",
-    format: (val) => `${val}`,
-    sortable: true,
-  },
-  {
-    name: "nome",
-    align: "left",
-    label: "Nome",
-    field: "nome",
-    sortable: true,
-  },
-  {
-    name: "email",
-    align: "left",
-    label: "E-mail",
-    field: "email",
-    sortable: true,
-  },
-]);
-
 onMounted(() => {
   if ("id" in route.params) {
     // modo de edição
     modoEdicao.value = true;
-    id.value = +route.params.id;
+    idInventario.value = +route.params.id;
 
     api
-      .get(`v1/restrito/inventario/${id.value}`)
+      .get(`v1/restrito/inventario/${idInventario.value}`)
       .then((res) => {
         const inventario = res.data;
         nomeInventario.value = inventario.nome;
@@ -193,7 +81,7 @@ onMounted(() => {
 
 function onSubmit() {
   const inventario = {
-    id: id.value,
+    id: idInventario.value,
     nome: nomeInventario.value,
     // situacaoInventario: statusAtual.value,
     descricao: inventarioDescricao.value,
@@ -221,41 +109,5 @@ function onSubmit() {
         Notify.create({ color: "red", message: `Erro: ${err}` });
       });
   }
-}
-
-function filterFn(val, update, abort) {
-  // call abort() at any time if you can't retrieve data somehow
-
-  update(() => {
-    if (val === "") {
-      novoUsuario.value = null;
-      usuariosListaFiltro.value = usuariosLista.value;
-    } else {
-      const needle = val.toLowerCase();
-      usuariosListaFiltro.value = usuariosLista.value.filter(
-        (v) => v.nome.toLowerCase().indexOf(needle) > -1
-      );
-    }
-  });
-}
-
-function togglePermissoes() {
-  mostrarTblPermissoes.value = !mostrarTblPermissoes.value;
-
-  if (mostrarTblPermissoes.value) {
-    api.get(`v1/restrito/usuarios`).then((res) => {
-      usuariosLista.value = res.data;
-      return api
-        .get(`v1/restrito/inventario/usuario/${id.value}`)
-        .then((res) => {
-          usuariosInventario.value = res.data;
-        });
-    });
-  }
-}
-
-function addUsuarioInventario() {
-  usuariosInventario.value.push(novoUsuario.value);
-  novoUsuario.value = null;
 }
 </script>

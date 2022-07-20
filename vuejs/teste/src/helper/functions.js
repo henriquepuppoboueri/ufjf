@@ -8,6 +8,6 @@ export function diminuiTexto(text) {
 
 export function registroPortugues(reg) {
   const nrRegistros =
-    reg > 1 ? `registro(s) selecionados.` : `registro selecionado.`;
+    reg > 1 ? `registros selecionados.` : `registro selecionado.`;
   return `${reg} ${nrRegistros}`;
 }

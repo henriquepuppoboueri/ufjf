@@ -169,7 +169,7 @@
 <script setup>
 import { storeToRefs } from "pinia";
 import { useAuthStore } from "src/stores/auth";
-import { onBeforeMount, reactive, ref, watch } from "vue";
+import { ref } from "vue";
 
 const authStore = useAuthStore();
 const { usuario, carregando, erro } = storeToRefs(authStore);
@@ -179,9 +179,3 @@ function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 }
 </script>
-
-<style>
-.q-item {
-  /* margin: 0.2rem; */
-}
-</style>

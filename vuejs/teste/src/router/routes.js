@@ -71,7 +71,7 @@ const routes = [
           },
           {
             path: 'unidades',
-            name: 'unidades',
+            name: 'Unidades',
             component: () => import('components/inventarios/unidades/UnidadesLista.vue'),
           },
           {
@@ -82,7 +82,12 @@ const routes = [
           {
             path: 'items/item/:idItem',
             component: () => import('components/inventarios/items/item/ItemCad.vue'),
-          }
+          },
+          {
+            path: 'permissoes',
+            name: 'Permissoes',
+            component: () => import('components/inventarios/usuarios/UsuariosInventario.vue'),
+          },
           //   children: [{
           //     path: '',
           //     component: () => import('components/inventarios/items/item/ItemCad.vue'),

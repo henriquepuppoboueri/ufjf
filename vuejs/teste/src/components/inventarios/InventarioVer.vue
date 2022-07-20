@@ -12,7 +12,8 @@
         </q-item>
       </q-list>
     </q-btn-dropdown>
-    <q-btn class="btn-nav" :to="{ name: 'unidades' }">DEPENDÊNCIAS</q-btn>
+    <q-btn class="btn-nav" :to="{ name: 'Unidades' }">DEPENDÊNCIAS</q-btn>
+    <q-btn class="btn-nav" :to="{ name: 'Permissoes' }">PERMISSÕES</q-btn>
   </q-tabs>
   <div class="q-px-none">
     <router-view></router-view>
