@@ -5,7 +5,11 @@ import { Notify } from "quasar";
 import { api } from "boot/axios";
 import { registroPortugues } from "src/helper/functions";
 import { useQuasar } from "quasar";
+import { useUsuariosStore } from "stores/usuarios";
+import { useInventariosStore } from "stores/inventarios";
 
+const inventariosStore = useInventariosStore();
+const usuariosStore = useUsuariosStore();
 const $q = useQuasar();
 const route = useRoute();
 const router = useRouter();
@@ -42,17 +46,22 @@ const colunasTblUsuarios = ref([
   },
 ]);
 
-onMounted(() => {
+onMounted(async () => {
   if ("idInventario" in route.params) {
     idInventario.value = +route.params.idInventario;
 
-    api.get(`v1/restrito/usuarios`).then(async (usuariosResponse) => {
-      usuariosLista.value = usuariosResponse.data;
-      const usuariosInventarioResponse = await api.get(
-        `v1/restrito/inventario/usuario/${idInventario.value}`
-      );
-      usuariosInventario.value = usuariosInventarioResponse.data;
-    });
+    await usuariosStore.buscarUsuarios();
+    usuariosLista.value = usuariosStore.usuarios;
+    await inventariosStore.buscarInventario(idInventario.value);
+    usuariosInventario.value = inventariosStore.usuariosInventario;
+
+    // api.get(`v1/restrito/usuarios`).then(async (usuariosResponse) => {
+    //   usuariosLista.value = usuariosResponse.data;
+    //   const usuariosInventarioResponse = await api.get(
+    //     `v1/restrito/inventario/usuario/${idInventario.value}`
+    //   );
+    //   usuariosInventario.value = usuariosInventarioResponse.data;
+    // });
   }
 });
 
@@ -206,10 +215,11 @@ function deletarUsuario() {
       </template> -->
     </q-table>
     <q-btn
+      v-if="usuariosSelecionados.length > 0"
       color="primary"
-      icon="check"
-      label="Desvincular usuário(s) selecionado(s)"
+      label="Desvincular"
       @click="deletarUsuario"
+      :disable="!usuariosSelecionados.length > 0"
     />
   </div>
 </template>
