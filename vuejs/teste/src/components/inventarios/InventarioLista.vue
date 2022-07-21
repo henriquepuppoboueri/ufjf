@@ -188,8 +188,4 @@ function mudarSituacaoInventario() {
 }
 </script>
 
-<style>
-.q-btn {
-  min-width: 5rem;
-}
-</style>
+<style></style>

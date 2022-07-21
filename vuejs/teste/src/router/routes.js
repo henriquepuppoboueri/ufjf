@@ -11,6 +11,7 @@ const routes = [
   {
     path: "/usuario",
     component: () => import("layouts/MainLayout.vue"),
+    meta: { restrito: true },
     children: [
       {
         path: "",
@@ -29,11 +30,13 @@ const routes = [
   {
     path: "/logout",
     name: 'Logout',
+    meta: { restrito: true },
     component: () => import("pages/LogoutPage.vue"),
   },
   {
     path: "/login",
     name: 'Login',
+    meta: { restrito: false },
     component: () => import("layouts/LoginLayout.vue"),
     children: [{ path: "", component: () => import("pages/LoginPage.vue") }],
   },

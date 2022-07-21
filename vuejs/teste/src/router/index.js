@@ -33,7 +33,7 @@ export default route(function (/* { store, ssrContext } */) {
 
     if (to.meta.restrito && !authStore.isUsuarioLogado) {
       next('/login')
-    } else  {
+    } else {
       next()
     }
   })
