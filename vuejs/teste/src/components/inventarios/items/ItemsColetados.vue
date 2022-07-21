@@ -2,20 +2,22 @@
   <q-table
     v-if="idInventario !== 0"
     :loading="loadingItems"
-    :title="origem === 'lancados' ? 'Itens coletados' : 'Itens importados'"
+    :title="origemItens === 'lancados' ? 'Itens coletados' : 'Itens importados'"
     :rows="itemsInventario"
     :columns="colunasItems"
     row-key="id"
     separator="cell"
+    selection="multiple"
     :wrap-cells="true"
     no-data-label="Não foram encontrados dados."
     rows-per-page-label="Registros por página:"
     :selected-rows-label="registroPortugues"
     :filter="filtro"
+    class="my-sticky-header-table"
   >
     <template v-slot:header="props">
       <q-tr :props="props">
-        <q-th auto-width />
+        <q-th auto-width></q-th>
         <q-th v-for="col in props.cols" :key="col.name" :props="props">
           {{ col.label }}
         </q-th>
@@ -38,15 +40,11 @@
 
     <template v-slot:body="props">
       <q-tr :props="props">
-        <q-td auto-width>
-          <q-btn
-            size="sm"
-            :color="props.row.id === idItemSelecionado ? 'red' : 'green'"
-            round
-            dense
-            @click="selecionaItem(props.row.id)"
-            :icon="props.row.id === idItemSelecionado ? 'remove' : 'add'"
-            :disabled="props.origem === 'itens_originais'"
+        <q-td
+          ><q-checkbox
+            left-label
+            v-model="itensSelecionados"
+            :val="props.row.id"
           />
         </q-td>
         <q-td
@@ -67,36 +65,43 @@
       </q-tr>
     </template>
   </q-table>
-  <q-btn
-    v-if="habilitaBtnSalvar"
-    class="q-mt-md q-ml-md"
-    :disabled="!habilitaBtnSalvar"
-    color="primary"
-    icon="check"
-    label="Salvar"
-  />
-  <!-- <ItemCad v-if="idItemSelecionado !== 0" :id="idItemSelecionado"> </ItemCad> -->
-  <router-view></router-view>
+  <q-card-actions>
+    <q-btn
+      v-if="qtItensSelec && qtItensSelec === 1"
+      dense
+      color="orange"
+      class="text-white"
+      label="Visualizar"
+    />
+    <q-btn
+      v-if="qtItensSelec && qtItensSelec === 1"
+      dense
+      color="blue"
+      label="Editar"
+    />
+    <q-btn
+      v-if="qtItensSelec && qtItensSelec > 0"
+      dense
+      color="primary"
+      label="Excluir"
+    />
+    <q-btn
+      v-if="!qtItensSelec && qtItensSelec === 0"
+      dense
+      color="green"
+      label="Novo"
+    />
+  </q-card-actions>
 </template>
 
 <script setup>
-import {
-  onUnmounted,
-  onUpdated,
-  onBeforeUpdate,
-  ref,
-  reactive,
-  watch,
-  computed,
-  onMounted,
-} from "vue";
+import { ref, reactive, watch, computed, onMounted } from "vue";
 import { api } from "boot/axios";
-import { API_URL } from "../../../helper/constants.js";
-import ItemCad from "./item/ItemCad.vue";
 import { useRoute } from "vue-router";
 import { diminuiTexto, registroPortugues } from "src/helper/functions";
 import { Notify } from "quasar";
 
+const itensSelecionados = ref([]);
 const filtro = ref("");
 const setores = ref([]);
 const dependencias = ref([]);
@@ -105,7 +110,7 @@ const inventarios = reactive([]);
 const itemsInventario = ref([]);
 const idInventario = ref(0);
 const idItemSelecionado = ref(0);
-const origem = ref("");
+const origemItens = ref("");
 
 const loadingInventarios = ref(false);
 const loadingItems = ref(false);
@@ -148,12 +153,12 @@ const colunasItems = reactive([
   },
 ]);
 
+const qtItensSelec = computed(() => {
+  return itensSelecionados.value.length;
+});
+
 onMounted(() => {
   renderPage();
-
-  // setTimeout(() => {
-  //   loadingItems.value = true;
-  // }, 5000);
 });
 
 watch(route, () => {
@@ -163,14 +168,15 @@ watch(route, () => {
 function renderPage() {
   itemsInventario.value = [];
   const id = route.params.idInventario || false;
-  origem.value = route.query.origem || false;
+  origemItens.value = route.query.origemItens || false;
 
-  if (!id || !origem.value) {
+  if (!id || !origemItens.value) {
     return;
   }
+  console.log(route);
 
   let urlDestino = "";
-  if (origem.value === "lancados") urlDestino = "coleta";
+  if (origemItens.value === "lancados") urlDestino = "coleta";
   else urlDestino = "itens";
 
   loadingItems.value = true;
@@ -231,3 +237,35 @@ const habilitaBtnSalvar = computed(() => {
   return idItemSelecionado.value !== 0;
 });
 </script>
+
+<!-- <style>
+.q-btn {
+  min-width: 5rem;
+}
+</style> -->
+
+<style lang="sass">
+.my-sticky-header-table
+  // /* height or max-height is important */
+  // height: calc(100vh - 150px)
+
+  // .q-table__top,
+  // .q-table__bottom,
+  // thead tr:first-child th
+  //   /* bg color is important for th; just specify one */
+  //   background-color: white
+
+  // thead tr th
+  //   position: sticky
+  //   z-index: 1
+  // thead tr:first-child th
+  //   top: 0
+
+  // /* this is when the loading indicator appears */
+  // &.q-table--loading thead tr:last-child th
+  //   /* height of all previous header rows */
+  //   top: 48px
+
+.q-btn
+  min-width: 5rem
+</style>

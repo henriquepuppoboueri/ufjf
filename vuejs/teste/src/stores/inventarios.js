@@ -41,6 +41,11 @@ export const useInventariosStore = defineStore({
       this.inventarios = inventariosResponse.data
     },
 
+    async addUsuarioInventario(idInventario, usuario) {
+      await api
+        .post(`v1/restrito/inventario/usuario/${idInventario}`, usuario)
+    },
+
     async buscarUsuariosInventario(idInventario) {
       const usuariosInventarioResponse = await api.get(
         `v1/restrito/inventario/usuario/${idInventario}`

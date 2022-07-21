@@ -52,16 +52,8 @@ onMounted(async () => {
 
     await usuariosStore.buscarUsuarios();
     usuariosLista.value = usuariosStore.usuarios;
-    await inventariosStore.buscarInventario(idInventario.value);
+    await inventariosStore.buscarUsuariosInventario(idInventario.value);
     usuariosInventario.value = inventariosStore.usuariosInventario;
-
-    // api.get(`v1/restrito/usuarios`).then(async (usuariosResponse) => {
-    //   usuariosLista.value = usuariosResponse.data;
-    //   const usuariosInventarioResponse = await api.get(
-    //     `v1/restrito/inventario/usuario/${idInventario.value}`
-    //   );
-    //   usuariosInventario.value = usuariosInventarioResponse.data;
-    // });
   }
 });
 
@@ -81,28 +73,26 @@ function filterFn(val, update, abort) {
   });
 }
 
-function addUsuarioInventario() {
-  const idUsuario = +novoUsuario.value.id;
-  console.log(novoUsuario.value);
+async function addUsuarioInventario() {
+  const idUsuario = novoUsuario.value.id;
   const data = {
     idUsuario,
   };
-  api
-    .post(`v1/restrito/inventario/usuario/${idInventario.value}`, data)
-    .then((res) => {
-      Notify.create({
-        color: "green",
-        message: `Usuário ${novoUsuario.value} vinculado!`,
-      });
-      // router.go();
-    })
-    .catch((err) => {
-      Notify.create({
-        color: "red",
-        message: `Erro ao vincular usuário: ${err}`,
-      });
+
+  try {
+    await inventariosStore.addUsuarioInventario(idInventario.value, data);
+    Notify.create({
+      color: "green",
+      message: `Usuário ${novoUsuario.value} vinculado!`,
     });
-  novoUsuario.value = null;
+  } catch (err) {
+    Notify.create({
+      color: "red",
+      message: `Erro ao vincular usuário: ${err}`,
+    });
+  } finally {
+    novoUsuario.value = null;
+  }
 }
 
 function deletarUsuario() {

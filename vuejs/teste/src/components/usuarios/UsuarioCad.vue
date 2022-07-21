@@ -1,15 +1,18 @@
 <template>
   <div class="q-pa-md">
-    <!-- <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md"> -->
-    <q-form class="q-gutter-md">
-      <q-input outlined v-model="nome" label="Nome de usuário" />
-
+    <q-form @submit.prevent="onSubmit" class="q-gutter-md">
       <q-input
         type="e-mail"
         outlined
-        v-model="email"
+        v-model="usuario.email"
         label="E-mail (@ufjf.br)"
+        :disable="isModoEdicao"
+        :rules="[
+          (value) => value.includes('@ufjf.br') || 'E-mail não pertence à UFJF',
+        ]"
       />
+      <q-input outlined v-model="usuario.nome" disable label="Nome" />
+      <q-input outlined v-model="usuario.login" disable label="Login" />
 
       <div>
         <q-btn label="Salvar" type="submit" color="primary" />
@@ -27,20 +30,27 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref } from "vue";
-import { useRoute } from "vue-router";
-import { api } from "boot/axios";
+import { onMounted, reactive, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { Notify } from "quasar";
+import { useUsuariosStore } from "stores/usuarios";
 
+const usuariosStore = useUsuariosStore();
 const isModoEdicao = ref(false);
+const router = useRouter();
 const route = useRoute();
-const nome = ref("");
-const email = ref("");
-const usuario = reactive(null);
 const id = ref(null);
+const usuario = reactive({
+  nome: "",
+  email: "",
+  cpf: `${Math.floor(Math.random() * 99999999999)}`,
+  id: 0,
+  login: "",
+  senha: "33",
+  nascimento: "",
+});
 
-onMounted(() => {
-  // modo.value = !!+route.params.id;
-
+onMounted(async () => {
   if (
     route.params.hasOwnProperty("id") &&
     typeof +route.params.id === "number"
@@ -50,9 +60,43 @@ onMounted(() => {
   }
 
   if (isModoEdicao.value) {
-    api.get(`v1/restrito/usuarios/${id.value}`).then((res) => {
-      usuario = res.data;
+    const response = await usuariosStore.buscarUsuario(id.value);
+    Object.assign(usuario, response.data);
+  }
+});
+
+async function onSubmit() {
+  if (isModoEdicao.value) {
+    try {
+      const response = await usuariosStore.editUsuario(id.value, usuario);
+      Notify.create({ color: "green", message: "Usuário atualizado!" });
+      console.log(usuario);
+      return response;
+    } catch (err) {
+      Notify.create({ color: "red", message: `Erro: ${err}` });
+    }
+  } else {
+    // novo, então
+    try {
+      const response = await usuariosStore.addUsuario(usuario);
+      console.log(usuario);
+      Notify.create({ color: "green", message: "Usuário atualizado!" });
+      return response;
+    } catch (err) {
+      Notify.create({ color: "red", message: `Erro: ${err}` });
+    }
+  }
+}
+
+// temporário, até arrumar a API
+watch(usuario, (nv) => {
+  if (!isModoEdicao.value) {
+    usuario.login = nv.email.split("@")[0];
+    const nomeSeparado = nv.login.split(".").map((palavra) => {
+      if (palavra && typeof palavra === "string")
+        return `${palavra[0].toUpperCase()}${palavra.slice(1)}`;
     });
+    usuario.nome = nomeSeparado.join(" ");
   }
 });
 </script>

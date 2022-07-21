@@ -75,12 +75,12 @@ const routes = [
             component: () => import('components/inventarios/unidades/UnidadesLista.vue'),
           },
           {
-            path: 'items',
-            name: 'items',
+            path: 'itens',
+            name: 'itens',
             component: () => import('components/inventarios/items/ItemsColetados.vue'),
           },
           {
-            path: 'items/item/:idItem',
+            path: 'itens/item/:idItem',
             component: () => import('components/inventarios/items/item/ItemCad.vue'),
           },
           {

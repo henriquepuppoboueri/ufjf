@@ -62,34 +62,12 @@ onMounted(async () => {
 
     await inventariosStore.buscarInventario(idInventario.value);
     Object.assign(inventario, inventariosStore.inventario);
-
-    // api
-    //   .get(`v1/restrito/inventario/${idInventario.value}`)
-    //   .then((res) => {
-    //     const inventario = res.data;
-    //     nomeInventario.value = inventario.nome;
-    //     dataCriacao.value = date.formatDate(
-    //       inventario.dataCadastro,
-    //       "DD/MM/YYYY"
-    //     );
-    //     statusAtual.value = inventario.situacaoInventario;
-    //     inventarioDescricao.value = inventario.descricao;
-    //   })
-    //   .catch((err) =>
-    //     Notify.create({ color: "red", message: "Erro ao buscar inventário!" })
-    //   );
   } else {
     return;
   }
 });
 
 async function onSubmit() {
-  // const inventario = {
-  //   id: idInventario.value,
-  //   nome: nomeInventario.value,
-  //   // situacaoInventario: statusAtual.value,
-  //   descricao: inventarioDescricao.value,
-  // };
   if (modoEdicao.value) {
     try {
       await inventariosStore.editInventario(idInventario.value, inventario);
@@ -98,27 +76,14 @@ async function onSubmit() {
     } catch (err) {
       Notify.create({ color: "red", message: `Erro: ${err}` });
     }
-    // api
-    //   .put(`v1/restrito/inventario/${idInventario.value}`, inventario)
-    //   .then((_) => {
-    //     Notify.create({ color: "green", message: "Inventário atualizado!" });
-    //     router.push("/inventario/lista");
-    //     // router.go(-1);
-    //   })
-    //   .catch((err) => {
-    //     Notify.create({ color: "red", message: `Erro: ${err}` });
-    //   });
   } else {
-    // api
-    //   .post(`v1/restrito/inventario`, inventario)
-    //   .then((_) => {
-    //     Notify.create({ color: "green", message: "Inventário cadastrado!" });
-    //     // router.go(-1);
-    //     router.push("/inventario/lista");
-    //   })
-    //   .catch((err) => {
-    //     Notify.create({ color: "red", message: `Erro: ${err}` });
-    //   });
+    try {
+      await inventariosStore.addInventario(inventario);
+      Notify.create({ color: "green", message: "Inventário criado!" });
+      router.go(-1);
+    } catch (err) {
+      Notify.create({ color: "red", message: `Erro: ${err}` });
+    }
   }
 }
 </script>

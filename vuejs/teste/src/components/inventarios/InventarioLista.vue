@@ -15,34 +15,23 @@
     <q-card-actions>
       <q-btn
         v-if="!isEditavel"
-        flat
         dense
         :disabled="isEditavel"
-        color="primary"
+        color="orange"
+        class="text-white"
         label="Visualizar"
         @click="verInventario"
       />
       <q-btn
         v-if="!isEditavel"
-        flat
         dense
         :disabled="isEditavel"
-        color="primary"
+        color="blue"
         label="Editar"
         @click="editarInventario"
       />
       <q-btn
-        v-if="isEditavel"
-        flat
-        dense
-        :disabled="!isEditavel"
-        color="primary"
-        label="Novo"
-        @click="novoInventario"
-      />
-      <q-btn
         v-if="!isEditavel"
-        flat
         dense
         :disabled="isEditavel"
         color="primary"
@@ -50,11 +39,18 @@
         @click="excluirInventario"
       />
       <q-btn
+        v-if="isEditavel"
+        dense
+        :disabled="!isEditavel"
+        color="green"
+        label="Novo"
+        @click="novoInventario"
+      />
+      <q-btn
         v-if="!isEditavel"
-        flat
         dense
         :disabled="isEditavel"
-        color="primary"
+        color="green"
         :label="statusInventarioBtn"
         @click="mudarSituacaoInventario"
       />
@@ -191,3 +187,9 @@ function mudarSituacaoInventario() {
   }
 }
 </script>
+
+<style>
+.q-btn {
+  min-width: 5rem;
+}
+</style>
