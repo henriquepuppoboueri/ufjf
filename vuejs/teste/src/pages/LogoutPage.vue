@@ -6,5 +6,5 @@ authStore.deslogar();
 </script>
 
 <template>
-  <div>Deslogando</div>
+  <div v-if="authStore.carregando">Deslogando</div>
 </template>

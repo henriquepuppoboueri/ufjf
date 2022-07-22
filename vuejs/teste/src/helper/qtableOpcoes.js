@@ -1,4 +1,4 @@
 export const paginacaoOpcoes = {
-  rowsPerPage: 10,
+  rowsPerPage: 7,
   sortBy: "id",
 };

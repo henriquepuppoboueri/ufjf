@@ -17,10 +17,9 @@ export const useAuthStore = defineStore({
     async logar(credenciais) {
       this.carregando = true
       try {
-        await api.post("login", credenciais).then((res) => {
-          sessionStorage.setItem("usuarioLogado", JSON.stringify(res.data))
-          this.usuario = res.data
-        })
+        const response = await api.post("login", credenciais)
+        sessionStorage.setItem("usuarioLogado", JSON.stringify(response.data))
+        this.usuario = response.data
       } catch (error) {
         this.erro = error
       } finally {
@@ -35,18 +34,18 @@ export const useAuthStore = defineStore({
         useRouter().push('/login')
       }
     },
-    deslogar() {
+
+    async deslogar() {
+      const router = useRouter()
       try {
-        api.post(`restrito/logout`).then(_ => {
-          sessionStorage.removeItem('usuarioLogado')
-          this.usuario = null
-        }).catch(error => {
-          throw new Error(error.message)
-        })
+        await api.post(`restrito/logout`)
+        sessionStorage.removeItem('usuarioLogado')
+        this.usuario = null
+        console.log('logout', this.usuario);
       } catch (error) {
-        console.log(error)
+        throw new Error(error.message)
       } finally {
-        useRouter().push('/login')
+        router.push('/login')
       }
 
     }

@@ -86,6 +86,13 @@ const colunas = ref([
   },
 ]);
 
+// inventariosStore.$subscribe(
+//   (mutation, state) => {
+//     console.log(mutation);
+//   },
+//   { detached: true }
+// );
+
 const isEditavel = computed(() => {
   return !inventarioSelecionado.value.length > 0;
 });
@@ -115,19 +122,6 @@ function excluirInventario() {
       Notify.create({ color: "green", message: "Inventário excluído!" });
       router.go();
     }
-
-    // api
-    //   .delete(`v1/restrito/inventario/${_id}`)
-    //   .then((_) => {
-    //     Notify.create({ color: "green", message: "Inventário excluído!" });
-    //     router.go();
-    //   })
-    //   .catch((err) => {
-    //     Notify.create({
-    //       color: "red",
-    //       message: `Erro ao excluir inventário: ${err}`,
-    //     });
-    //   });
   });
 }
 
@@ -146,8 +140,8 @@ const statusInventarioBtn = computed(() => {
 });
 
 onMounted(async () => {
-  await inventariosStore.buscarInventarios();
-  inventarios.value = inventariosStore.inventarios;
+  inventarios.value = await inventariosStore.buscarInventarios();
+  // inventarios.value = inventariosStore.inventarios;
   // api
   //   .get(`v1/restrito/inventario`)
   //   .then((res) => {
@@ -187,5 +181,3 @@ function mudarSituacaoInventario() {
   }
 }
 </script>
-
-<style></style>

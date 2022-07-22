@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { Notify } from "quasar";
 import { api } from "boot/axios";
@@ -7,18 +7,21 @@ import { registroPortugues } from "src/helper/functions";
 import { useQuasar } from "quasar";
 import { useUsuariosStore } from "stores/usuarios";
 import { useInventariosStore } from "stores/inventarios";
+import { MutationType, storeToRefs } from "pinia";
 
 const inventariosStore = useInventariosStore();
+const { usuariosInventario } = storeToRefs(inventariosStore);
 const usuariosStore = useUsuariosStore();
+const { usuarios } = storeToRefs(usuariosStore);
+// const usuariosLista = ref([]);
 const $q = useQuasar();
 const route = useRoute();
 const router = useRouter();
 const idInventario = ref(null);
 const novoUsuario = ref(null);
 const usuariosSelecionados = ref([]);
-const usuariosLista = ref([]);
 const usuariosListaFiltro = ref([]);
-const usuariosInventario = ref([]);
+// const usuariosInventario = ref([]);
 const colunasTblUsuarios = ref([
   {
     name: "login",
@@ -46,14 +49,18 @@ const colunasTblUsuarios = ref([
   },
 ]);
 
+// inventariosStore.$subscribe((mutation, state) => {
+//   console.log(mutation);
+// });
+
 onMounted(async () => {
   if ("idInventario" in route.params) {
     idInventario.value = +route.params.idInventario;
 
     await usuariosStore.buscarUsuarios();
-    usuariosLista.value = usuariosStore.usuarios;
+    // usuariosLista.value = usuariosStore.usuarios;
     await inventariosStore.buscarUsuariosInventario(idInventario.value);
-    usuariosInventario.value = inventariosStore.usuariosInventario;
+    // usuariosInventario.value = inventariosStore.usuariosInventario;
   }
 });
 
@@ -63,10 +70,10 @@ function filterFn(val, update, abort) {
   update(() => {
     if (val === "") {
       novoUsuario.value = null;
-      usuariosListaFiltro.value = usuariosLista.value;
+      usuariosListaFiltro.value = usuarios.value;
     } else {
       const needle = val.toLowerCase();
-      usuariosListaFiltro.value = usuariosLista.value.filter(
+      usuariosListaFiltro.value = usuarios.value.filter(
         (v) => v.nome.toLowerCase().indexOf(needle) > -1
       );
     }
@@ -80,10 +87,14 @@ async function addUsuarioInventario() {
   };
 
   try {
-    await inventariosStore.addUsuarioInventario(idInventario.value, data);
+    await inventariosStore.addUsuarioInventario(
+      idInventario.value,
+      data,
+      novoUsuario.value
+    );
     Notify.create({
       color: "green",
-      message: `Usuário ${novoUsuario.value} vinculado!`,
+      message: `Usuário ${novoUsuario.value.nome} vinculado!`,
     });
   } catch (err) {
     Notify.create({
@@ -102,23 +113,24 @@ function deletarUsuario() {
       "Tem certeza de que deseja desvincular o(s) usuário(s) do inventário?",
   }).onOk(() => {
     if (usuariosSelecionados.value.length > 0) {
-      usuariosSelecionados.value.forEach((usuario) => {
-        api
-          .delete(
-            `/v1/restrito/inventario/usuario/${idInventario.value}&${usuario.id}`
-          )
-          .then((_) => {
-            Notify.create({
-              color: "green",
-              message: `Usuário ${usuario.nome} desvinculado!`,
-            });
-          })
-          .catch((err) => {
-            Notify.create({
-              color: "red",
-              message: `Erro ao desvincular usuário: ${err}`,
-            });
+      usuariosSelecionados.value.forEach(async (usuario) => {
+        try {
+          await inventariosStore.delUsuarioInventario(
+            idInventario.value,
+            usuario.id
+          );
+          Notify.create({
+            color: "green",
+            message: `Usuário ${usuario.nome} desvinculado!`,
           });
+        } catch (err) {
+          Notify.create({
+            color: "red",
+            message: `Erro ao desvincular usuário: ${err}`,
+          });
+        } finally {
+          novoUsuario.value = null;
+        }
       });
     }
   });
@@ -168,41 +180,6 @@ function deletarUsuario() {
       rows-per-page-label="Registros por página:"
       :selected-rows-label="registroPortugues"
     >
-      <!-- <template v-slot:header="props">
-        <q-tr :props="props">
-          <q-th auto-width />
-          <q-th v-for="col in props.cols" :key="col.name" :props="props">
-            {{ col.label }}
-          </q-th>
-        </q-tr>
-      </template>
-
-      <template v-slot:body="props">
-        <q-tr :props="props">
-          <q-td auto-width>
-            <q-btn
-              size="sm"
-              color="red"
-              round
-              dense
-              @click="props.expand = !props.expand"
-              :icon="props.expand ? 'remove' : 'add'"
-            />
-          </q-td>
-          <q-td v-for="col in props.cols" :key="col.name" :props="props">
-            {{ col.value }}
-          </q-td>
-        </q-tr>
-        <q-tr v-show="props.expand" :props="props">
-          <q-td colspan="100%">
-            <div class="column">
-              <q-toggle :model-value="true" label="Pode editar" />
-              <q-toggle :model-value="false" label="Pode cadastrar items" />
-              <q-toggle :model-value="true" label="Pode editar" />
-            </div>
-          </q-td>
-        </q-tr>
-      </template> -->
     </q-table>
     <q-btn
       v-if="usuariosSelecionados.length > 0"

@@ -39,18 +39,27 @@ export const useInventariosStore = defineStore({
     async buscarInventarios() {
       const inventariosResponse = await api.get(`v1/restrito/inventario`)
       this.inventarios = inventariosResponse.data
+      return this.inventarios
     },
 
     async addUsuarioInventario(idInventario, usuario) {
       await api
         .post(`v1/restrito/inventario/usuario/${idInventario}`, usuario)
+      await this.buscarUsuariosInventario(idInventario);
+    },
+
+    async delUsuarioInventario(idInventario, idUsuario) {
+      await api
+        .delete(`v1/restrito/inventario/usuario/${idInventario}&${idUsuario}`)
+      await this.buscarUsuariosInventario(idInventario);
     },
 
     async buscarUsuariosInventario(idInventario) {
       const usuariosInventarioResponse = await api.get(
         `v1/restrito/inventario/usuario/${idInventario}`
       );
-      this.usuariosInventario = usuariosInventarioResponse.data
+      Object.assign(this.usuariosInventario, usuariosInventarioResponse.data)
+
     },
 
   }

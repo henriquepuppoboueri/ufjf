@@ -25,6 +25,7 @@
         <template v-slot:header="props">
           <q-tr :props="props">
             <q-th auto-width></q-th>
+            <!-- <q-th v-if="origemItens === 'lancados'" auto-width></q-th> -->
             <q-th v-for="col in props.cols" :key="col.name" :props="props">
               {{ col.label }}
             </q-th>
@@ -47,8 +48,9 @@
 
         <template v-slot:body="props">
           <q-tr :props="props">
-            <q-td
-              ><q-checkbox
+            <q-td>
+              <!-- <q-td v-if="origemItens === 'lancados'"> -->
+              <q-checkbox
                 left-label
                 v-model="itensSelecionados"
                 :val="props.row.id"
@@ -80,21 +82,24 @@
         color="orange"
         class="text-white"
         label="Visualizar"
+        @click="verItem"
       />
       <q-btn
-        v-if="qtItensSelec && qtItensSelec === 1"
+        v-if="qtItensSelec && qtItensSelec === 1 && origemItens === 'lancados'"
         dense
         color="blue"
         label="Editar"
+        @click="editItem"
       />
       <q-btn
-        v-if="qtItensSelec && qtItensSelec > 0"
+        v-if="qtItensSelec && qtItensSelec > 0 && origemItens === 'lancados'"
         dense
         color="primary"
         label="Excluir"
+        @click="delItens"
       />
       <q-btn
-        v-if="!qtItensSelec && qtItensSelec === 0"
+        v-if="!qtItensSelec && qtItensSelec === 0 && origemItens === 'lancados'"
         dense
         color="green"
         label="Novo"
@@ -105,7 +110,7 @@
 
 <script setup>
 import { ref, reactive, watch, computed, onMounted } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { Notify } from "quasar";
 import { api } from "boot/axios";
 import { diminuiTexto, registroPortugues } from "src/helper/functions";
@@ -119,6 +124,7 @@ const itensSelecionados = ref([]);
 const filtro = ref("");
 const setores = ref([]);
 const dependencias = ref([]);
+const router = useRouter();
 const route = useRoute();
 const inventarios = reactive([]);
 const itensInventario = ref([]);
@@ -179,8 +185,45 @@ watch(route, () => {
   renderPage();
 });
 
+watch(itensSelecionados, (nv, ov) => {
+  if (origemItens.value === "importados") {
+    if (nv.length > 1) {
+      itensSelecionados.value.shift();
+    }
+  }
+});
+
+function editItem() {
+  if (itensSelecionados.value.length === 1) {
+    router.push(`${itensSelecionados.value}`);
+    router.push({
+      path: `${route.path}/${itensSelecionados.value}`,
+      query: route.query,
+    });
+  }
+}
+
+function verItem() {
+  if (itensSelecionados.value.length === 1) {
+    router.push(`${itensSelecionados.value}`);
+    router.push({
+      path: `${route.path}/${itensSelecionados.value}`,
+      query: route.query,
+    });
+  }
+}
+
+function delItens() {
+  if (itensSelecionados.value.length > 0) {
+    for (const item of itensSelecionados.value) {
+      console.log(item);
+    }
+  }
+}
+
 async function renderPage() {
   itensInventario.value = [];
+  itensSelecionados.value = [];
   const id = route.params.idInventario || false;
   origemItens.value = route.query.origemItens || false;
 
@@ -269,21 +312,21 @@ async function renderPage() {
   //   });
 }
 
-function selecionaItem(idItem) {
-  if (idItemSelecionado.value === idItem) {
-    idItemSelecionado.value = 0;
-    return;
-  }
-  idItemSelecionado.value = idItem;
-}
+// function selecionaItem(idItem) {
+//   if (idItemSelecionado.value === idItem) {
+//     idItemSelecionado.value = 0;
+//     return;
+//   }
+//   idItemSelecionado.value = idItem;
+// }
 
-function extraiSetor(id) {
-  return setores.value.find((s) => s.id === text).nome;
-}
+// function extraiSetor(id) {
+//   return setores.value.find((s) => s.id === text).nome;
+// }
 
-const habilitaBtnSalvar = computed(() => {
-  return idItemSelecionado.value !== 0;
-});
+// const habilitaBtnSalvar = computed(() => {
+//   return idItemSelecionado.value !== 0;
+// });
 </script>
 
 <!-- <style>

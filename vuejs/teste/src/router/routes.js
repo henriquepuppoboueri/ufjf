@@ -83,7 +83,7 @@ const routes = [
             component: () => import('components/inventarios/items/ItemsColetados.vue'),
           },
           {
-            path: 'itens/item/:idItem',
+            path: 'itens/:idItem',
             component: () => import('components/inventarios/items/item/ItemCad.vue'),
           },
           {
