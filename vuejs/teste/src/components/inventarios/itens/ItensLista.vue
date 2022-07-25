@@ -10,9 +10,9 @@
   <q-table
     v-if="idSelecionado"
     class="q-mt-lg"
-    title="Items"
-    :rows="itemsInventario"
-    :columns="colunasItems"
+    title="Itens"
+    :rows="itensInventario"
+    :columns="colunasItens"
     row-key="id"
   />
 </template>
@@ -23,7 +23,7 @@ import { api } from "boot/axios";
 
 const inventarios = reactive([]);
 const inventarioSelecionado = ref([]);
-const itemsInventario = ref([]);
+const itensInventario = ref([]);
 
 const idSelecionado = computed(() => {
   if (inventarioSelecionado.value.length === 0) {
@@ -36,7 +36,7 @@ const idSelecionado = computed(() => {
 watch(idSelecionado, (_) => {
   if (idSelecionado.value === 0) return;
   api.get(`v1/restrito/item/itens/${idSelecionado.value}`).then((res) => {
-    itemsInventario.value = res.data;
+    itensInventario.value = res.data;
   });
 });
 
@@ -55,7 +55,7 @@ const colunasInventarios = reactive([
   },
 ]);
 
-const colunasItems = reactive([
+const colunasItens = reactive([
   {
     name: "patrimonio",
     align: "left",

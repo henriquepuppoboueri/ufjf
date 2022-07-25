@@ -1,15 +1,45 @@
 import { defineStore } from 'pinia';
 import { api } from 'boot/axios';
+import { useSetoresStore } from 'src/stores/setores'
+
+const setoresStore = useSetoresStore()
 
 export const useItensStore = defineStore({
-  id: 'items',
+  id: 'itens',
   state: () => ({
-    items: [],
+    itensImportados: [],
+    itensColetados: [],
+    itemImportado: null,
+    itemColetado: null,
+    tipoGetter: '',
     carregando: false,
     erro: null,
-    item: null
   }),
-  getters: {},
+  getters: {
+    itensNominais(state) {
+      console.log(state.tipoGetter);
+      const itens = state.tipoGetter === 'coletados' ? state.itensColetados : state.itensImportados
+
+      if (itens.length > 0) {
+        return itens.map(item => {
+          const setor = setoresStore.buscarSetorPorId(item.setor)
+          let dependenciaNome = 'Sem dependência'
+          if (
+            setor !== "Sem setor" &&
+            setor.hasOwnProperty("dependencias") & (setor.dependencias.length > 0)
+          ) {
+            const dependencia = setor.dependencias.find((dep) => dep.id === item.dependencia)
+            if (dependencia) dependenciaNome = dependencia.nome
+          }
+          return {
+            ...item,
+            setor: setor.nome,
+            dependencia: dependenciaNome,
+          };
+        })
+      }
+    }
+  },
   actions: {
     async addItemColetado() {
       try {
@@ -51,7 +81,7 @@ export const useItensStore = defineStore({
       try {
         this.carregando = true
         const response = await api.get(`v1/restrito/item/coleta/${idInventario}`)
-        return response;
+        this.itensColetados = response.data
       } catch (error) {
         this.error = error;
       } finally {
@@ -63,7 +93,7 @@ export const useItensStore = defineStore({
       try {
         this.carregando = true
         const response = await api.get(`v1/restrito/coleta/${idItem}`)
-        return response;
+        this.itemColetado = response.data
       } catch (error) {
         this.error = error;
       } finally {
@@ -72,11 +102,11 @@ export const useItensStore = defineStore({
     },
 
 
-    async buscarItensOriginais(idInventario) {
+    async buscarItensImportados(idInventario) {
       try {
         this.carregando = true
         const response = await api.get(`v1/restrito/item/itens/${idInventario}`)
-        return response;
+        this.itensImportados = response.data
       } catch (error) {
         this.error = error;
       } finally {
@@ -84,11 +114,11 @@ export const useItensStore = defineStore({
       }
     },
 
-    async buscarItemOriginal(idItem) {
+    async buscarItemImportado(idItem) {
       try {
         this.carregando = true
         const response = await api.get(`v1/restrito/item/${idItem}`)
-        return response;
+        this.itemImportado = response.data
       } catch (error) {
         this.error = error;
       } finally {

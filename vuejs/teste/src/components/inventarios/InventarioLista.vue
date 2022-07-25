@@ -4,7 +4,7 @@
       <q-table
         flat
         title="Inventários"
-        :rows="inventarios"
+        :rows="inventariosStore.inventarios"
         :columns="colunas"
         row-key="id"
         selection="single"
@@ -86,13 +86,6 @@ const colunas = ref([
   },
 ]);
 
-// inventariosStore.$subscribe(
-//   (mutation, state) => {
-//     console.log(mutation);
-//   },
-//   { detached: true }
-// );
-
 const isEditavel = computed(() => {
   return !inventarioSelecionado.value.length > 0;
 });
@@ -120,7 +113,6 @@ function excluirInventario() {
     const status = await inventariosStore.delInventario(_id);
     if (status === 204) {
       Notify.create({ color: "green", message: "Inventário excluído!" });
-      router.go();
     }
   });
 }
@@ -140,14 +132,8 @@ const statusInventarioBtn = computed(() => {
 });
 
 onMounted(async () => {
-  inventarios.value = await inventariosStore.buscarInventarios();
-  // inventarios.value = inventariosStore.inventarios;
-  // api
-  //   .get(`v1/restrito/inventario`)
-  //   .then((res) => {
-  //     Object.assign(inventarios, res.data);
-  //   })
-  //   .catch(console.log);
+  // inventarios.value = await inventariosStore.buscarInventarios();
+  const inventariosResponse = await inventariosStore.buscarInventarios();
 });
 
 function mudarSituacaoInventario() {

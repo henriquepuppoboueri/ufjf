@@ -3,11 +3,9 @@
     <q-card-section>
       <q-table
         :loading="itensStore.carregando"
-        :title="
-          origemItens === 'lancados' ? 'Itens coletados' : 'Itens importados'
-        "
-        :rows="itensInventario"
-        :columns="colunasItems"
+        title="Itens coletados"
+        :rows="itensStore.itensNominais"
+        :columns="colunasItens"
         row-key="id"
         separator="cell"
         selection="multiple"
@@ -25,7 +23,6 @@
         <template v-slot:header="props">
           <q-tr :props="props">
             <q-th auto-width></q-th>
-            <!-- <q-th v-if="origemItens === 'lancados'" auto-width></q-th> -->
             <q-th v-for="col in props.cols" :key="col.name" :props="props">
               {{ col.label }}
             </q-th>
@@ -49,7 +46,6 @@
         <template v-slot:body="props">
           <q-tr :props="props">
             <q-td>
-              <!-- <q-td v-if="origemItens === 'lancados'"> -->
               <q-checkbox
                 left-label
                 v-model="itensSelecionados"
@@ -62,7 +58,7 @@
               :props="props"
               @click="props.expand = !props.expand"
             >
-              {{ diminuiTexto(col.value) }}
+              {{ refatoraTexto(col.name, col.value) }}
             </q-td>
           </q-tr>
           <q-tr v-show="props.expand" :props="props">
@@ -116,26 +112,32 @@ import { api } from "boot/axios";
 import { diminuiTexto, registroPortugues } from "src/helper/functions";
 import { paginacaoOpcoes } from "src/helper/qtableOpcoes";
 import { useItensStore } from "src/stores/itens.js";
-import { useUnidadesStore } from "src/stores/unidades.js";
+import { useSetoresStore } from "src/stores/setores.js";
+import { useDependenciasStore } from "src/stores/dependencias";
+import { storeToRefs } from "pinia";
 
-const unidadesStore = useUnidadesStore();
+const dependenciasStore = useDependenciasStore();
+const setoresStore = useSetoresStore();
+const { setoresDependencias } = storeToRefs(setoresStore);
+const { setoresDepsComNome } = storeToRefs(setoresStore);
 const itensStore = useItensStore();
+const { itensColetados } = storeToRefs(itensStore);
 const itensSelecionados = ref([]);
 const filtro = ref("");
 const setores = ref([]);
+// const { setores } = storeToRefs();
 const dependencias = ref([]);
 const router = useRouter();
 const route = useRoute();
 const inventarios = reactive([]);
-const itensInventario = ref([]);
+// const itensInventario = ref([]);
 const idInventario = ref(0);
 const idItemSelecionado = ref(0);
 const origemItens = ref("");
-
 const loadingInventarios = ref(false);
 const loadingItens = ref(false);
 
-const colunasItems = reactive([
+const colunasItens = reactive([
   {
     name: "id",
     align: "left",
@@ -221,119 +223,37 @@ function delItens() {
   }
 }
 
+function buscarDependenciaPorId(idDependencia) {}
+
+function refatoraTexto(colNome, colValor) {
+  switch (colNome) {
+    // case "setor":
+    //   return buscarSetorPorId(colValor);
+    //   break;
+    // case "dependencia":
+    //   return buscarDependenciaPorId(colValor);
+    //   break;
+
+    default:
+      return diminuiTexto(colValor);
+      break;
+  }
+}
+
 async function renderPage() {
-  itensInventario.value = [];
+  itensStore.tipoGetter = "coletados";
+  itensColetados.value = [];
   itensSelecionados.value = [];
   const id = route.params.idInventario || false;
-  origemItens.value = route.query.origemItens || false;
 
-  if (!id || !origemItens.value) {
-    return;
-  }
-
-  let urlDestino = "";
-  if (origemItens.value === "lancados") urlDestino = "coleta";
-  else urlDestino = "itens";
+  if (!id) return;
 
   try {
-    const setoresResponse = await unidadesStore.buscarSetoresDependencias(id);
-    setores.value = setoresResponse.data;
-    let response = null;
-    if (urlDestino === "itens") {
-      response = await itensStore.buscarItensOriginais(id);
-    } else {
-      response = await itensStore.buscarItensColetados(id);
-    }
-
-    if (response.data.length > 0) {
-      const resData = response.data.map((item) => {
-        const setor =
-          setores.value.find((setor) => setor.id === item.setor) || "Sem setor";
-        let _dependencia = "Sem dependência";
-        if (
-          setor !== "Sem setor" &&
-          setor.hasOwnProperty("dependencias") & (setor.dependencias.length > 0)
-        ) {
-          _dependencia =
-            setor.dependencias.find((dep) => dep.id === item.dependencia)
-              .nome || "Sem dependência";
-        }
-        return {
-          ...item,
-          setor: setor.nome || "Sem unidade",
-          dependencia: _dependencia,
-        };
-      });
-      itensInventario.value = resData;
-    }
-    loadingItens.value = false;
-  } catch (err) {
-    Notify.create({ color: "red", message: `Erro: ${err}` });
-  }
-
-  // api
-  //   .get(`v1/restrito/inventario/setor/dependencia/${id}`)
-  //   .then((res) => {
-  //     setores.value = res.data;
-  //     idInventario.value = id;
-  //     return api.get(`v1/restrito/item/${urlDestino}/${id}`);
-  //   })
-  //   .then((res) => {
-  //     if (res.data.length > 0) {
-  //       const resData = res.data.map((item) => {
-  //         const setor =
-  //           setores.value.find((setor) => setor.id === item.setor) ||
-  //           "Sem unidade";
-
-  //         let dependencia_ = "Sem dependência";
-  //         if (
-  //           setor !== "Sem unidade" &&
-  //           setor.hasOwnProperty("dependencias") &&
-  //           setor.dependencias.length > 0
-  //         ) {
-  //           dependencia_ =
-  //             setor.dependencias.find(
-  //               (dependencia) => dependencia.id === item.dependencia
-  //             ).nome || "Sem dependência";
-  //         }
-
-  //         return {
-  //           ...item,
-  //           setor: setor.nome || "Sem unidade",
-  //           dependencia: dependencia_,
-  //         };
-  //       });
-  //       itemsInventario.value = resData;
-  //     }
-  //     loadingItems.value = false;
-  //   })
-  //   .catch((err) => {
-  //     Notify.create({ color: "red", message: `Erro: ${err}` });
-  //   });
+    await setoresStore.buscarSetoresDependencias(id);
+    await itensStore.buscarItensColetados(id);
+  } catch (error) {}
 }
-
-// function selecionaItem(idItem) {
-//   if (idItemSelecionado.value === idItem) {
-//     idItemSelecionado.value = 0;
-//     return;
-//   }
-//   idItemSelecionado.value = idItem;
-// }
-
-// function extraiSetor(id) {
-//   return setores.value.find((s) => s.id === text).nome;
-// }
-
-// const habilitaBtnSalvar = computed(() => {
-//   return idItemSelecionado.value !== 0;
-// });
 </script>
-
-<!-- <style>
-.q-btn {
-  min-width: 5rem;
-}
-</style> -->
 
 <style lang="sass">
 .my-sticky-header-table

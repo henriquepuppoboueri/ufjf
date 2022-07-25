@@ -24,6 +24,13 @@ const usuariosListaFiltro = ref([]);
 // const usuariosInventario = ref([]);
 const colunasTblUsuarios = ref([
   {
+    name: "id",
+    align: "left",
+    label: "ID",
+    field: "id",
+    sortable: true,
+  },
+  {
     name: "login",
     required: true,
     label: "Login",
@@ -130,6 +137,7 @@ function deletarUsuario() {
           });
         } finally {
           novoUsuario.value = null;
+          usuariosSelecionados.value = [];
         }
       });
     }
@@ -190,3 +198,8 @@ function deletarUsuario() {
     />
   </div>
 </template>
+
+<style lang="sass">
+.q-dialog-plugin
+  padding: 1rem
+</style>

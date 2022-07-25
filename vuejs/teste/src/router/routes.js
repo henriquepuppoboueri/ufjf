@@ -3,10 +3,6 @@ import { createRouter, createWebHistory } from 'vue-router';
 const routes = [
   {
     path: "/", redirect: '/inventario',
-    // component: () => import("layouts/MainLayout.vue"),
-    // children: [
-    //   { path: "", component: () => import("pages/IndexPage.vue") },
-    // ],
   },
   {
     path: "/usuario",
@@ -79,26 +75,27 @@ const routes = [
           },
           {
             path: 'itens',
-            name: 'itens',
-            component: () => import('components/inventarios/items/ItemsColetados.vue'),
+            redirect: { name: 'itensColetados' }
+          },
+          {
+            path: 'itens/coletados',
+            name: 'itensColetados',
+            component: () => import('src/components/inventarios/itens/ItensColetados.vue'),
+          },
+          {
+            path: 'itens/importados',
+            name: 'itensImportados',
+            component: () => import('src/components/inventarios/itens/ItensImportados.vue'),
           },
           {
             path: 'itens/:idItem',
-            component: () => import('components/inventarios/items/item/ItemCad.vue'),
+            component: () => import('components/inventarios/itens/item/ItemCad.vue'),
           },
           {
             path: 'permissoes',
             name: 'Permissoes',
             component: () => import('components/inventarios/usuarios/UsuariosInventario.vue'),
           },
-          //   children: [{
-          //     path: '',
-          //     component: () => import('components/inventarios/items/item/ItemCad.vue'),
-          //   },
-          //   {
-          //     path: 'item/:idItem',
-          //     component: () => import('components/inventarios/items/item/ItemCad.vue'),
-          //   }]
         ]
       },
       {

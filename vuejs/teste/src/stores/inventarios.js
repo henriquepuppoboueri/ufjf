@@ -1,11 +1,12 @@
 import { defineStore } from 'pinia'
 import { api } from 'boot/axios'
+import lodash from 'lodash'
 
 export const useInventariosStore = defineStore({
   id: 'inventarios',
   state: () => ({
     inventarios: [],
-    usuariosInventario: [],
+    usuariosInventario: [{ id: 1, nome: 'Novo 4444', cpf: '03667333625', email: 'jpaniceto@gmail.com', login: 'novo' }],
     carregando: false,
     erro: null,
     inventario: null
@@ -16,11 +17,13 @@ export const useInventariosStore = defineStore({
     async addInventario(inventario) {
       const inventarioResponse = await api
         .post(`v1/restrito/inventario`, inventario)
+      this.buscarInventarios();
     },
 
     async delInventario(idInventario) {
       const res = await api
         .delete(`v1/restrito/inventario/${idInventario}`)
+      this.buscarInventarios();
       return res.status
     },
 
@@ -39,7 +42,7 @@ export const useInventariosStore = defineStore({
     async buscarInventarios() {
       const inventariosResponse = await api.get(`v1/restrito/inventario`)
       this.inventarios = inventariosResponse.data
-      return this.inventarios
+      // return this.inventarios;
     },
 
     async addUsuarioInventario(idInventario, usuario) {
@@ -49,6 +52,7 @@ export const useInventariosStore = defineStore({
     },
 
     async delUsuarioInventario(idInventario, idUsuario) {
+      console.log(idInventario, idUsuario)
       await api
         .delete(`v1/restrito/inventario/usuario/${idInventario}&${idUsuario}`)
       await this.buscarUsuariosInventario(idInventario);
@@ -58,8 +62,7 @@ export const useInventariosStore = defineStore({
       const usuariosInventarioResponse = await api.get(
         `v1/restrito/inventario/usuario/${idInventario}`
       );
-      Object.assign(this.usuariosInventario, usuariosInventarioResponse.data)
-
+      this.usuariosInventario = usuariosInventarioResponse.data;
     },
 
   }

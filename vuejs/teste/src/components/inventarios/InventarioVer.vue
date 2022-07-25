@@ -4,10 +4,10 @@
     <q-btn class="btn-nav" :to="'resumo'">RESUMO</q-btn>
     <q-btn-dropdown auto-close stretch flat label="Itens">
       <q-list>
-        <q-item clickable :to="`itens?origemItens=importados`" exact>
+        <q-item clickable :to="`importados`" exact>
           <q-item-section>Itens originais (importados)</q-item-section>
         </q-item>
-        <q-item clickable :to="`itens?origemItens=lancados`" exact>
+        <q-item clickable :to="`coletados`" exact>
           <q-item-section>Itens coletados (lançados)</q-item-section>
         </q-item>
       </q-list>
@@ -16,7 +16,11 @@
     <q-btn class="btn-nav" :to="{ name: 'Permissoes' }">PERMISSÕES</q-btn>
   </q-tabs>
   <div class="q-px-none">
-    <router-view></router-view>
+    <router-view v-slot="{ Component }">
+      <keep-alive>
+        <component :is="Component" />
+      </keep-alive>
+    </router-view>
   </div>
 </template>
 
@@ -26,7 +30,7 @@ import { useRoute, useRouter } from "vue-router";
 import { api } from "boot/axios";
 import { date, Notify } from "quasar";
 
-import ItemsColetados from "../inventarios/items/ItemsColetados.vue";
+import ItensColetados from "./itens/ItensColetados.vue";
 import DependenciaLista from "./unidades/UnidadesLista.vue";
 
 const tabSelecionada = ref("itens_coletados");

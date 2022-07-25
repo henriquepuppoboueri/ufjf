@@ -165,7 +165,7 @@
 import { onMounted, ref, reactive, watch, computed } from "vue";
 import { api } from "boot/axios";
 import { API_URL } from "src/helper/constants.js";
-import ItemCad from "../inventarios/items/item/ItemCad.vue";
+import ItemCad from "../inventarios/itens/item/ItemCad.vue";
 
 function selecionaInventario(idInventario) {
   idSetorSelecionado.value = 0;
