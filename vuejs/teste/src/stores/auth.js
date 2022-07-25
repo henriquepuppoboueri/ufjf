@@ -41,7 +41,6 @@ export const useAuthStore = defineStore({
         await api.post(`restrito/logout`)
         sessionStorage.removeItem('usuarioLogado')
         this.usuario = null
-        console.log('logout', this.usuario);
       } catch (error) {
         throw new Error(error.message)
       } finally {

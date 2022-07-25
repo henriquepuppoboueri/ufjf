@@ -52,7 +52,6 @@ export const useInventariosStore = defineStore({
     },
 
     async delUsuarioInventario(idInventario, idUsuario) {
-      console.log(idInventario, idUsuario)
       await api
         .delete(`v1/restrito/inventario/usuario/${idInventario}&${idUsuario}`)
       await this.buscarUsuariosInventario(idInventario);

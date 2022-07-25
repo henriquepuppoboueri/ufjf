@@ -161,24 +161,25 @@ onMounted(() => {
   renderPage();
 });
 
-watch(route, () => {
-  renderPage();
-});
+watch(
+  () => route.path,
+  (to, from) => {
+    renderPage();
+  }
+);
 
 watch(itensSelecionados, (nv, ov) => {
-  if (origemItens.value === "importados") {
-    if (nv.length > 1) {
-      itensSelecionados.value.shift();
-    }
+  console.log();
+  if (nv.length > 1) {
+    itensSelecionados.value.shift();
   }
 });
 
 function verItem() {
   if (itensSelecionados.value.length === 1) {
-    router.push(`${itensSelecionados.value}`);
     router.push({
-      path: `${route.path}/${itensSelecionados.value}`,
-      query: route.query,
+      name: "item",
+      params: { idItem: itensSelecionados.value[0] },
     });
   }
 }

@@ -17,27 +17,34 @@ export const useItensStore = defineStore({
   }),
   getters: {
     itensNominais(state) {
-      console.log(state.tipoGetter);
-      const itens = state.tipoGetter === 'coletados' ? state.itensColetados : state.itensImportados
+      try {
+        state.carregando = true;
+        const itens = state.tipoGetter === 'coletados' ? state.itensColetados : state.itensImportados
 
-      if (itens.length > 0) {
-        return itens.map(item => {
-          const setor = setoresStore.buscarSetorPorId(item.setor)
-          let dependenciaNome = 'Sem dependência'
-          if (
-            setor !== "Sem setor" &&
-            setor.hasOwnProperty("dependencias") & (setor.dependencias.length > 0)
-          ) {
-            const dependencia = setor.dependencias.find((dep) => dep.id === item.dependencia)
-            if (dependencia) dependenciaNome = dependencia.nome
-          }
-          return {
-            ...item,
-            setor: setor.nome,
-            dependencia: dependenciaNome,
-          };
-        })
+        if (itens.length > 0) {
+          return itens.map(item => {
+            const setor = setoresStore.buscarSetorPorId(item.setor)
+            let dependenciaNome = 'Sem dependência'
+            if (
+              setor !== "Sem setor" &&
+              setor.hasOwnProperty("dependencias") & (setor.dependencias.length > 0)
+            ) {
+              const dependencia = setor.dependencias.find((dep) => dep.id === item.dependencia)
+              if (dependencia) dependenciaNome = dependencia.nome
+            }
+            return {
+              ...item,
+              setor: setor.nome,
+              dependencia: dependenciaNome,
+            };
+          })
+        }
+      } catch (error) {
+
+      } finally {
+        state.carregando = false;
       }
+
     }
   },
   actions: {
@@ -81,7 +88,7 @@ export const useItensStore = defineStore({
       try {
         this.carregando = true
         const response = await api.get(`v1/restrito/item/coleta/${idInventario}`)
-        this.itensColetados = response.data
+        this.itensColetados = await response.data
       } catch (error) {
         this.error = error;
       } finally {
@@ -93,7 +100,7 @@ export const useItensStore = defineStore({
       try {
         this.carregando = true
         const response = await api.get(`v1/restrito/coleta/${idItem}`)
-        this.itemColetado = response.data
+        this.itemColetado = await response.data
       } catch (error) {
         this.error = error;
       } finally {
@@ -106,7 +113,7 @@ export const useItensStore = defineStore({
       try {
         this.carregando = true
         const response = await api.get(`v1/restrito/item/itens/${idInventario}`)
-        this.itensImportados = response.data
+        this.itensImportados = await response.data
       } catch (error) {
         this.error = error;
       } finally {
@@ -118,7 +125,7 @@ export const useItensStore = defineStore({
       try {
         this.carregando = true
         const response = await api.get(`v1/restrito/item/${idItem}`)
-        this.itemImportado = response.data
+        this.itemImportado = await response.data
       } catch (error) {
         this.error = error;
       } finally {

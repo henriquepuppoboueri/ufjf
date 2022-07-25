@@ -89,6 +89,7 @@ const routes = [
           },
           {
             path: 'itens/:idItem',
+            name: 'item',
             component: () => import('components/inventarios/itens/item/ItemCad.vue'),
           },
           {

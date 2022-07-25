@@ -105,7 +105,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch, computed, onMounted } from "vue";
+import { ref, reactive, watch, computed, onMounted, onUnmounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { Notify } from "quasar";
 import { api } from "boot/axios";
@@ -183,21 +183,15 @@ onMounted(() => {
   renderPage();
 });
 
-watch(route, () => {
-  renderPage();
-});
-
-watch(itensSelecionados, (nv, ov) => {
-  if (origemItens.value === "importados") {
-    if (nv.length > 1) {
-      itensSelecionados.value.shift();
-    }
+watch(
+  () => route.path,
+  (to, from) => {
+    renderPage();
   }
-});
+);
 
 function editItem() {
   if (itensSelecionados.value.length === 1) {
-    router.push(`${itensSelecionados.value}`);
     router.push({
       path: `${route.path}/${itensSelecionados.value}`,
       query: route.query,
@@ -207,10 +201,9 @@ function editItem() {
 
 function verItem() {
   if (itensSelecionados.value.length === 1) {
-    router.push(`${itensSelecionados.value}`);
     router.push({
-      path: `${route.path}/${itensSelecionados.value}`,
-      query: route.query,
+      name: "item",
+      params: { idItem: itensSelecionados.value[0] },
     });
   }
 }

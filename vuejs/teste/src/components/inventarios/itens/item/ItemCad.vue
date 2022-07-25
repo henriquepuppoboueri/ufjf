@@ -66,12 +66,13 @@
 import { ref, onMounted, onUpdated } from "vue";
 import { useUsuariosStore } from "src/stores/usuarios";
 import { useItensStore } from "src/stores/itens";
-import { useUnidadesStore } from "src/stores/unidades";
+import { useSetoresStore } from "src/stores/setores";
 import { useRouter, useRoute } from "vue-router";
+import { storeToRefs } from "pinia";
 
 const router = useRouter();
 const route = useRoute();
-const unidadesStore = useUnidadesStore();
+const setoresStore = useSetoresStore();
 const itensStore = useItensStore();
 const usuariosStore = useUsuariosStore();
 const props = defineProps({ id: Number });
@@ -93,16 +94,15 @@ const usuario = ref("");
 
 onMounted(async () => {
   const idItem = +route.params.idItem;
-  console.log(idItem);
-  const itemResponse = await itensStore.buscarItemOriginal(idItem);
-  const itemData = await itemResponse.data;
-  patrimonio.value = itemData.patrimonio;
-  itemDescricao.value = itemData.descricao;
-  empenho.value = itemData.empenho;
-  setorAtual.value = itemData.setor.nome;
-  dependenciaAtual.value = itemData.dependencia.nome;
+  await itensStore.buscarItemImportado(idItem);
+  const { itemImportado, itemColetado } = storeToRefs(itensStore);
+  patrimonio.value = itemImportado.value.patrimonio;
+  itemDescricao.value = itemImportado.value.descricao;
+  empenho.value = itemImportado.value.empenho;
+  setorAtual.value = itemImportado.value.setor.nome;
+  dependenciaAtual.value = itemImportado.value.dependencia.nome;
   // estadoPlaquetaAtual.value = itemData.
-  nomeFornecedor.value = itemData.fornecedor;
+  nomeFornecedor.value = itemImportado.value.fornecedor;
   // situacaoAtual.value = itemData.situacaoInventario.nome;
   // const item = buscarItemPorId(props.id);
   // itemDescricao.value = item.descricao;

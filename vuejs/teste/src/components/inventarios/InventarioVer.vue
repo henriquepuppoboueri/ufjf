@@ -4,10 +4,10 @@
     <q-btn class="btn-nav" :to="'resumo'">RESUMO</q-btn>
     <q-btn-dropdown auto-close stretch flat label="Itens">
       <q-list>
-        <q-item clickable :to="`importados`" exact>
+        <q-item clickable :to="{ name: 'itensImportados' }" exact>
           <q-item-section>Itens originais (importados)</q-item-section>
         </q-item>
-        <q-item clickable :to="`coletados`" exact>
+        <q-item clickable :to="{ name: 'itensColetados' }" exact>
           <q-item-section>Itens coletados (lançados)</q-item-section>
         </q-item>
       </q-list>
@@ -16,11 +16,12 @@
     <q-btn class="btn-nav" :to="{ name: 'Permissoes' }">PERMISSÕES</q-btn>
   </q-tabs>
   <div class="q-px-none">
-    <router-view v-slot="{ Component }">
+    <!-- <router-view v-slot="{ Component }">
       <keep-alive>
         <component :is="Component" />
       </keep-alive>
-    </router-view>
+    </router-view> -->
+    <router-view></router-view>
   </div>
 </template>
 
