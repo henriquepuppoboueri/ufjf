@@ -94,6 +94,8 @@ const usuario = ref("");
 
 onMounted(async () => {
   const idItem = +route.params.idItem;
+  if (!idItem) return;
+
   await itensStore.buscarItemImportado(idItem);
   const { itemImportado, itemColetado } = storeToRefs(itensStore);
   patrimonio.value = itemImportado.value.patrimonio;
