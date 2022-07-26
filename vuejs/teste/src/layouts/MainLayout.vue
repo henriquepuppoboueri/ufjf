@@ -161,7 +161,12 @@
     </q-drawer>
 
     <q-page-container>
-      <router-view />
+      <!-- <router-view v-slot="{ Component }">
+      <keep-alive>
+        <component :is="Component" />
+      </keep-alive>
+    </router-view> -->
+      <router-view></router-view>
     </q-page-container>
   </q-layout>
 </template>
@@ -172,7 +177,8 @@ import { useAuthStore } from "src/stores/auth";
 import { ref } from "vue";
 
 const authStore = useAuthStore();
-const { usuario, carregando, erro } = storeToRefs(authStore);
+const { carregando, erro } = storeToRefs(authStore);
+const usuario = authStore.usuario;
 const leftDrawerOpen = ref(false);
 
 function toggleLeftDrawer() {

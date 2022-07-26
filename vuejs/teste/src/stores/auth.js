@@ -25,7 +25,6 @@ export const useAuthStore = defineStore({
         if (response) {
           localStorage.setItem("usuarioLogado", JSON.stringify(response.data))
           const responseData = await response.data
-          console.log(responseData);
           this.usuario = responseData;
         }
       } catch (error) {
