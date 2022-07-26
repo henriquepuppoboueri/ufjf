@@ -5,12 +5,16 @@ import { useRouter } from 'vue-router'
 export const useAuthStore = defineStore({
   id: 'auth',
   state: () => {
-    return { usuario: null, carregando: false, erro: null }
+    ({
+      usuario: null,
+      carregando: false,
+      erro: null
+    })
   },
   persist: true,
   getters: {
     isUsuarioLogado: (state) => {
-      return !!state.usuario;
+      return !!state.usuario
     }
   },
   actions: {
@@ -19,7 +23,8 @@ export const useAuthStore = defineStore({
       try {
         const response = await api.post("login", credenciais)
         sessionStorage.setItem("usuarioLogado", JSON.stringify(response.data))
-        this.usuario = response.data
+        this.usuario = await response.data
+        console.log(this.isUsuarioLogado, this.usuario, !!this.usuario)
       } catch (error) {
         this.erro = error
       } finally {
@@ -39,12 +44,12 @@ export const useAuthStore = defineStore({
       const router = useRouter()
       try {
         await api.post(`restrito/logout`)
-        sessionStorage.removeItem('usuarioLogado')
-        this.usuario = null
       } catch (error) {
         throw new Error(error.message)
       } finally {
-        router.push('/login')
+        sessionStorage.removeItem('usuarioLogado')
+        this.usuario = null
+        await router.push('/login')
       }
 
     }

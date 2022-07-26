@@ -31,7 +31,9 @@ export default route(function (/* { store, ssrContext } */) {
     // to and from are both route objects. must call `next`.
     const authStore = useAuthStore();
 
-    if (to.meta.restrito && !authStore.isUsuarioLogado) {
+    console.log(to.meta.restrito, authStore.isUsuarioLogado)
+
+    if (to.meta.restrito && !authStore.usuario) {
       next('/login')
     } else {
       next()

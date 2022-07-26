@@ -4,9 +4,9 @@ import axios from 'axios'
 const api_options = { baseURL: 'http://10.1.2.90:9001' }
 const api = axios.create(api_options)
 
-const usuarioLogado = sessionStorage.getItem('usuarioLogado');
+const usuarioLogado = sessionStorage.getItem('usuarioLogado')
 if (usuarioLogado) {
-  const usuarioJSON = JSON.parse(usuarioLogado);
+  const usuarioJSON = JSON.parse(usuarioLogado)
   api.interceptors.request.use(config => {
     config.headers.Authorization = `Bearer ${usuarioJSON.token}`
     return config
