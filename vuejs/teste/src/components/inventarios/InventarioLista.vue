@@ -92,7 +92,7 @@ const isEditavel = computed(() => {
 
 function verInventario() {
   const _id = inventarioSelecionado.value[0].id;
-  router.push(`/inventario/view/${_id}/`);
+  router.push(`/inventario/v/${_id}/`);
 }
 
 function editarInventario() {

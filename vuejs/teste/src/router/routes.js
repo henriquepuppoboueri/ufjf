@@ -56,7 +56,7 @@ const routes = [
           import("components/inventarios/InventarioLista.vue"),
       },
       {
-        path: "view/:idInventario",
+        path: "v/:idInventario",
         name: 'view',
         component: () => import("components/inventarios/InventarioVer.vue"),
         children: [
@@ -66,6 +66,7 @@ const routes = [
           },
           {
             path: 'resumo',
+            name: 'resumo',
             component: () => import('components/inventarios/InventarioStats.vue'),
           },
           {
@@ -83,13 +84,18 @@ const routes = [
             component: () => import('src/components/inventarios/itens/ItensColetados.vue'),
           },
           {
+            path: 'itens/coletados/:idItem',
+            name: 'itemColetado',
+            component: () => import('components/inventarios/itens/item/ItemCad.vue'),
+          },
+          {
             path: 'itens/importados',
             name: 'itensImportados',
             component: () => import('src/components/inventarios/itens/ItensImportados.vue'),
           },
           {
-            path: 'itens/:idItem',
-            name: 'item',
+            path: 'itens/importados/:idItem',
+            name: 'itemImportado',
             component: () => import('components/inventarios/itens/item/ItemCad.vue'),
           },
           {

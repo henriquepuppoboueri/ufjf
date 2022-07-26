@@ -178,7 +178,7 @@ watch(itensSelecionados, (nv, ov) => {
 function verItem() {
   if (itensSelecionados.value.length === 1) {
     router.push({
-      name: "item",
+      name: "itemImportado",
       params: { idItem: itensSelecionados.value[0] },
     });
   }

@@ -1,14 +1,14 @@
 <template>
   <p class="text-h4 text-center q-mt-md">{{ nomeInventario }}</p>
   <q-tabs v-model="tabSelecionada" dense class="bg-red text-white shadow-none">
-    <q-btn class="btn-nav" :to="'resumo'">RESUMO</q-btn>
+    <q-btn class="btn-nav" :to="{ name: 'resumo' }">RESUMO</q-btn>
     <q-btn-dropdown auto-close stretch flat label="Itens">
       <q-list>
-        <q-item clickable :to="{ name: 'itensImportados' }" exact>
-          <q-item-section>Itens originais (importados)</q-item-section>
-        </q-item>
         <q-item clickable :to="{ name: 'itensColetados' }" exact>
           <q-item-section>Itens coletados (lançados)</q-item-section>
+        </q-item>
+        <q-item clickable :to="{ name: 'itensImportados' }" exact>
+          <q-item-section>Itens originais (importados)</q-item-section>
         </q-item>
       </q-list>
     </q-btn-dropdown>

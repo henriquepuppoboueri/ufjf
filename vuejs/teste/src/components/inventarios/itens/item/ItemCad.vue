@@ -94,17 +94,28 @@ const usuario = ref("");
 
 onMounted(async () => {
   const idItem = +route.params.idItem;
+  const origem = route.path;
+  let itemOrigem = {};
   if (!idItem) return;
 
-  await itensStore.buscarItemImportado(idItem);
   const { itemImportado, itemColetado } = storeToRefs(itensStore);
-  patrimonio.value = itemImportado.value.patrimonio;
-  itemDescricao.value = itemImportado.value.descricao;
-  empenho.value = itemImportado.value.empenho;
-  setorAtual.value = itemImportado.value.setor.nome;
-  dependenciaAtual.value = itemImportado.value.dependencia.nome;
+
+  if (origem.includes("importados")) {
+    await itensStore.buscarItemImportado(idItem);
+    itemOrigem = itemImportado;
+    console.log(itemOrigem);
+  } else {
+    await itensStore.buscarItemColetado(idItem);
+    itemOrigem = itemColetado;
+  }
+
+  patrimonio.value = itemOrigem.value.patrimonio;
+  itemDescricao.value = itemOrigem.value.descricao;
+  empenho.value = itemOrigem.value.empenho;
+  setorAtual.value = itemOrigem.value.setor.nome;
+  dependenciaAtual.value = itemOrigem.value.dependencia.nome;
   // estadoPlaquetaAtual.value = itemData.
-  nomeFornecedor.value = itemImportado.value.fornecedor;
+  nomeFornecedor.value = itemOrigem.value.fornecedor;
   // situacaoAtual.value = itemData.situacaoInventario.nome;
   // const item = buscarItemPorId(props.id);
   // itemDescricao.value = item.descricao;

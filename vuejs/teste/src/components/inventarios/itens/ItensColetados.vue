@@ -81,21 +81,21 @@
         @click="verItem"
       />
       <q-btn
-        v-if="qtItensSelec && qtItensSelec === 1 && origemItens === 'lancados'"
+        v-if="qtItensSelec && qtItensSelec === 1"
         dense
         color="blue"
         label="Editar"
         @click="editItem"
       />
       <q-btn
-        v-if="qtItensSelec && qtItensSelec > 0 && origemItens === 'lancados'"
+        v-if="qtItensSelec && qtItensSelec > 0"
         dense
         color="primary"
         label="Excluir"
         @click="delItens"
       />
       <q-btn
-        v-if="!qtItensSelec && qtItensSelec === 0 && origemItens === 'lancados'"
+        v-if="!qtItensSelec && qtItensSelec === 0"
         dense
         color="green"
         label="Novo"
@@ -202,7 +202,7 @@ function editItem() {
 function verItem() {
   if (itensSelecionados.value.length === 1) {
     router.push({
-      name: "item",
+      name: "itemColetado",
       params: { idItem: itensSelecionados.value[0] },
     });
   }
@@ -249,26 +249,7 @@ async function renderPage() {
 </script>
 
 <style lang="sass">
-.my-sticky-header-table
-  // /* height or max-height is important */
-  // height: calc(100vh - 150px)
 
-  // .q-table__top,
-  // .q-table__bottom,
-  // thead tr:first-child th
-  //   /* bg color is important for th; just specify one */
-  //   background-color: white
-
-  // thead tr th
-  //   position: sticky
-  //   z-index: 1
-  // thead tr:first-child th
-  //   top: 0
-
-  // /* this is when the loading indicator appears */
-  // &.q-table--loading thead tr:last-child th
-  //   /* height of all previous header rows */
-  //   top: 48px
 .q-card__section--vert
   padding: 0
 
