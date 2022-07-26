@@ -4,10 +4,11 @@
 
 <script setup>
 import { onMounted } from "@vue/runtime-core";
-import { useAuthStore } from "./stores/auth";
+import { useAuthStore } from "src/stores/auth";
 
 onMounted(() => {
   const authStore = useAuthStore();
-  authStore.carregarToken();
+  const { carregarToken } = authStore;
+  carregarToken();
 });
 </script>

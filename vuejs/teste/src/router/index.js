@@ -2,6 +2,7 @@ import { route } from 'quasar/wrappers'
 import { createRouter, createMemoryHistory, createWebHistory, createWebHashHistory } from 'vue-router'
 import routes from './routes'
 import { useAuthStore } from 'src/stores/auth'
+import { api } from 'boot/axios'
 
 /*
  * If not building with SSR mode, you can
@@ -31,11 +32,17 @@ export default route(function (/* { store, ssrContext } */) {
     // to and from are both route objects. must call `next`.
     const authStore = useAuthStore();
 
-    console.log(to.meta.restrito, authStore.isUsuarioLogado)
-
     if (to.meta.restrito && !authStore.usuario) {
       next('/login')
     } else {
+      api.interceptors.request.use(config => {
+        const usuarioLogado = localStorage.getItem('usuarioLogado')
+        if (usuarioLogado) {
+          const json = JSON.parse(usuarioLogado)
+          config.headers.Authorization = `Bearer ${json.token}`
+        }
+        return config
+      })
       next()
     }
   })

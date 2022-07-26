@@ -1,20 +1,23 @@
 <script setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "src/stores/auth";
+import { storeToRefs } from "pinia";
 
-const usuario = ref("puppo");
+const usuarioForm = ref("puppo");
 const senha = ref("33");
 const router = useRouter();
 const authStore = useAuthStore();
+// const { usuario } = storeToRefs(authStore);
+const { logar } = useAuthStore();
 
-async function logar() {
-  if (!usuario.value || !senha.value) return;
+async function onLogar() {
+  if (!usuarioForm.value || !senha.value) return;
 
-  const data = { username: usuario.value, password: senha.value };
-  const { logar } = useAuthStore();
+  const data = { username: usuarioForm.value, password: senha.value };
   await logar(data);
-  if (authStore.usuario) {
+
+  if (authStore.isUsuarioLogado) {
     router.push("/inventario");
   }
 }
@@ -24,14 +27,14 @@ async function logar() {
   <q-page class="bg-red-1 row flex-center">
     <div class="column">
       <div class="row">
-        <q-form @submit="logar">
+        <q-form @submit.prevent="onLogar">
           <q-card bordered class="q-pa-md shadow-1">
             <q-card-section class="q-gutter-md">
               <p class="text-grey-6">Entre com suas credenciais</p>
               <q-input
                 outlined
                 clearable
-                v-model="usuario"
+                v-model="usuarioForm"
                 type="text"
                 label="Usuário"
               />
@@ -58,7 +61,7 @@ async function logar() {
                 size="lg"
                 class="full-width"
                 label="Entrar"
-                :disable="!usuario || !senha"
+                :disable="!usuarioForm || !senha"
                 type="submit"
               />
             </q-card-actions>

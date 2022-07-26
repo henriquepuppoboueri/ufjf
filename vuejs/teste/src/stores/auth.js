@@ -14,7 +14,7 @@ export const useAuthStore = defineStore({
   persist: true,
   getters: {
     isUsuarioLogado: (state) => {
-      return !!state.usuario
+      return !!localStorage.getItem('usuarioLogado')
     }
   },
   actions: {
@@ -22,19 +22,23 @@ export const useAuthStore = defineStore({
       this.carregando = true
       try {
         const response = await api.post("login", credenciais)
-        sessionStorage.setItem("usuarioLogado", JSON.stringify(response.data))
-        this.usuario = await response.data
-        console.log(this.isUsuarioLogado, this.usuario, !!this.usuario)
+        if (response) {
+          localStorage.setItem("usuarioLogado", JSON.stringify(response.data))
+          const responseData = await response.data
+          console.log(responseData);
+          this.usuario = responseData;
+        }
       } catch (error) {
+        console.log(error);
         this.erro = error
       } finally {
         this.carregando = false
       }
     },
     carregarToken() {
-      const usuarioSession = sessionStorage.getItem('usuarioLogado')
-      if (usuarioSession) {
-        this.usuario = JSON.parse(usuarioSession)
+      const usuarioStorage = localStorage.getItem('usuarioLogado')
+      if (usuarioStorage) {
+        this.usuario = JSON.parse(usuarioStorage)
       } else {
         useRouter().push('/login')
       }
@@ -47,9 +51,9 @@ export const useAuthStore = defineStore({
       } catch (error) {
         throw new Error(error.message)
       } finally {
-        sessionStorage.removeItem('usuarioLogado')
+        localStorage.removeItem('usuarioLogado')
         this.usuario = null
-        await router.push('/login')
+        router.push('/login')
       }
 
     }
