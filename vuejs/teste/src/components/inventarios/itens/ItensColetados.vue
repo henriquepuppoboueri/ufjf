@@ -2,6 +2,7 @@
   <q-card square>
     <q-card-section>
       <q-table
+        flat
         :loading="itensStore.carregando"
         title="Itens coletados"
         :rows="itensStore.itensNominais"
@@ -10,15 +11,14 @@
         separator="cell"
         selection="multiple"
         :wrap-cells="true"
-        no-data-label="Não foram encontrados dados."
-        rows-per-page-label="Registros por página:"
-        :selected-rows-label="registroPortugues"
         :filter="filtro"
         class="my-sticky-header-table"
+        :selected-rows-label="registroPortugues"
         :pagination="paginacaoOpcoes"
         :bordered="false"
         loading-label="Carregando"
-        flat
+        no-data-label="Não foram encontrados dados."
+        rows-per-page-label="Registros por página:"
       >
         <template v-slot:header="props">
           <q-tr :props="props">
@@ -33,6 +33,7 @@
           <q-input
             borderless
             dense
+            filled
             debounce="300"
             v-model="filtro"
             placeholder="Filtrar"

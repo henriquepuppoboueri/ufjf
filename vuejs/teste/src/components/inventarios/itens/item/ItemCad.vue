@@ -128,6 +128,8 @@ async function montaColetado() {
   await setoresStore.buscarSetor(itemOrigem.value.setor);
   await dependenciasStore.buscarDependencia(itemOrigem.value.dependencia);
   await dependenciasStore.buscarDependencias(itemOrigem.value.setor);
+  await situacaoStore.buscarSituacoes();
+  await situacaoStore.buscarSituacao(itemOrigem.value.situacao);
 
   patrimonio.value = itemOrigem.value.patrimonio;
   itemDescricao.value = itemOrigem.value.descricao;
@@ -136,7 +138,6 @@ async function montaColetado() {
   dependenciaAtual.value = itemOrigem.value.dependencia.nome;
   nomeFornecedor.value = itemOrigem.value.fornecedor;
   usuario.value = itemOrigem.value.usuario;
-  await situacaoStore.buscarSituacoes();
   situacao.value = extraiSituacao(itemOrigem.value.situacao);
   itemLocalizacao.value = itemOrigem.value.localizacao;
   itemObservacao.value = itemOrigem.value.observacao;

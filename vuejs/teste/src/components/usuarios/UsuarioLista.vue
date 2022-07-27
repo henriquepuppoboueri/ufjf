@@ -2,13 +2,19 @@
   <q-card square>
     <q-card-section>
       <q-table
+        flat
         title="Usuários"
         :rows="usuarios"
         :columns="colunas"
         row-key="id"
         selection="single"
         v-model:selected="usuarioSelecionado"
+        :pagination="paginacaoOpcoes"
         :bordered="false"
+        :selected-rows-label="registroPortugues"
+        loading-label="Carregando"
+        no-data-label="Não foram encontrados dados."
+        rows-per-page-label="Registros por página:"
       />
     </q-card-section>
     <q-card-actions>
@@ -40,6 +46,8 @@
 <script setup>
 import { computed, onMounted, reactive, ref } from "vue";
 import { api } from "boot/axios";
+import { diminuiTexto, registroPortugues } from "src/helper/functions";
+import { paginacaoOpcoes } from "src/helper/qtableOpcoes";
 
 const isUsuarioSelecionado = computed(() => {
   return usuarioSelecionado.value.length > 0;
@@ -76,3 +84,12 @@ onMounted(() => {
 
 function excluirUsuario() {}
 </script>
+
+<style lang="sass">
+
+.q-card__section
+  padding-bottom: 0
+
+.q-btn
+  min-width: 5rem
+</style>

@@ -3,13 +3,20 @@
     <q-card-section>
       <q-table
         flat
+        :loading="inventariosStore.carregando"
         title="Inventários"
         :rows="inventariosStore.inventarios"
         :columns="colunas"
         row-key="id"
         selection="single"
+        :wrap-cells="true"
         v-model:selected="inventarioSelecionado"
         :bordered="false"
+        :selected-rows-label="registroPortugues"
+        :pagination="paginacaoOpcoes"
+        loading-label="Carregando"
+        no-data-label="Não foram encontrados dados."
+        rows-per-page-label="Registros por página:"
       />
     </q-card-section>
     <q-card-actions>
@@ -65,6 +72,8 @@ import { api } from "boot/axios";
 import { Notify } from "quasar";
 import { useQuasar } from "quasar";
 import { useInventariosStore } from "src/stores/inventarios";
+import { diminuiTexto, registroPortugues } from "src/helper/functions";
+import { paginacaoOpcoes } from "src/helper/qtableOpcoes";
 
 const inventariosStore = useInventariosStore();
 const $q = useQuasar();
@@ -167,3 +176,12 @@ function mudarSituacaoInventario() {
   }
 }
 </script>
+
+<style lang="sass">
+
+.q-card__section
+  padding-bottom: 0
+
+.q-btn
+  min-width: 5rem
+</style>

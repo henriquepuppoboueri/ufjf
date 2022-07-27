@@ -32,6 +32,7 @@ export const useItensStore = defineStore({
               const dependencia = setor.dependencias.find((dep) => dep.id === item.dependencia)
               if (dependencia) dependenciaNome = dependencia.nome
             }
+            state.carregando = false;
             return {
               ...item,
               setor: setor.nome,
@@ -42,7 +43,6 @@ export const useItensStore = defineStore({
       } catch (error) {
 
       } finally {
-        state.carregando = false;
       }
 
     }

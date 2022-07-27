@@ -33,6 +33,7 @@
           <q-input
             borderless
             dense
+            filled
             debounce="300"
             v-model="filtro"
             placeholder="Filtrar"

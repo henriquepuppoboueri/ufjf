@@ -220,7 +220,7 @@ function onSelecionaUnidade(selected) {
           label="Unidade/dependência"
         />
       </q-card-section>
-      <q-card-actions class="flex-center q-gutter-md">
+      <!-- <q-card-actions class="flex-center q-gutter-md">
         <q-btn
           v-if="!!novaUnidade.nome"
           size="sm"
@@ -229,11 +229,11 @@ function onSelecionaUnidade(selected) {
           @click="salvarAddUnidade"
         />
         <q-btn size="sm" color="red" label="Cancelar" />
-      </q-card-actions>
+      </q-card-actions> -->
     </q-card>
   </q-dialog>
   <div class="q-pa-md q-gutter-sm">
-    <div class="q-gutter-x-sm" v-if="isUnidade">
+    <!-- <div class="q-gutter-x-sm" v-if="isUnidade">
       <q-btn
         v-if="!keySelecionada"
         size="sm"
@@ -279,7 +279,7 @@ function onSelecionaUnidade(selected) {
         @click="deletarDependencia"
       />
     </div>
-    <q-separator></q-separator>
+    <q-separator></q-separator> -->
     <q-tree
       :nodes="setores"
       default-expand-all
