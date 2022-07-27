@@ -15,12 +15,12 @@
       <q-input outlined v-model="usuario.login" disable label="Login" />
 
       <div>
-        <q-btn label="Salvar" type="submit" color="primary" />
+        <q-btn dense label="Salvar" type="submit" color="green" />
         <q-btn
+          dense
           label="Voltar"
           type="reset"
           color="primary"
-          flat
           class="q-ml-sm"
           to="/usuario"
         />

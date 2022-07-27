@@ -9,7 +9,8 @@ export const useSetoresStore = defineStore({
     setoresDependencias: [],
     setor: null,
     carregando: false,
-    erro: null
+    erro: null,
+    dependencia: null,
   }),
   actions: {
     buscarSetorPorId(idSetor) {
@@ -64,7 +65,7 @@ export const useSetoresStore = defineStore({
       try {
         this.carregando = true
         const response = await api.get(`v1/restrito/setor/${idSetor}`)
-        return response;
+        this.setor = await response.data;
       } catch (error) {
         this.error = error;
       } finally {
@@ -87,7 +88,7 @@ export const useSetoresStore = defineStore({
       try {
         this.carregando = true
         const response = await api.get(`v1/restrito/inventario/setor/dependencia/${idInventario}`)
-        this.setoresDependencias = response.data;
+        this.setoresDependencias = await response.data;
       } catch (error) {
         this.error = error;
       } finally {

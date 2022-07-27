@@ -18,9 +18,9 @@
       />
 
       <div>
-        <q-btn outline label="Enviar" type="submit" color="primary" />
+        <q-btn dense label="Enviar" type="submit" color="green" />
         <q-btn
-          outline
+          dense
           label="Voltar"
           type="reset"
           color="primary"

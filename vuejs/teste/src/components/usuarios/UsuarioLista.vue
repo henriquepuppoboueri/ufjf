@@ -2,7 +2,6 @@
   <q-card square>
     <q-card-section>
       <q-table
-        flat
         title="Usuários"
         :rows="usuarios"
         :columns="colunas"
@@ -15,23 +14,20 @@
     <q-card-actions>
       <q-btn
         v-if="!isUsuarioSelecionado"
-        flat
         dense
-        color="primary"
+        color="green"
         label="Novo"
         :to="`/usuario/novo`"
       />
       <q-btn
         v-if="isUsuarioSelecionado"
-        flat
         dense
-        color="primary"
+        color="blue"
         label="Editar"
         :to="`/usuario/${idUsuario}`"
       />
       <q-btn
         v-if="isUsuarioSelecionado"
-        flat
         dense
         color="primary"
         label="Excluir"

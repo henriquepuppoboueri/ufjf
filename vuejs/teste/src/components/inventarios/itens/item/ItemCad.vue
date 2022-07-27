@@ -13,15 +13,19 @@
       />
       <q-select
         outlined
-        v-model="setorAtual"
-        :options="setorLista"
+        v-model="setor"
+        :options="setoresDependencias"
+        :option-label="(item) => item.nome"
+        :option-value="(item) => item.nome"
         label="Setor"
         dense
       />
       <q-select
         outlined
-        v-model="dependenciaAtual"
-        :options="dependenciaLista"
+        v-model="dependencia"
+        :options="dependencias"
+        :option-label="(item) => item.nome"
+        :option-value="(item) => item.nome"
         label="Dependência"
         dense
       />
@@ -48,8 +52,10 @@
       />
       <q-select
         outlined
-        v-model="situacaoAtual"
-        :options="situacaoLista"
+        v-model="situacao"
+        :options="situacoes"
+        :option-label="(item) => item.nome"
+        :option-value="(item) => item.nome"
         label="Situação"
         dense
       />
@@ -58,29 +64,34 @@
   </section>
   <section class="row q-gutter-x-sm q-px-sm q-my-md">
     <q-btn dense color="green" label="Salvar" />
-    <q-btn dense color="primary" label="Cancelar" @click="cancelar" />
+    <q-btn
+      dense
+      color="primary"
+      label="Cancelar"
+      :to="{ name: 'itensColetados' }"
+    />
   </section>
 </template>
 
 <script setup>
-import { ref, onMounted, onUpdated } from "vue";
+import { ref, onMounted, onUpdated, watch } from "vue";
 import { useUsuariosStore } from "src/stores/usuarios";
 import { useItensStore } from "src/stores/itens";
 import { useSetoresStore } from "src/stores/setores";
 import { useRouter, useRoute } from "vue-router";
 import { storeToRefs } from "pinia";
+import { useSituacaoStore } from "src/stores/situacao";
+import { useDependenciasStore } from "src/stores/dependencias";
 
+const dependenciasStore = useDependenciasStore();
+const situacaoStore = useSituacaoStore();
 const router = useRouter();
 const route = useRoute();
 const setoresStore = useSetoresStore();
 const itensStore = useItensStore();
 const usuariosStore = useUsuariosStore();
-const props = defineProps({ id: Number });
 const itemDescricao = ref("");
-const setorAtual = ref("");
-const setorLista = ref([]);
 const dependenciaAtual = ref("");
-const dependenciaLista = ref([]);
 const empenho = ref("");
 const estadoPlaquetaAtual = ref("");
 const estadoPlaquetaLista = ref([]);
@@ -88,49 +99,51 @@ const nomeFornecedor = ref("");
 const itemLocalizacao = ref("");
 const itemObservacao = ref("");
 const patrimonio = ref([]);
-const situacaoAtual = ref("");
-const situacaoLista = ref([]);
+const { dependencias, dependencia } = storeToRefs(dependenciasStore);
+const { setoresDependencias, setor } = storeToRefs(setoresStore);
+const { situacoes, situacao } = storeToRefs(situacaoStore);
 const usuario = ref("");
+let itemOrigem = "";
 
 onMounted(async () => {
   const idItem = +route.params.idItem;
-  const origem = route.path;
-  let itemOrigem = {};
   if (!idItem) return;
 
+  const origem = route.path;
+  // let itemOrigem = {};
   const { itemImportado, itemColetado } = storeToRefs(itensStore);
 
   if (origem.includes("importados")) {
     await itensStore.buscarItemImportado(idItem);
     itemOrigem = itemImportado;
-    console.log(itemOrigem);
   } else {
     await itensStore.buscarItemColetado(idItem);
     itemOrigem = itemColetado;
+    montaColetado();
   }
+});
+
+async function montaColetado() {
+  await setoresStore.buscarSetoresDependencias(itemOrigem.value.inventario);
+  await setoresStore.buscarSetor(itemOrigem.value.setor);
+  await dependenciasStore.buscarDependencia(itemOrigem.value.dependencia);
+  await dependenciasStore.buscarDependencias(itemOrigem.value.setor);
 
   patrimonio.value = itemOrigem.value.patrimonio;
   itemDescricao.value = itemOrigem.value.descricao;
   empenho.value = itemOrigem.value.empenho;
-  setorAtual.value = itemOrigem.value.setor.nome;
+
   dependenciaAtual.value = itemOrigem.value.dependencia.nome;
-  // estadoPlaquetaAtual.value = itemData.
   nomeFornecedor.value = itemOrigem.value.fornecedor;
-  // situacaoAtual.value = itemData.situacaoInventario.nome;
-  // const item = buscarItemPorId(props.id);
-  // itemDescricao.value = item.descricao;
-});
-
-onUpdated(() => {
-  // const item = buscarItemPorId(props.id);
-  // itemDescricao.value = item.descricao;
-});
-
-// function buscarItemPorId(id) {
-//   return itemsColetados.value.find((i) => i.id === id);
-// }
-
-function cancelar() {
-  router.go(-1);
+  usuario.value = itemOrigem.value.usuario;
+  await situacaoStore.buscarSituacoes();
+  situacao.value = extraiSituacao(itemOrigem.value.situacao);
+  itemLocalizacao.value = itemOrigem.value.localizacao;
+  itemObservacao.value = itemOrigem.value.observacao;
 }
+function extraiSituacao(idSituacao) {
+  return situacoes.value.find((situ) => situ.id === idSituacao);
+}
+
+watch(setor, (nv) => console.log(nv));
 </script>

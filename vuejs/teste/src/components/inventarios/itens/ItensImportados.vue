@@ -86,7 +86,7 @@
 
 <script setup>
 import { ref, reactive, watch, computed, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { onBeforeRouteUpdate, useRoute, useRouter } from "vue-router";
 import { diminuiTexto, registroPortugues } from "src/helper/functions";
 import { paginacaoOpcoes } from "src/helper/qtableOpcoes";
 import { useItensStore } from "src/stores/itens.js";

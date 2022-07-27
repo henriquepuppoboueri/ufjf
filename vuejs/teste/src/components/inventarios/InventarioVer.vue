@@ -1,33 +1,46 @@
 <template>
-  <p class="text-h4 text-center q-mt-md">{{ nomeInventario }}</p>
-  <q-tabs v-model="tabSelecionada" dense class="bg-red text-white shadow-none">
-    <q-btn class="btn-nav" :to="{ name: 'resumo' }">RESUMO</q-btn>
-    <q-btn-dropdown auto-close stretch flat label="Itens">
-      <q-list>
-        <q-item clickable :to="{ name: 'itensColetados' }" exact>
-          <q-item-section>Itens coletados (lançados)</q-item-section>
-        </q-item>
-        <q-item clickable :to="{ name: 'itensImportados' }" exact>
-          <q-item-section>Itens originais (importados)</q-item-section>
-        </q-item>
-      </q-list>
-    </q-btn-dropdown>
-    <q-btn class="btn-nav" :to="{ name: 'Unidades' }">DEPENDÊNCIAS</q-btn>
-    <q-btn class="btn-nav" :to="{ name: 'Permissoes' }">PERMISSÕES</q-btn>
-  </q-tabs>
-  <div class="q-px-none">
-    <!-- <router-view v-slot="{ Component }">
+  <div>
+    <p class="text-h4 text-center q-mt-md">{{ nomeInventario }}</p>
+    <q-tabs
+      v-model="tabSelecionada"
+      dense
+      class="bg-red text-white shadow-none"
+    >
+      <q-btn class="btn-nav" :to="{ name: 'resumo' }">RESUMO</q-btn>
+      <q-btn-dropdown auto-close stretch flat label="Itens">
+        <q-list>
+          <q-item clickable :to="{ name: 'itensColetados' }" exact>
+            <q-item-section>Itens coletados (lançados)</q-item-section>
+          </q-item>
+          <q-item clickable :to="{ name: 'itensImportados' }" exact>
+            <q-item-section>Itens originais (importados)</q-item-section>
+          </q-item>
+        </q-list>
+      </q-btn-dropdown>
+      <q-btn class="btn-nav" :to="{ name: 'Unidades' }">DEPENDÊNCIAS</q-btn>
+      <q-btn class="btn-nav" :to="{ name: 'Permissoes' }">PERMISSÕES</q-btn>
+    </q-tabs>
+    <div class="q-px-none">
+      <!-- <router-view v-slot="{ Component }">
       <keep-alive>
         <component :is="Component" />
       </keep-alive>
     </router-view> -->
-    <router-view></router-view>
+      <router-view v-slot="{ Component, route }">
+        <transition name="fade">
+          <div :key="route.path">
+            <component :is="Component" />
+          </div>
+        </transition>
+      </router-view>
+      <!-- <router-view></router-view> -->
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref, reactive, onMounted, onUpdated, watch, computed } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { onBeforeRouteLeave, useRoute, useRouter } from "vue-router";
 import { api } from "boot/axios";
 import { date, Notify } from "quasar";
 
@@ -72,6 +85,11 @@ const colunas = ref([
     sortable: true,
   },
 ]);
+
+// onBeforeRouteLeave((to, from, next) => {
+//   console.log("beforeLeave");
+//   console.log(to, from);
+// });
 
 onMounted(() => {
   if ("idInventario" in route.params) {

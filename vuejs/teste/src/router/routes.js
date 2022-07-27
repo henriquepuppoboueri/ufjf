@@ -1,3 +1,4 @@
+import { extractIdentifiers } from '@vue/compiler-core';
 import { createRouter, createWebHistory } from 'vue-router';
 
 const routes = [
@@ -38,6 +39,7 @@ const routes = [
   },
   {
     path: "/inventario",
+    name: 'inventario',
     component: () => import("layouts/MainLayout.vue"),
     meta: { restrito: true },
     children: [

@@ -5,45 +5,12 @@ import { api } from 'boot/axios'
 export const useDependenciasStore = defineStore({
   id: 'dependencias',
   state: () => ({
-    unidades: [],
-    unidade: null,
+    dependencias: [],
+    dependencia: null,
     carregando: false,
     erro: null
   }),
   actions: {
-    async buscarDepsDoSetor(idSetor) {
-      try {
-        this.carregando = true
-        const response = await api.get(`v1/restrito/setor/dependencia/${idSetor}`)
-        return response;
-      } catch (error) {
-        this.error = error;
-      } finally {
-        this.carregando = false
-      }
-    },
-    async buscarSetor(idSetor) {
-      try {
-        this.carregando = true
-        const response = await api.get(`v1/restrito/setor/${idSetor}`)
-        return response;
-      } catch (error) {
-        this.error = error;
-      } finally {
-        this.carregando = false
-      }
-    },
-    async buscarSetoresDependencias(idInventario) {
-      try {
-        this.carregando = true
-        const response = await api.get(`v1/restrito/inventario/setor/dependencia/${idInventario}`)
-        return response;
-      } catch (error) {
-        this.error = error;
-      } finally {
-        this.carregando = false
-      }
-    },
     async addDependencia(dependencia) {
       try {
         this.carregando = true
@@ -81,7 +48,18 @@ export const useDependenciasStore = defineStore({
       try {
         this.carregando = true
         const response = await api.get(`v1/restrito/dependencia/${idDependencia}`)
-        return response;
+        this.dependencia = await response.data;
+      } catch (error) {
+        this.error = error;
+      } finally {
+        this.carregando = false
+      }
+    },
+    async buscarDependencias(idSetor) {
+      try {
+        this.carregando = true
+        const response = await api.get(`v1/restrito/setor/dependencia/${idSetor}`)
+        this.dependencias = await response.data;
       } catch (error) {
         this.error = error;
       } finally {
