@@ -1,4 +1,20 @@
 <template>
+  <q-dialog v-model="mostrarDialog">
+    <q-card>
+      <q-card-section class="text-h6 text-center text-bold">
+        Confirmação de exclusão
+      </q-card-section>
+      <q-card-section>
+        <p class="text-center text-subtitle">
+          Tem certeza de que desejar excluir o inventário selecionado?
+        </p>
+      </q-card-section>
+      <q-card-actions class="flex-center q-gutter-md">
+        <q-btn dense color="red" label="Não" @click="mostrarDialog = false" />
+        <q-btn dense color="green" label="Sim" @click="excluirInventario" />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
   <q-card square>
     <q-card-section>
       <q-table
@@ -43,7 +59,7 @@
         :disabled="isEditavel"
         color="primary"
         label="Excluir"
-        @click="excluirInventario"
+        @click="mostrarDialog = true"
       />
       <q-btn
         v-if="isEditavel"
@@ -75,6 +91,7 @@ import { useInventariosStore } from "src/stores/inventarios";
 import { diminuiTexto, registroPortugues } from "src/helper/functions";
 import { paginacaoOpcoes } from "src/helper/qtableOpcoes";
 
+const mostrarDialog = ref(false);
 const inventariosStore = useInventariosStore();
 const $q = useQuasar();
 const inventarioSelecionado = ref([]);
@@ -113,17 +130,21 @@ function novoInventario() {
   router.push({ path: "/inventario/novo/" });
 }
 
-function excluirInventario() {
+async function excluirInventario() {
   const _id = inventarioSelecionado.value[0].id;
-  $q.dialog({
-    title: "Exclusão de inventário",
-    message: "Tem certeza de que deseja excluir o inventário?",
-  }).onOk(async () => {
+
+  try {
     const status = await inventariosStore.delInventario(_id);
+    console.log(status);
     if (status === 204) {
       Notify.create({ color: "green", message: "Inventário excluído!" });
+      inventarioSelecionado.value = [];
     }
-  });
+  } catch (error) {
+  } finally {
+    mostrarDialog.value = false;
+    inventarioSelecionado.value = [];
+  }
 }
 
 const statusInventarioBtn = computed(() => {
@@ -135,6 +156,9 @@ const statusInventarioBtn = computed(() => {
       break;
     case "Inventariando":
       lblTemp = "Fechar";
+      break;
+    case "Fechado":
+      lblTemp = "Reabrir";
       break;
   }
   return lblTemp;
@@ -153,12 +177,14 @@ function mudarSituacaoInventario() {
       .patch(`v1/restrito/inventario/liberar/${_id}`)
       .then((res) => {
         Notify.create({ color: "green", message: "Inventário liberado!" });
-        router.go();
+        setTimeout((_) => {
+          router.go();
+        }, 1000);
       })
       .catch((err) => {
         Notify.create({
           color: "red",
-          message: `Erro ao liberar inventário: ${err}`,
+          message: `Erro ao liberar inventário: ${err.response.data}`,
         });
       });
   } else if (situacaoAtual === "Inventariando") {
@@ -166,13 +192,21 @@ function mudarSituacaoInventario() {
       .patch(`v1/restrito/inventario/fechar/${_id}`)
       .then((res) => {
         Notify.create({ color: "green", message: "Inventário fechado!" });
+        setTimeout((_) => {
+          router.go();
+        }, 1000);
       })
       .catch((err) => {
         Notify.create({
           color: "red",
-          message: `Erro ao fechar inventário: ${err}`,
+          message: `Erro ao fechar inventário: ${err.response.data}`,
         });
       });
+  } else if (situacaoAtual === "Fechado") {
+    $q.dialog({
+      title: "Reabertura de inventário",
+      message: "Função não implementada!",
+    });
   }
 }
 </script>

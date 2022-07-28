@@ -119,10 +119,9 @@ import { storeToRefs } from "pinia";
 
 const dependenciasStore = useDependenciasStore();
 const setoresStore = useSetoresStore();
-const { setoresDependencias } = storeToRefs(setoresStore);
-const { setoresDepsComNome } = storeToRefs(setoresStore);
+const { setoresDependencias, setoresDepsComNome } = storeToRefs(setoresStore);
 const itensStore = useItensStore();
-const { itensColetados } = storeToRefs(itensStore);
+const { itensColetados, carregando } = storeToRefs(itensStore);
 const itensSelecionados = ref([]);
 const filtro = ref("");
 const setores = ref([]);
@@ -137,6 +136,10 @@ const idItemSelecionado = ref(0);
 const origemItens = ref("");
 const loadingInventarios = ref(false);
 const loadingItens = ref(false);
+
+// watch(itensStore, (v) => {
+//   console.log(v.carregando);
+// });
 
 const colunasItens = reactive([
   {

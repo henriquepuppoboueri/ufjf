@@ -88,11 +88,13 @@ export const useSetoresStore = defineStore({
       try {
         this.carregando = true
         const response = await api.get(`v1/restrito/inventario/setor/dependencia/${idInventario}`)
-        this.setoresDependencias = await response.data;
+        if (response)
+          this.setoresDependencias = await response.data;
       } catch (error) {
         this.error = error;
       } finally {
-        this.carregando = false
+        this.carregando = false;
+
       }
     },
   }

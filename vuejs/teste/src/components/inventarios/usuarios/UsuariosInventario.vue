@@ -1,27 +1,24 @@
 <script setup>
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { Notify } from "quasar";
-import { api } from "boot/axios";
 import { registroPortugues } from "src/helper/functions";
 import { useQuasar } from "quasar";
 import { useUsuariosStore } from "stores/usuarios";
 import { useInventariosStore } from "stores/inventarios";
-import { MutationType, storeToRefs } from "pinia";
+import { storeToRefs } from "pinia";
+import lodash from "lodash";
 
 const inventariosStore = useInventariosStore();
 const { usuariosInventario } = storeToRefs(inventariosStore);
 const usuariosStore = useUsuariosStore();
 const { usuarios } = storeToRefs(usuariosStore);
-// const usuariosLista = ref([]);
 const $q = useQuasar();
 const route = useRoute();
-const router = useRouter();
 const idInventario = ref(null);
 const novoUsuario = ref(null);
 const usuariosSelecionados = ref([]);
 const usuariosListaFiltro = ref([]);
-// const usuariosInventario = ref([]);
 const colunasTblUsuarios = ref([
   {
     name: "id",
@@ -56,18 +53,16 @@ const colunasTblUsuarios = ref([
   },
 ]);
 
-// inventariosStore.$subscribe((mutation, state) => {
-//   console.log(mutation);
-// });
+const usuariosSemVinculo = computed(() => {
+  return lodash.differenceBy(usuarios.value, usuariosInventario.value, "id");
+});
 
 onMounted(async () => {
   if ("idInventario" in route.params) {
     idInventario.value = +route.params.idInventario;
 
     await usuariosStore.buscarUsuarios();
-    // usuariosLista.value = usuariosStore.usuarios;
     await inventariosStore.buscarUsuariosInventario(idInventario.value);
-    // usuariosInventario.value = inventariosStore.usuariosInventario;
   }
 });
 
@@ -77,10 +72,10 @@ function filterFn(val, update, abort) {
   update(() => {
     if (val === "") {
       novoUsuario.value = null;
-      usuariosListaFiltro.value = usuarios.value;
+      usuariosListaFiltro.value = usuariosSemVinculo.value;
     } else {
       const needle = val.toLowerCase();
-      usuariosListaFiltro.value = usuarios.value.filter(
+      usuariosListaFiltro.value = usuariosSemVinculo.value.filter(
         (v) => v.nome.toLowerCase().indexOf(needle) > -1
       );
     }

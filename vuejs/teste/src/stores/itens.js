@@ -88,11 +88,12 @@ export const useItensStore = defineStore({
       try {
         this.carregando = true
         const response = await api.get(`v1/restrito/item/coleta/${idInventario}`)
-        this.itensColetados = await response.data
+        if (response.data.length > 0)
+          this.itensColetados = await response.data
       } catch (error) {
         this.error = error;
       } finally {
-        this.carregando = false
+        this.carregando = false;
       }
     },
 
@@ -105,6 +106,7 @@ export const useItensStore = defineStore({
         this.error = error;
       } finally {
         this.carregando = false
+        console.log('finally: ', this.carregando);
       }
     },
 
@@ -113,9 +115,10 @@ export const useItensStore = defineStore({
       try {
         this.carregando = true
         const response = await api.get(`v1/restrito/item/itens/${idInventario}`)
-        this.itensImportados = await response.data
+        if (response.data.length > 0)
+          this.itensImportados = await response.data
       } catch (error) {
-        this.error = error;
+        this.error = error
       } finally {
         this.carregando = false
       }
@@ -127,7 +130,7 @@ export const useItensStore = defineStore({
         const response = await api.get(`v1/restrito/item/${idItem}`)
         this.itemImportado = await response.data
       } catch (error) {
-        this.error = error;
+        this.error = error
       } finally {
         this.carregando = false
       }
