@@ -1,6 +1,6 @@
 <template>
   <q-dialog v-model="mostrarDialog">
-    <q-card>
+    <q-card class="q-pa-sm">
       <q-card-section class="text-h6 text-center text-bold">
         Confirmação de exclusão
       </q-card-section>
@@ -169,24 +169,36 @@ onMounted(async () => {
   const inventariosResponse = await inventariosStore.buscarInventarios();
 });
 
-function mudarSituacaoInventario() {
+async function mudarSituacaoInventario() {
   const situacaoAtual = inventarioSelecionado.value[0].situacaoInventario.nome;
   const _id = inventarioSelecionado.value[0].id;
   if (situacaoAtual === "Preparando") {
-    api
-      .patch(`v1/restrito/inventario/liberar/${_id}`)
-      .then((res) => {
-        Notify.create({ color: "green", message: "Inventário liberado!" });
-        setTimeout((_) => {
-          router.go();
-        }, 1000);
-      })
-      .catch((err) => {
-        Notify.create({
-          color: "red",
-          message: `Erro ao liberar inventário: ${err.response.data}`,
-        });
+    try {
+      const status = await inventariosStore.liberarInventario(_id);
+      // console.log(status);
+      Notify.create({ color: "green", message: "Inventário liberado!" });
+    } catch (error) {
+      Notify.create({
+        color: "red",
+        message: `Erro ao liberar inventário: ${error}`,
       });
+    } finally {
+    }
+
+    // api
+    //   .patch(`v1/restrito/inventario/liberar/${_id}`)
+    //   .then((res) => {
+    //     Notify.create({ color: "green", message: "Inventário liberado!" });
+    //     setTimeout((_) => {
+    //       router.go();
+    //     }, 1000);
+    //   })
+    //   .catch((err) => {
+    //     Notify.create({
+    //       color: "red",
+    //       message: `Erro ao liberar inventário: ${err.response.data}`,
+    //     });
+    //   });
   } else if (situacaoAtual === "Inventariando") {
     api
       .patch(`v1/restrito/inventario/fechar/${_id}`)
