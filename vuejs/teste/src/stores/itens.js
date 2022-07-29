@@ -106,7 +106,6 @@ export const useItensStore = defineStore({
         this.error = error;
       } finally {
         this.carregando = false
-        console.log('finally: ', this.carregando);
       }
     },
 

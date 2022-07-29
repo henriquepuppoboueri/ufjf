@@ -175,45 +175,23 @@ async function mudarSituacaoInventario() {
   if (situacaoAtual === "Preparando") {
     try {
       const status = await inventariosStore.liberarInventario(_id);
-      // console.log(status);
       Notify.create({ color: "green", message: "Inventário liberado!" });
     } catch (error) {
       Notify.create({
         color: "red",
         message: `Erro ao liberar inventário: ${error}`,
       });
-    } finally {
     }
-
-    // api
-    //   .patch(`v1/restrito/inventario/liberar/${_id}`)
-    //   .then((res) => {
-    //     Notify.create({ color: "green", message: "Inventário liberado!" });
-    //     setTimeout((_) => {
-    //       router.go();
-    //     }, 1000);
-    //   })
-    //   .catch((err) => {
-    //     Notify.create({
-    //       color: "red",
-    //       message: `Erro ao liberar inventário: ${err.response.data}`,
-    //     });
-    //   });
   } else if (situacaoAtual === "Inventariando") {
-    api
-      .patch(`v1/restrito/inventario/fechar/${_id}`)
-      .then((res) => {
-        Notify.create({ color: "green", message: "Inventário fechado!" });
-        setTimeout((_) => {
-          router.go();
-        }, 1000);
-      })
-      .catch((err) => {
-        Notify.create({
-          color: "red",
-          message: `Erro ao fechar inventário: ${err.response.data}`,
-        });
+    try {
+      const status = await inventariosStore.fecharInventario(_id);
+      Notify.create({ color: "green", message: "Inventário fechado!" });
+    } catch (error) {
+      Notify.create({
+        color: "red",
+        message: `Erro ao fechar inventário: ${error}`,
       });
+    }
   } else if (situacaoAtual === "Fechado") {
     $q.dialog({
       title: "Reabertura de inventário",

@@ -88,7 +88,7 @@ const routes = [
           {
             path: 'itens/coletados/:idItem',
             name: 'itemColetado',
-            component: () => import('components/inventarios/itens/item/ItemCad.vue'),
+            component: () => import('components/inventarios/itens/item/ItemColetado.vue'),
           },
           {
             path: 'itens/importados',
@@ -98,7 +98,7 @@ const routes = [
           {
             path: 'itens/importados/:idItem',
             name: 'itemImportado',
-            component: () => import('components/inventarios/itens/item/ItemCad.vue'),
+            component: () => import('components/inventarios/itens/item/ItemImportado.vue'),
           },
           {
             path: 'permissoes',

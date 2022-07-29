@@ -19,10 +19,19 @@ export const useInventariosStore = defineStore({
       try {
         const inventarioResponse = await api
           .patch(`v1/restrito/inventario/liberar/${idInventario}`)
-        this.buscarInventarios();
         return inventarioResponse.status
       } catch (error) {
-        throw new Error(error)
+        throw new Error(error.response.data)
+
+      }
+    },
+    async fecharInventario(idInventario) {
+      try {
+        const inventarioResponse = await api
+          .patch(`v1/restrito/inventario/fechar/${idInventario}`)
+        return inventarioResponse.status
+      } catch (error) {
+        throw new Error(error.message)
       }
     },
 
