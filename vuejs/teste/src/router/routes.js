@@ -1,6 +1,7 @@
 import { extractIdentifiers } from '@vue/compiler-core';
 import { createRouter, createWebHistory } from 'vue-router';
 
+
 const routes = [
   {
     path: "/", redirect: '/inventario',
@@ -36,6 +37,18 @@ const routes = [
     meta: { restrito: false },
     component: () => import("layouts/LoginLayout.vue"),
     children: [{ path: "", component: () => import("pages/LoginPage.vue") }],
+  },
+  {
+    path: "/ferramentas",
+    component: () => import("layouts/MainLayout.vue"),
+    meta: { restrito: true },
+    children: [
+      {
+        path: "",
+        component: () =>
+          import("pages/PatImport.vue"),
+      }
+    ]
   },
   {
     path: "/inventario",

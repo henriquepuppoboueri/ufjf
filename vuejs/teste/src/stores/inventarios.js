@@ -66,6 +66,12 @@ export const useInventariosStore = defineStore({
       // return this.inventarios;
     },
 
+    async buscarInventariosEmPreparacao() {
+      const inventariosResponse = await api.get(`v1/restrito/inventario_preparando`)
+      this.inventarios = inventariosResponse.data
+      // return this.inventarios;
+    },
+
     async addUsuarioInventario(idInventario, usuario) {
       await api
         .post(`v1/restrito/inventario/usuario/${idInventario}`, usuario)

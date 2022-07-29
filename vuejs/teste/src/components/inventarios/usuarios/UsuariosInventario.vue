@@ -1,5 +1,13 @@
 <script setup>
-import { onMounted, ref, watch, computed } from "vue";
+import {
+  onMounted,
+  ref,
+  watch,
+  computed,
+  defineComponent,
+  createApp,
+  reactive,
+} from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { Notify } from "quasar";
 import { registroPortugues } from "src/helper/functions";
@@ -8,6 +16,7 @@ import { useUsuariosStore } from "stores/usuarios";
 import { useInventariosStore } from "stores/inventarios";
 import { storeToRefs } from "pinia";
 import lodash from "lodash";
+import MyQDialog from "components/utils/MyQDialog.vue";
 
 const inventariosStore = useInventariosStore();
 const { usuariosInventario } = storeToRefs(inventariosStore);
@@ -52,6 +61,16 @@ const colunasTblUsuarios = ref([
     sortable: true,
   },
 ]);
+const mostrarDialog = ref(false);
+const mensagem = ref("");
+const titulo = ref("");
+
+function tornarPresidente() {
+  mensagem.value =
+    "Tem certeza de que deseja tornar o usuário selecionado presidente do inventário?";
+  titulo.value = "Definição de presidente";
+  mostrarDialog.value = true;
+}
 
 const usuariosSemVinculo = computed(() => {
   return lodash.differenceBy(usuarios.value, usuariosInventario.value, "id");
@@ -138,9 +157,19 @@ function deletarUsuario() {
     }
   });
 }
+
+function vigiar(val) {
+  console.log(val);
+}
 </script>
 
 <template>
+  <my-q-dialog
+    v-model="mostrarDialog"
+    :mensagem="mensagem"
+    :titulo="titulo"
+    @resposta="vigiar"
+  ></my-q-dialog>
   <div class="col permissoes q-gutter-y-sm q-pa-sm">
     <div class="row q-gutter-x-sm justify-between no-wrap">
       <q-select
@@ -184,13 +213,22 @@ function deletarUsuario() {
       :selected-rows-label="registroPortugues"
     >
     </q-table>
-    <q-btn
-      v-if="usuariosSelecionados.length > 0"
-      color="primary"
-      label="Desvincular"
-      @click="deletarUsuario"
-      :disable="!usuariosSelecionados.length > 0"
-    />
+    <div class="row q-gutter-x-sm" v-if="usuariosSelecionados.length > 0">
+      <q-btn
+        v-if="usuariosSelecionados.length > 0"
+        color="primary"
+        label="Desvincular"
+        @click="deletarUsuario"
+        :disable="!usuariosSelecionados.length > 0"
+      />
+      <q-btn
+        v-if="usuariosSelecionados.length === 1"
+        color="green"
+        label="Tornar presidente"
+        @click="tornarPresidente"
+        :disable="!usuariosSelecionados.length > 0"
+      />
+    </div>
   </div>
 </template>
 

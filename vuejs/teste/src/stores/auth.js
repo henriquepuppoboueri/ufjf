@@ -11,7 +11,7 @@ export const useAuthStore = defineStore({
       erro: null
     })
   },
-  persist: true,
+  // persist: true,
   getters: {
     isUsuarioLogado: (state) => {
       return !!localStorage.getItem('usuarioLogado')

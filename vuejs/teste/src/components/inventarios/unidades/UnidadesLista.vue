@@ -289,6 +289,7 @@ function onSelecionaUnidade(selected) {
       label-key="nome"
       children-key="dependencias"
       no-results-label="Nenhum dado a exibir!"
+      no-nodes-label="Nenhum dado a exibir!"
       @update:selected="onSelecionaUnidade"
     >
     </q-tree>

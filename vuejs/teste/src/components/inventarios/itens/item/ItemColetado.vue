@@ -74,11 +74,10 @@
       :to="{ name: 'itensColetados' }"
     />
   </section>
-  {{ itemColetado }} asas
 </template>
 
 <script setup>
-import { ref, onMounted, onUpdated, watch } from "vue";
+import { ref, onMounted } from "vue";
 import { useUsuariosStore } from "src/stores/usuarios";
 import { useItensColetadosStore } from "src/stores/itensColetados";
 import { useSetoresStore } from "src/stores/setores";
