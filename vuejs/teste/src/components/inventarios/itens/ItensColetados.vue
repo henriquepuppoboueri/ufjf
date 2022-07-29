@@ -3,9 +3,9 @@
     <q-card-section>
       <q-table
         flat
-        :loading="itensStore.carregando"
+        :loading="carregando"
         title="Itens coletados"
-        :rows="itensStore.itensNominais"
+        :rows="itensNominais"
         :columns="colunasItens"
         row-key="id"
         separator="cell"
@@ -112,16 +112,17 @@ import { Notify } from "quasar";
 import { api } from "boot/axios";
 import { diminuiTexto, registroPortugues } from "src/helper/functions";
 import { paginacaoOpcoes } from "src/helper/qtableOpcoes";
-import { useItensStore } from "src/stores/itens.js";
-import { useSetoresStore } from "src/stores/setores.js";
+import { useItensColetadosStore } from "src/stores/itensColetados";
+import { useSetoresStore } from "src/stores/setores";
 import { useDependenciasStore } from "src/stores/dependencias";
 import { storeToRefs } from "pinia";
 
 const dependenciasStore = useDependenciasStore();
 const setoresStore = useSetoresStore();
 const { setoresDependencias, setoresDepsComNome } = storeToRefs(setoresStore);
-const itensStore = useItensStore();
-const { itensColetados, carregando } = storeToRefs(itensStore);
+const itensColetadosStore = useItensColetadosStore();
+const { itensColetados, carregando, itensNominais } =
+  storeToRefs(itensColetadosStore);
 const itensSelecionados = ref([]);
 const filtro = ref("");
 const setores = ref([]);
@@ -238,7 +239,6 @@ function refatoraTexto(colNome, colValor) {
 }
 
 async function renderPage() {
-  itensStore.tipoGetter = "coletados";
   itensColetados.value = [];
   itensSelecionados.value = [];
   const id = route.params.idInventario || false;
@@ -247,7 +247,7 @@ async function renderPage() {
 
   try {
     await setoresStore.buscarSetoresDependencias(id);
-    await itensStore.buscarItensColetados(id);
+    await itensColetadosStore.buscarItensColetados(id);
   } catch (error) {}
 }
 </script>

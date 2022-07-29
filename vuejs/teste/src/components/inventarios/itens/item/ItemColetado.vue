@@ -74,12 +74,13 @@
       :to="{ name: 'itensColetados' }"
     />
   </section>
+  {{ itemColetado }} asas
 </template>
 
 <script setup>
 import { ref, onMounted, onUpdated, watch } from "vue";
 import { useUsuariosStore } from "src/stores/usuarios";
-import { useItensStore } from "src/stores/itens";
+import { useItensColetadosStore } from "src/stores/itensColetados";
 import { useSetoresStore } from "src/stores/setores";
 import { useRouter, useRoute } from "vue-router";
 import { storeToRefs } from "pinia";
@@ -87,13 +88,14 @@ import { useSituacaoStore } from "src/stores/situacao";
 import { useDependenciasStore } from "src/stores/dependencias";
 import { usePlaquetaStore } from "src/stores/plaqueta";
 
+console.clear();
 const plaquetaStore = usePlaquetaStore();
 const dependenciasStore = useDependenciasStore();
 const situacaoStore = useSituacaoStore();
 const router = useRouter();
 const route = useRoute();
 const setoresStore = useSetoresStore();
-const itensStore = useItensStore();
+const itensColetadosStore = useItensColetadosStore();
 const usuariosStore = useUsuariosStore();
 const identificador = ref("");
 const itemDescricao = ref("");
@@ -108,52 +110,41 @@ const { dependencias, dependencia } = storeToRefs(dependenciasStore);
 const { setoresDependencias, setor } = storeToRefs(setoresStore);
 const { situacoes, situacao } = storeToRefs(situacaoStore);
 const { estadoPlaqueta, estadosPlaquetas } = storeToRefs(plaquetaStore);
+const { itemColetado } = storeToRefs(itensColetadosStore);
 const usuario = ref("");
-let itemOrigem = "";
 
 onMounted(async () => {
   const idItem = +route.params.idItem;
   if (!idItem) return;
 
-  const origem = route.path;
-  // let itemOrigem = {};
-  const { itemImportado, itemColetado } = storeToRefs(itensStore);
-
-  if (origem.includes("importados")) {
-    await itensStore.buscarItemImportado(idItem);
-    itemOrigem = itemImportado;
-  } else {
-    await itensStore.buscarItemColetado(idItem);
-    itemOrigem = itemColetado;
-    montaColetado();
-  }
+  await montaColetado(idItem);
 });
 
-async function montaColetado() {
-  await setoresStore.buscarSetoresDependencias(itemOrigem.value.inventario);
-  await setoresStore.buscarSetor(itemOrigem.value.setor);
-  await dependenciasStore.buscarDependencia(itemOrigem.value.dependencia);
-  await dependenciasStore.buscarDependencias(itemOrigem.value.setor);
+async function montaColetado(idItem) {
+  await itensColetadosStore.buscarItemColetado(idItem);
+  // await setoresStore.buscarSetoresDependencias(itemColetado.value.inventario);
+  await setoresStore.buscarSetor(itemColetado.value.setor);
+  await dependenciasStore.buscarDependencia(itemColetado.value.dependencia);
+  await dependenciasStore.buscarDependencias(itemColetado.value.setor);
   await situacaoStore.buscarSituacoes();
-  await situacaoStore.buscarSituacao(itemOrigem.value.situacao);
+  await situacaoStore.buscarSituacao(itemColetado.value.situacao);
   await plaquetaStore.buscarEstadosPlaquetas();
-  await plaquetaStore.buscarEstadoPlaqueta(itemOrigem.value.estadoPlaqueta);
+  await plaquetaStore.buscarEstadoPlaqueta(itemColetado.value.estadoPlaqueta);
 
-  patrimonio.value = itemOrigem.value.patrimonio;
-  identificador.value = itemOrigem.value.identificador;
-  itemDescricao.value = itemOrigem.value.descricao;
-  empenho.value = itemOrigem.value.empenho;
+  patrimonio.value = itemColetado.value.patrimonio;
+  identificador.value = itemColetado.value.identificador;
+  itemDescricao.value = itemColetado.value.descricao;
+  empenho.value = itemColetado.value.empenho;
 
-  dependenciaAtual.value = itemOrigem.value.dependencia.nome;
-  nomeFornecedor.value = itemOrigem.value.fornecedor;
-  usuario.value = itemOrigem.value.usuario;
-  situacao.value = extraiSituacao(itemOrigem.value.situacao);
-  itemLocalizacao.value = itemOrigem.value.localizacao;
-  itemObservacao.value = itemOrigem.value.observacao;
+  dependenciaAtual.value = itemColetado.value.dependencia;
+  nomeFornecedor.value = itemColetado.value.fornecedor;
+  usuario.value = itemColetado.value.usuario;
+  situacao.value = extraiSituacao(itemColetado.value.situacao);
+  itemLocalizacao.value = itemColetado.value.localizacao;
+  itemObservacao.value = itemColetado.value.observacao;
 }
+
 function extraiSituacao(idSituacao) {
   return situacoes.value.find((situ) => situ.id === idSituacao);
 }
-
-watch(setor, (nv) => console.log(nv));
 </script>

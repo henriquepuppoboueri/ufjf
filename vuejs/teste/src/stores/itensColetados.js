@@ -4,25 +4,22 @@ import { useSetoresStore } from 'src/stores/setores'
 
 const setoresStore = useSetoresStore()
 
-export const useItensStore = defineStore({
-  id: 'itens',
+export const useItensColetadosStore = defineStore({
+  id: 'itensColetados',
   state: () => ({
-    itensImportados: [],
     itensColetados: [],
-    itemImportado: null,
     itemColetado: null,
-    tipoGetter: '',
     carregando: false,
     erro: null,
   }),
   getters: {
     itensNominais(state) {
+
       try {
         state.carregando = true;
-        const itens = state.tipoGetter === 'coletados' ? state.itensColetados : state.itensImportados
 
-        if (itens.length > 0) {
-          return itens.map(item => {
+        if (state.itensColetados.length > 0) {
+          const itensLista = state.itensColetados.map(item => {
             const setor = setoresStore.buscarSetorPorId(item.setor)
             let dependenciaNome = 'Sem dependência'
             if (
@@ -37,8 +34,9 @@ export const useItensStore = defineStore({
               ...item,
               setor: setor.nome,
               dependencia: dependenciaNome,
-            };
+            }
           })
+          return itensLista
         }
       } catch (error) {
 
@@ -108,31 +106,5 @@ export const useItensStore = defineStore({
         this.carregando = false
       }
     },
-
-
-    async buscarItensImportados(idInventario) {
-      try {
-        this.carregando = true
-        const response = await api.get(`v1/restrito/item/itens/${idInventario}`)
-        if (response.data.length > 0)
-          this.itensImportados = await response.data
-      } catch (error) {
-        this.error = error
-      } finally {
-        this.carregando = false
-      }
-    },
-
-    async buscarItemImportado(idItem) {
-      try {
-        this.carregando = true
-        const response = await api.get(`v1/restrito/item/${idItem}`)
-        this.itemImportado = await response.data
-      } catch (error) {
-        this.error = error
-      } finally {
-        this.carregando = false
-      }
-    }
   }
 });
