@@ -91,5 +91,14 @@ export const useInventariosStore = defineStore({
       this.usuariosInventario = usuariosInventarioResponse.data;
     },
 
+    async setUsuarioInventarioPresidente(idInventario, idUsuario) {
+      const response = await api.patch(`/v1/restrito/inventario/usuario/presidente/${idInventario}&${idUsuario}`)
+      await this.buscarUsuariosInventario(idInventario);
+    },
+
+    async setUsuarioInventarioNormal(idInventario, idUsuario) {
+      const response = await api.patch(`/v1/restrito/inventario/usuario/normal/${idInventario}&${idUsuario}`)
+      await this.buscarUsuariosInventario(idInventario);
+    }
   }
 })

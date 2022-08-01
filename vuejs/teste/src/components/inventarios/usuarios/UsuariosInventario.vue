@@ -63,35 +63,68 @@ const colunasTblUsuarios = ref([
   },
 ]);
 
-function tornarPresidente() {
+function toggleTipoUsuarioInventario() {
+  if (usuariosSelecionados.value.length > 0) {
+    const usuario = usuariosSelecionados.value[0];
+
+    // Usuário era presidente
+    let tituloInicio = "Destituição de presidente";
+    let mensagemInicio =
+      "Tem certeza de que deseja destituir o usuário selecionado do inventário?";
+    let mensagemSucesso = `Usuário ${usuario.nome} destituído como presidente!`;
+    let mensagemErro = "";
+    let api = inventariosStore.setUsuarioInventarioNormal;
+
+    // Usuário não era presidente
+    if (!usuario.presidente) {
+      tituloInicio = "Definição de presidente";
+      mensagemInicio =
+        "Tem certeza de que deseja definir o usuário selecionado presidente do inventário?";
+      mensagemSucesso = `Usuário ${usuario.nome} definido como presidente!`;
+      mensagemErro = "";
+      api = inventariosStore.setUsuarioInventarioPresidente;
+    }
+
+    mostrarDialogPresidente(
+      tituloInicio,
+      mensagemInicio,
+      mensagemSucesso,
+      mensagemErro,
+      api,
+      idInventario,
+      usuario.id
+    );
+  }
+}
+function mostrarDialogPresidente(
+  tituloInicio,
+  mensagemInicio,
+  mensagemSucesso,
+  mensagemErro,
+  api,
+  idInventario,
+  idUsuario
+) {
   $q.dialog({
-    title: "Definição de presidente",
-    message:
-      "Tem certeza de que deseja tornar o usuário selecionado presidente do inventário?",
+    title: `${tituloInicio}`,
+    message: `${mensagemInicio}`,
     cancel: { type: "button", label: "Cancelar", color: "primary" },
     ok: { type: "button", label: "Confirmar", color: "green" },
-  }).onOk(() => {
-    if (usuariosSelecionados.value.length > 0) {
-      usuariosSelecionados.value.forEach(async (usuario) => {
-        try {
-          await inventariosStore.delUsuarioInventario(
-            idInventario.value,
-            usuario.id
-          );
-          Notify.create({
-            color: "green",
-            message: `Usuário ${usuario.nome} desvinculado!`,
-          });
-        } catch (err) {
-          Notify.create({
-            color: "red",
-            message: `Erro ao desvincular usuário: ${err}`,
-          });
-        } finally {
-          novoUsuario.value = null;
-          usuariosSelecionados.value = [];
-        }
+  }).onOk(async () => {
+    try {
+      await api(idInventario.value, idUsuario);
+      Notify.create({
+        color: "green",
+        message: `${mensagemSucesso}`,
       });
+    } catch (err) {
+      Notify.create({
+        color: "red",
+        message: ` ${err}`,
+      });
+    } finally {
+      novoUsuario.value = null;
+      usuariosSelecionados.value = [];
     }
   });
 }
@@ -240,8 +273,12 @@ async function deletarUsuario() {
       <q-btn
         v-if="usuariosSelecionados.length === 1"
         color="green"
-        label="Tornar presidente"
-        @click="tornarPresidente"
+        :label="`${
+          usuariosSelecionados[0].presidente
+            ? 'Destituir presidente'
+            : 'Definir como presidente'
+        }`"
+        @click="toggleTipoUsuarioInventario"
         :disable="!usuariosSelecionados.length === 1"
       />
     </div>
