@@ -1,17 +1,17 @@
 <script setup>
 import { onMounted, onUnmounted, onUpdated } from "vue";
 
-const props = defineProps(["modelValue", "titulo", "mensagem"]);
-const emits = defineEmits("update:modelValue", "resposta");
+const props = defineProps(["modelValue", "evento", "titulo", "mensagem"]);
+const emit = defineEmits(["update:modelValue", "resposta"]);
 
-onUnmounted(() => {
-  console.log("unmounted");
-  emits("resposta", true);
-});
+function enviarResposta(resposta) {
+  emit("resposta", { evento: props.evento, resposta });
+}
 </script>
 
 <template>
-  <q-dialog persistent :model-value="modelValue">
+  <!-- <q-dialog persistent :model-value="modelValue" > -->
+  <q-dialog persistent :model-value="true">
     <q-card class="q-pa-sm">
       <q-card-section class="text-h6 text-center text-bold">
         {{ titulo }}
@@ -27,14 +27,14 @@ onUnmounted(() => {
           dense
           color="red"
           label="Não"
-          @click="emits('resposta', false)"
+          @click="enviarResposta(false)"
         />
         <q-btn
           v-close-popup
           dense
           color="green"
           label="Sim"
-          @click="emits('resposta', true)"
+          @click="enviarResposta(true)"
         />
       </q-card-actions>
     </q-card>

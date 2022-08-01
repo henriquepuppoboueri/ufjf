@@ -1,14 +1,6 @@
 <script setup>
-import {
-  onMounted,
-  ref,
-  watch,
-  computed,
-  defineComponent,
-  createApp,
-  reactive,
-} from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { onMounted, ref, computed } from "vue";
+import { useRoute } from "vue-router";
 import { Notify } from "quasar";
 import { registroPortugues } from "src/helper/functions";
 import { useQuasar } from "quasar";
@@ -16,7 +8,6 @@ import { useUsuariosStore } from "stores/usuarios";
 import { useInventariosStore } from "stores/inventarios";
 import { storeToRefs } from "pinia";
 import lodash from "lodash";
-import MyQDialog from "components/utils/MyQDialog.vue";
 
 const inventariosStore = useInventariosStore();
 const { usuariosInventario } = storeToRefs(inventariosStore);
@@ -60,16 +51,49 @@ const colunasTblUsuarios = ref([
     field: "email",
     sortable: true,
   },
+  {
+    name: "tipo",
+    required: true,
+    label: "É presidente?",
+    align: "left",
+    // field: (row) => row.name,
+    field: "presidente",
+    format: (val) => `${val}`,
+    sortable: true,
+  },
 ]);
-const mostrarDialog = ref(false);
-const mensagem = ref("");
-const titulo = ref("");
 
 function tornarPresidente() {
-  mensagem.value =
-    "Tem certeza de que deseja tornar o usuário selecionado presidente do inventário?";
-  titulo.value = "Definição de presidente";
-  mostrarDialog.value = true;
+  $q.dialog({
+    title: "Definição de presidente",
+    message:
+      "Tem certeza de que deseja tornar o usuário selecionado presidente do inventário?",
+    cancel: { type: "button", label: "Cancelar", color: "primary" },
+    ok: { type: "button", label: "Confirmar", color: "green" },
+  }).onOk(() => {
+    if (usuariosSelecionados.value.length > 0) {
+      usuariosSelecionados.value.forEach(async (usuario) => {
+        try {
+          await inventariosStore.delUsuarioInventario(
+            idInventario.value,
+            usuario.id
+          );
+          Notify.create({
+            color: "green",
+            message: `Usuário ${usuario.nome} desvinculado!`,
+          });
+        } catch (err) {
+          Notify.create({
+            color: "red",
+            message: `Erro ao desvincular usuário: ${err}`,
+          });
+        } finally {
+          novoUsuario.value = null;
+          usuariosSelecionados.value = [];
+        }
+      });
+    }
+  });
 }
 
 const usuariosSemVinculo = computed(() => {
@@ -127,11 +151,13 @@ async function addUsuarioInventario() {
   }
 }
 
-function deletarUsuario() {
+async function deletarUsuario() {
   $q.dialog({
     title: "Desvinculação de usuário",
     message:
       "Tem certeza de que deseja desvincular o(s) usuário(s) do inventário?",
+    cancel: { type: "button", label: "Cancelar", color: "primary" },
+    ok: { type: "button", label: "Confirmar", color: "green" },
   }).onOk(() => {
     if (usuariosSelecionados.value.length > 0) {
       usuariosSelecionados.value.forEach(async (usuario) => {
@@ -157,19 +183,9 @@ function deletarUsuario() {
     }
   });
 }
-
-function vigiar(val) {
-  console.log(val);
-}
 </script>
 
 <template>
-  <my-q-dialog
-    v-model="mostrarDialog"
-    :mensagem="mensagem"
-    :titulo="titulo"
-    @resposta="vigiar"
-  ></my-q-dialog>
   <div class="col permissoes q-gutter-y-sm q-pa-sm">
     <div class="row q-gutter-x-sm justify-between no-wrap">
       <q-select
@@ -226,7 +242,7 @@ function vigiar(val) {
         color="green"
         label="Tornar presidente"
         @click="tornarPresidente"
-        :disable="!usuariosSelecionados.length > 0"
+        :disable="!usuariosSelecionados.length === 1"
       />
     </div>
   </div>
