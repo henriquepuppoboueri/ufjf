@@ -39,69 +39,43 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, onUpdated, watch, computed } from "vue";
-import { onBeforeRouteLeave, useRoute, useRouter } from "vue-router";
-import { api } from "boot/axios";
-import { date, Notify } from "quasar";
+import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import { useInventariosStore } from "stores/inventarios";
+import { storeToRefs } from "pinia";
+// import { useItensImportadosStore } from "src/stores/itensImportados";
+// import { useItensColetadosStore } from "src/stores/itensColetados";
 
-import ItensColetados from "./itens/ItensColetados.vue";
-import DependenciaLista from "./unidades/UnidadesLista.vue";
-
+// const itensImportadosStore = useItensColetadosStore();
+// const { itensImportados } = storeToRefs(itensImportadosStore);
+// const itensColetadosStore = useItensColetadosStore();
+// const { itensColetados } = storeToRefs(itensColetadosStore);
+// const { buscarItensImportados } = useItensImportadosStore();
+// const { buscarItensColetados } = useItensColetadosStore();
+const inventariosStore = useInventariosStore();
+const { buscarInventario } = useInventariosStore();
+const { inventario } = storeToRefs(inventariosStore);
 const tabSelecionada = ref("itens_coletados");
 const id = ref(0);
-const modoEdicao = ref(false);
 const route = useRoute();
-const router = useRouter();
-const mostrarTblPermissoes = ref(false);
-const dataCriacao = ref("30/06/2022");
-const selected = reactive([]);
-const inventarioDescricao = ref("");
-const statusAtual = ref("");
+
 const nomeInventario = ref("");
-const usuarios = ref([]);
-const colunas = ref([
-  {
-    name: "usuario",
-    required: true,
-    label: "Usuário",
-    align: "left",
-    // field: (row) => row.name,
-    field: "usuario",
-    format: (val) => `${val}`,
-    sortable: true,
-  },
-  {
-    name: "siape",
-    align: "left",
-    label: "SIAPE",
-    field: "siape",
-    sortable: true,
-  },
-  {
-    name: "email",
-    align: "left",
-    label: "E-mail",
-    field: "email",
-    sortable: true,
-  },
-]);
 
 // onBeforeRouteLeave((to, from, next) => {
 //   console.log("beforeLeave");
 //   console.log(to, from);
 // });
 
-onMounted(() => {
+onMounted(async () => {
   if ("idInventario" in route.params) {
     // modo de edição ou visualização
     id.value = +route.params.idInventario;
 
-    api.get(`v1/restrito/inventario/${id.value}`).then((res) => {
-      const inventario = res.data;
-      nomeInventario.value = inventario.nome;
-    });
-  } else {
-    return;
+    // await buscarItensColetados(id.value);
+    // await buscarItensImportados(id.value);
+
+    await buscarInventario(id.value);
+    nomeInventario.value = inventario.value.nome;
   }
 });
 </script>

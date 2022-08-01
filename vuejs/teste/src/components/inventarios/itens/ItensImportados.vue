@@ -2,9 +2,9 @@
   <q-card square>
     <q-card-section>
       <q-table
-        :loading="itensStore.carregando"
+        :loading="carregando"
         title="Itens importados"
-        :rows="itensStore.itensNominais"
+        :rows="itensNominais"
         :columns="colunasItens"
         row-key="id"
         separator="cell"
@@ -87,34 +87,22 @@
 
 <script setup>
 import { ref, reactive, watch, computed, onMounted } from "vue";
-import { onBeforeRouteUpdate, useRoute, useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { diminuiTexto, registroPortugues } from "src/helper/functions";
 import { paginacaoOpcoes } from "src/helper/qtableOpcoes";
-import { useItensStore } from "src/stores/itens.js";
+import { useItensImportadosStore } from "src/stores/itensImportados.js";
 import { useSetoresStore } from "src/stores/setores.js";
-import { useDependenciasStore } from "src/stores/dependencias";
 import { storeToRefs } from "pinia";
 
-const dependenciasStore = useDependenciasStore();
 const setoresStore = useSetoresStore();
-const { setoresDependencias } = storeToRefs(setoresStore);
-const { setoresDepsComNome } = storeToRefs(setoresStore);
-const itensStore = useItensStore();
-const { itensImportados } = storeToRefs(itensStore);
+const itensImportadosStore = useItensImportadosStore();
+const { itensImportados, carregando, itensNominais } =
+  storeToRefs(itensImportadosStore);
 const itensSelecionados = ref([]);
 const filtro = ref("");
-const setores = ref([]);
-// const { setores } = storeToRefs();
-const dependencias = ref([]);
+
 const router = useRouter();
 const route = useRoute();
-const inventarios = reactive([]);
-// const itensInventario = ref([]);
-const idInventario = ref(0);
-const idItemSelecionado = ref(0);
-const origemItens = ref("");
-const loadingInventarios = ref(false);
-const loadingItens = ref(false);
 
 const colunasItens = reactive([
   {
@@ -162,15 +150,14 @@ onMounted(() => {
   renderPage();
 });
 
-watch(
-  () => route.path,
-  (to, from) => {
-    renderPage();
-  }
-);
+// watch(
+//   () => route.path,
+//   (to, from) => {
+//     renderPage();
+//   }
+// );
 
 watch(itensSelecionados, (nv, ov) => {
-  console.log();
   if (nv.length > 1) {
     itensSelecionados.value.shift();
   }
@@ -194,7 +181,6 @@ function refatoraTexto(colNome, colValor) {
 }
 
 async function renderPage() {
-  itensStore.tipoGetter = "importados";
   itensImportados.value = [];
   itensSelecionados.value = [];
   const id = route.params.idInventario || false;
@@ -203,7 +189,7 @@ async function renderPage() {
 
   try {
     await setoresStore.buscarSetoresDependencias(id);
-    await itensStore.buscarItensImportados(id);
+    await itensImportadosStore.buscarItensImportados(id);
   } catch (error) {
   } finally {
   }

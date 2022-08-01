@@ -20,13 +20,13 @@ const novoUsuario = ref(null);
 const usuariosSelecionados = ref([]);
 const usuariosListaFiltro = ref([]);
 const colunasTblUsuarios = ref([
-  {
-    name: "id",
-    align: "left",
-    label: "ID",
-    field: "id",
-    sortable: true,
-  },
+  // {
+  //   name: "id",
+  //   align: "left",
+  //   label: "ID",
+  //   field: "id",
+  //   sortable: true,
+  // },
   {
     name: "login",
     required: true,
@@ -51,16 +51,15 @@ const colunasTblUsuarios = ref([
     field: "email",
     sortable: true,
   },
-  {
-    name: "tipo",
-    required: true,
-    label: "É presidente?",
-    align: "left",
-    // field: (row) => row.name,
-    field: "presidente",
-    format: (val) => `${val}`,
-    sortable: true,
-  },
+  // {
+  //   name: "tipo",
+  //   required: true,
+  //   label: "É presidente?",
+  //   align: "left",
+  //   field: "presidente",
+  //   format: (val) => `${val}`,
+  //   sortable: true,
+  // },
 ]);
 
 function toggleTipoUsuarioInventario() {
@@ -68,9 +67,9 @@ function toggleTipoUsuarioInventario() {
     const usuario = usuariosSelecionados.value[0];
 
     // Usuário era presidente
-    let tituloInicio = "Destituição de presidente";
+    let tituloInicio = "Revogação de presidência";
     let mensagemInicio =
-      "Tem certeza de que deseja destituir o usuário selecionado do inventário?";
+      "Tem certeza de que deseja revogar o status de presidente do usuário selecionado?";
     let mensagemSucesso = `Usuário ${usuario.nome} destituído como presidente!`;
     let mensagemErro = "";
     let api = inventariosStore.setUsuarioInventarioNormal;

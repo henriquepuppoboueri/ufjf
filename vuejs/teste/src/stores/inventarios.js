@@ -57,7 +57,7 @@ export const useInventariosStore = defineStore({
       const inventarioResponse = await api.get(
         `v1/restrito/inventario/${idInventario}`
       );
-      this.inventario = inventarioResponse.data
+      this.inventario = await inventarioResponse.data
     },
 
     async buscarInventarios() {
@@ -68,7 +68,7 @@ export const useInventariosStore = defineStore({
 
     async buscarInventariosEmPreparacao() {
       const inventariosResponse = await api.get(`v1/restrito/inventario_preparando`)
-      this.inventarios = inventariosResponse.data
+      this.inventarios = await inventariosResponse.data
       // return this.inventarios;
     },
 
@@ -88,7 +88,7 @@ export const useInventariosStore = defineStore({
       const usuariosInventarioResponse = await api.get(
         `v1/restrito/inventario/usuario/${idInventario}`
       );
-      this.usuariosInventario = usuariosInventarioResponse.data;
+      this.usuariosInventario = await usuariosInventarioResponse.data;
     },
 
     async setUsuarioInventarioPresidente(idInventario, idUsuario) {

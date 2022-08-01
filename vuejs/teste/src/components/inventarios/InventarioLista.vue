@@ -135,12 +135,12 @@ async function excluirInventario() {
 
   try {
     const status = await inventariosStore.delInventario(_id);
-    console.log(status);
     if (status === 204) {
       Notify.create({ color: "green", message: "Inventário excluído!" });
       inventarioSelecionado.value = [];
     }
   } catch (error) {
+    console.log(error);
   } finally {
     mostrarDialog.value = false;
     inventarioSelecionado.value = [];
@@ -165,7 +165,6 @@ const statusInventarioBtn = computed(() => {
 });
 
 onMounted(async () => {
-  // inventarios.value = await inventariosStore.buscarInventarios();
   const inventariosResponse = await inventariosStore.buscarInventarios();
 });
 

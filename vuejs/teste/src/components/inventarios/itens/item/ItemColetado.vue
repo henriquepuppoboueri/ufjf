@@ -1,7 +1,4 @@
 <template>
-  <!-- <header>
-    <h5 class="q-my-sm text-center">Item X</h5>
-  </header> -->
   <section>
     <q-form class="col q-ma-sm q-gutter-y-sm">
       <q-input outlined v-model="patrimonio" label="Patrimônio" dense />
@@ -78,10 +75,9 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { useUsuariosStore } from "src/stores/usuarios";
 import { useItensColetadosStore } from "src/stores/itensColetados";
 import { useSetoresStore } from "src/stores/setores";
-import { useRouter, useRoute } from "vue-router";
+import { useRoute } from "vue-router";
 import { storeToRefs } from "pinia";
 import { useSituacaoStore } from "src/stores/situacao";
 import { useDependenciasStore } from "src/stores/dependencias";
@@ -91,16 +87,13 @@ console.clear();
 const plaquetaStore = usePlaquetaStore();
 const dependenciasStore = useDependenciasStore();
 const situacaoStore = useSituacaoStore();
-const router = useRouter();
 const route = useRoute();
 const setoresStore = useSetoresStore();
 const itensColetadosStore = useItensColetadosStore();
-const usuariosStore = useUsuariosStore();
 const identificador = ref("");
 const itemDescricao = ref("");
 const dependenciaAtual = ref("");
 const empenho = ref("");
-const estadoPlaquetaLista = ref([]);
 const nomeFornecedor = ref("");
 const itemLocalizacao = ref("");
 const itemObservacao = ref("");
@@ -116,10 +109,10 @@ onMounted(async () => {
   const idItem = +route.params.idItem;
   if (!idItem) return;
 
-  await montaColetado(idItem);
+  await montaForm(idItem);
 });
 
-async function montaColetado(idItem) {
+async function montaForm(idItem) {
   await itensColetadosStore.buscarItemColetado(idItem);
   // await setoresStore.buscarSetoresDependencias(itemColetado.value.inventario);
   await setoresStore.buscarSetor(itemColetado.value.setor);

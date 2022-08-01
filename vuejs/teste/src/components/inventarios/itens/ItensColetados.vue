@@ -126,21 +126,15 @@ const { itensColetados, carregando, itensNominais } =
 const itensSelecionados = ref([]);
 const filtro = ref("");
 const setores = ref([]);
-// const { setores } = storeToRefs();
 const dependencias = ref([]);
 const router = useRouter();
 const route = useRoute();
 const inventarios = reactive([]);
-// const itensInventario = ref([]);
 const idInventario = ref(0);
 const idItemSelecionado = ref(0);
 const origemItens = ref("");
 const loadingInventarios = ref(false);
 const loadingItens = ref(false);
-
-// watch(itensStore, (v) => {
-//   console.log(v.carregando);
-// });
 
 const colunasItens = reactive([
   {
