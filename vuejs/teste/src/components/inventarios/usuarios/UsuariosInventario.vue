@@ -67,8 +67,11 @@ const presidente = computed(() => {
     .filter((usuario) => usuario.presidente)
     .map((usuario2) => usuario2.nome);
   return presidentes.length > 0
-    ? presidentes
-    : "Sem presidente. Selecionar na tabela abaixo.";
+    ? { temPresidente: true, value: presidentes }
+    : {
+        temPresidente: false,
+        value: "Sem presidente. Selecionar na tabela abaixo.",
+      };
 });
 
 function toggleTipoUsuarioInventario() {
@@ -232,8 +235,9 @@ async function deletarUsuario() {
       outlined
       type="text"
       label="Presidente"
+      :model-value="presidente.value"
       disable
-      :model-value="presidente"
+      :bg-color="presidente.temPresidente ? 'green-2' : 'red-2'"
     />
     <q-separator spaced />
     <div class="row q-gutter-x-sm justify-between no-wrap">

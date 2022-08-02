@@ -72,12 +72,13 @@ const routes = [
       },
       {
         path: "v/:idInventario",
-        name: 'view',
+        name: 'verInventario',
         component: () => import("components/inventarios/InventarioVer.vue"),
         children: [
           {
             path: '',
-            component: () => import('components/inventarios/InventarioStats.vue'),
+            // component: () => import('components/inventarios/InventarioStats.vue'),
+            redirect: { name: 'resumoSetores' }
           },
           {
             path: 'resumo',

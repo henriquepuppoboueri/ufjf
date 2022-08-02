@@ -12,9 +12,8 @@ onMounted(() => {
     // modo de edição ou visualização
     const id = +route.params.idInventario;
 
-    api.patch(`v1/restrito/inventario/usuario/qtdecoleta/${id}`).then((res) => {
+    api.get(`v1/restrito/inventario/usuario/qtdecoleta/${id}`).then((res) => {
       resumo.value = res.data;
-      console.log(res.data);
       temDados.value = !!resumo.value;
     });
   } else return;
@@ -24,27 +23,32 @@ onMounted(() => {
 <template>
   <div v-if="temDados">
     <div v-for="item in resumo" :key="item.usuario">
-      {{ item.coleta }}
-      <h5>Usuário: {{ item.usuario || "Sem nome" }}</h5>
-      <div>
-        <p class="q-mb-sm" v-for="coletado in item.coleta" :key="coletado.data">
-          {{ coletado.data }} - {{ coletado.qtde }}
-        </p>
-        <q-table
-          :title="item.usuario || 'Sem nome'"
-          :data="item.coleta"
-          :columns="[
-            {
-              name: 'data',
-              align: 'left',
-              label: 'Data',
-              field: 'data',
-            },
-            { name: 'qtde', align: 'left', label: 'Quantidade', field: 'qtde' },
-          ]"
-          row-key="name"
-        />
-      </div>
+      <q-table
+        flat
+        hide-pagination
+        square
+        :bordered="false"
+        :title="item.usuario.nome || 'Sem nome'"
+        :rows="item.coleta"
+        :rows-per-page-options="[0]"
+        :columns="[
+          {
+            name: 'data',
+            align: 'left',
+            label: 'Data',
+            field: 'data',
+            sortable: true,
+          },
+          {
+            name: 'qtde',
+            align: 'left',
+            label: 'Quantidade',
+            field: 'qtde',
+            sortable: true,
+          },
+        ]"
+        row-key="data"
+      />
       <q-separator spaced />
     </div>
   </div>
