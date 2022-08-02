@@ -307,5 +307,5 @@ async function deletarUsuario() {
 
 <style lang="sass">
 .q-dialog-plugin
-  padding: 1rem
+  // padding: 1rem
 </style>

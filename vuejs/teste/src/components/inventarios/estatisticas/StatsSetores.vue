@@ -54,7 +54,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div v-if="temDados">
+  <div class="col q-gutter-y-md" v-if="temDados">
     <div v-for="item in resumo.setores" :key="item.setor.id">
       <q-table
         flat
@@ -89,7 +89,7 @@ onMounted(() => {
           </q-tr>
         </template>
       </q-table>
-      <q-separator spaced />
+      <q-separator class="no-margin" spaced />
     </div>
   </div>
   <div v-if="!temDados">

@@ -6,6 +6,22 @@ import { api } from "boot/axios";
 const route = useRoute();
 const resumo = ref([]);
 const temDados = ref(false);
+const colunas = [
+  {
+    name: "data",
+    align: "left",
+    label: "Data",
+    field: "data",
+    sortable: true,
+  },
+  {
+    name: "qtde",
+    align: "left",
+    label: "Quantidade",
+    field: "qtde",
+    sortable: true,
+  },
+];
 
 onMounted(() => {
   if ("idInventario" in route.params) {
@@ -18,38 +34,36 @@ onMounted(() => {
     });
   } else return;
 });
+
+function somaQtde(item) {
+  return item.coleta.map((i) => i.qtde).reduce((pv, cv) => pv + cv);
+}
 </script>
 
 <template>
-  <div v-if="temDados">
+  <div class="col q-gutter-y-md" v-if="temDados">
     <div v-for="item in resumo" :key="item.usuario">
       <q-table
         flat
         hide-pagination
         square
         :bordered="false"
-        :title="item.usuario.nome || 'Sem nome'"
+        :title="item.usuario.nome"
         :rows="item.coleta"
+        :columns="colunas"
         :rows-per-page-options="[0]"
-        :columns="[
-          {
-            name: 'data',
-            align: 'left',
-            label: 'Data',
-            field: 'data',
-            sortable: true,
-          },
-          {
-            name: 'qtde',
-            align: 'left',
-            label: 'Quantidade',
-            field: 'qtde',
-            sortable: true,
-          },
-        ]"
         row-key="data"
-      />
-      <q-separator spaced />
+      >
+        <template v-slot:bottom-row>
+          <q-tr>
+            <q-td class="text-uppercase text-bold text-left">total</q-td>
+            <q-td class="text-bold text-left">
+              {{ somaQtde(item) }}
+            </q-td>
+          </q-tr>
+        </template>
+      </q-table>
+      <q-separator class="no-margin" spaced />
     </div>
   </div>
   <div v-if="!temDados">
