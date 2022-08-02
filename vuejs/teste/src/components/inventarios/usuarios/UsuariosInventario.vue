@@ -62,6 +62,15 @@ const colunasTblUsuarios = ref([
   // },
 ]);
 
+const presidente = computed(() => {
+  const presidentes = usuariosInventario.value
+    .filter((usuario) => usuario.presidente)
+    .map((usuario2) => usuario2.nome);
+  return presidentes.length > 0
+    ? presidentes
+    : "Sem presidente. Selecionar na tabela abaixo.";
+});
+
 function toggleTipoUsuarioInventario() {
   if (usuariosSelecionados.value.length > 0) {
     const usuario = usuariosSelecionados.value[0];
@@ -219,6 +228,14 @@ async function deletarUsuario() {
 
 <template>
   <div class="col permissoes q-gutter-y-sm q-pa-sm">
+    <q-input
+      outlined
+      type="text"
+      label="Presidente"
+      disable
+      :model-value="presidente"
+    />
+    <q-separator spaced />
     <div class="row q-gutter-x-sm justify-between no-wrap">
       <q-select
         class="fit"
@@ -274,7 +291,7 @@ async function deletarUsuario() {
         color="green"
         :label="`${
           usuariosSelecionados[0].presidente
-            ? 'Destituir presidente'
+            ? 'Revogar presidência'
             : 'Definir como presidente'
         }`"
         @click="toggleTipoUsuarioInventario"

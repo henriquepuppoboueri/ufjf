@@ -99,7 +99,6 @@ export const useItensColetadosStore = defineStore({
       try {
         this.carregando = true
         const response = await api.get(`v1/restrito/coleta/${idItem}`)
-        console.log(response);
         this.itemColetado = await response.data
       } catch (error) {
         this.error = error;

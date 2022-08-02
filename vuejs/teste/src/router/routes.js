@@ -82,7 +82,19 @@ const routes = [
           {
             path: 'resumo',
             name: 'resumo',
-            component: () => import('components/inventarios/InventarioStats.vue'),
+            component: () => import('components/inventarios/estatisticas/InventarioStats.vue'),
+            children: [
+              {
+                path: 'setores',
+                name: 'resumoSetores',
+                component: () => import('components/inventarios/estatisticas/StatsSetores.vue'),
+              },
+              {
+                path: 'usuarios',
+                name: 'resumoUsuarios',
+                component: () => import('components/inventarios/estatisticas/StatsUsuarios.vue'),
+              },
+            ]
           },
           {
             path: 'unidades',

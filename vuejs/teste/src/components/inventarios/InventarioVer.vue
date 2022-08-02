@@ -6,7 +6,17 @@
       dense
       class="bg-red text-white shadow-none"
     >
-      <q-btn class="btn-nav" :to="{ name: 'resumo' }">RESUMO</q-btn>
+      <q-btn-dropdown auto-close stretch flat label="Resumo">
+        <q-list>
+          <q-item clickable :to="{ name: 'resumoSetores' }" exact>
+            <q-item-section>Por setor</q-item-section>
+          </q-item>
+          <q-item clickable :to="{ name: 'resumoUsuarios' }" exact>
+            <q-item-section>Por usuário</q-item-section>
+          </q-item>
+        </q-list>
+      </q-btn-dropdown>
+      <!-- <q-btn class="btn-nav" :to="{ name: 'resumo' }">RESUMO</q-btn> -->
       <q-btn-dropdown auto-close stretch flat label="Itens">
         <q-list>
           <q-item clickable :to="{ name: 'itensColetados' }" exact>
