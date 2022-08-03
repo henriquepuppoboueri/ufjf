@@ -16,6 +16,7 @@ export const useUsuariosStore = defineStore({
       try {
         this.carregando = true
         const response = await api.post(`v1/restrito/usuarios`, usuario)
+        this.buscarUsuarios()
         return response;
       } catch (error) {
         this.error = error
@@ -23,10 +24,25 @@ export const useUsuariosStore = defineStore({
         this.carregando = false
       }
     },
+
     async editUsuario(idUsuario, usuario) {
       try {
         this.carregando = true
         const response = await api.put(`v1/restrito/usuarios/${idUsuario}`, usuario)
+        this.buscarUsuarios()
+        return response;
+      } catch (error) {
+        this.error = error
+      } finally {
+        this.carregando = false
+      }
+    },
+
+    async delUsuario(idUsuario) {
+      try {
+        this.carregando = true
+        const response = await api.delete(`v1/restrito/usuarios/${idUsuario}`)
+        this.buscarUsuarios()
         return response;
       } catch (error) {
         this.error = error

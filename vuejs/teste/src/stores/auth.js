@@ -34,13 +34,18 @@ export const useAuthStore = defineStore({
         this.carregando = false
       }
     },
+
     carregarToken() {
-      const usuarioStorage = localStorage.getItem('usuarioLogado')
-      if (usuarioStorage) {
-        this.usuario = JSON.parse(usuarioStorage)
+      const usuarioStorage = JSON.parse(localStorage.getItem('usuarioLogado'))
+      if (usuarioStorage && this.verificarValidadeToken(usuarioStorage.dataExt)) {
+        this.usuario = usuarioStorage
       } else {
         useRouter().push('/login')
       }
+    },
+
+    verificarValidadeToken(dataExp) {
+      return Date.now() < dataExp;
     },
 
     async deslogar() {

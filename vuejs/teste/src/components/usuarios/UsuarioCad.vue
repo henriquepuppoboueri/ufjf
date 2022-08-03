@@ -46,7 +46,7 @@ const usuario = reactive({
   cpf: `${Math.floor(Math.random() * 99999999999)}`,
   id: 0,
   login: "",
-  senha: "33",
+  senha: "123456",
   nascimento: "",
 });
 
@@ -70,8 +70,7 @@ async function onSubmit() {
     try {
       const response = await usuariosStore.editUsuario(id.value, usuario);
       Notify.create({ color: "green", message: "Usuário atualizado!" });
-      console.log(usuario);
-      return response;
+      router.push({ path: "/usuario" });
     } catch (err) {
       Notify.create({ color: "red", message: `Erro: ${err}` });
     }
@@ -79,9 +78,8 @@ async function onSubmit() {
     // novo, então
     try {
       const response = await usuariosStore.addUsuario(usuario);
-      console.log(usuario);
-      Notify.create({ color: "green", message: "Usuário atualizado!" });
-      return response;
+      Notify.create({ color: "green", message: "Usuário cadastrado!" });
+      router.push({ path: "/usuario" });
     } catch (err) {
       Notify.create({ color: "red", message: `Erro: ${err}` });
     }

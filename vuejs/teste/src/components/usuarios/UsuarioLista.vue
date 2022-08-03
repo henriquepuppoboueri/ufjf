@@ -44,11 +44,18 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref } from "vue";
+import { computed, onMounted, onUnmounted, reactive, ref } from "vue";
 import { api } from "boot/axios";
 import { diminuiTexto, registroPortugues } from "src/helper/functions";
 import { paginacaoOpcoes } from "src/helper/qtableOpcoes";
+import { useUsuariosStore } from "src/stores/usuarios";
+import { storeToRefs } from "pinia";
+import { useRouter } from "vue-router";
+import { Notify } from "quasar";
 
+const router = useRouter();
+const usuariosStore = useUsuariosStore();
+const { usuarios } = storeToRefs(usuariosStore);
 const isUsuarioSelecionado = computed(() => {
   return usuarioSelecionado.value.length > 0;
 });
@@ -56,7 +63,6 @@ const idUsuario = computed(() => {
   return usuarioSelecionado.value[0].id || 0;
 });
 const usuarioSelecionado = ref([]);
-const usuarios = reactive([]);
 const colunas = ref([
   {
     name: "nome",
@@ -73,16 +79,37 @@ const colunas = ref([
   },
 ]);
 
-onMounted(() => {
-  api
-    .get("v1/restrito/usuarios")
-    .then((res) => {
-      Object.assign(usuarios, res.data);
-    })
-    .catch(console.log);
+onUnmounted(() => {
+  console.log("unmounted");
 });
 
-function excluirUsuario() {}
+onMounted(async () => {
+  try {
+    await usuariosStore.buscarUsuarios();
+  } catch (error) {}
+});
+
+async function excluirUsuario() {
+  try {
+    const response = await usuariosStore.delUsuario(idUsuario.value);
+    const usuarioTemp = usuarioSelecionado.value[0];
+    if (response && response.status === 204) {
+      Notify.create({
+        color: "green",
+        message: `Usuário ${usuarioTemp.nome} excluído!`,
+      });
+    } else {
+      throw new Error(
+        `Não foi possível excluir o usuário '${usuarioTemp.nome}'`
+      );
+    }
+  } catch (error) {
+    Notify.create({
+      color: "red",
+      message: `${error}`,
+    });
+  }
+}
 </script>
 
 <style lang="sass">

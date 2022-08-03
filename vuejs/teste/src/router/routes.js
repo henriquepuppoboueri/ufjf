@@ -8,6 +8,7 @@ const routes = [
   },
   {
     path: "/usuario",
+    name: 'usuariosLista',
     component: () => import("layouts/MainLayout.vue"),
     meta: { restrito: true },
     children: [
@@ -22,6 +23,18 @@ const routes = [
       {
         path: ":id",
         component: () => import("components/usuarios/UsuarioCad.vue"),
+      },
+    ],
+  },
+  {
+    path: "/senha",
+    name: 'senha',
+    component: () => import("layouts/MainLayout.vue"),
+    meta: { restrito: true },
+    children: [
+      {
+        path: "",
+        component: () => import("components/usuarios/UsuarioSenha.vue"),
       },
     ],
   },
