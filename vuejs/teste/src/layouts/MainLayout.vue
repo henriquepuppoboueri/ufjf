@@ -37,7 +37,6 @@
                   flat
                   color="blue"
                   label="Alterar senha"
-                  @click="onClick"
                 />
               </q-item-label>
             </q-item-section>
@@ -51,7 +50,6 @@
                 flat
                 color="primary"
                 label="Sair"
-                @click="onClick"
               />
             </q-item-section>
           </q-item>
@@ -80,30 +78,6 @@
             </q-item>
           </q-expansion-item>
 
-          <!-- <q-expansion-item
-            expand-separator
-            icon="fa-solid fa-building"
-            label="Setores e dependências"
-            caption="Setores e dependências"
-            :content-inset-level="0.5"
-          >
-            <q-item clickable v-ripple to="/setor/novo">
-              <q-item-section avatar>
-                <q-icon text-color="white" name="fa-solid fa-plus" />
-              </q-item-section>
-
-              <q-item-section>Novo setor</q-item-section>
-            </q-item>
-
-            <q-item clickable v-ripple to="/setor">
-              <q-item-section avatar>
-                <q-icon text-color="white" name="fa-solid fa-pen-to-square" />
-              </q-item-section>
-
-              <q-item-section>Dependências</q-item-section>
-            </q-item>
-          </q-expansion-item> -->
-
           <q-expansion-item
             expand-separator
             icon="fa-solid fa-book"
@@ -129,22 +103,6 @@
 
               <q-item-section>Visualizar/editar</q-item-section>
             </q-item>
-            <!--
-            <q-item to="/inventario/items" clickable v-ripple>
-              <q-item-section avatar>
-                <q-icon text-color="white" name="fa-solid fa-list" />
-              </q-item-section>
-
-              <q-item-section>Items dos inventários</q-item-section>
-            </q-item>
-
-            <q-item to="/inventario/coletados" clickable v-ripple>
-              <q-item-section avatar>
-                <q-icon text-color="white" name="fa-solid fa-list" />
-              </q-item-section>
-
-              <q-item-section>Items coletados</q-item-section>
-            </q-item>-->
           </q-expansion-item>
 
           <q-expansion-item
@@ -183,16 +141,6 @@
     </q-drawer>
 
     <q-page-container>
-      <!-- <router-view v-slot="{ Component }">
-      <keep-alive>
-        <component :is="Component" />
-      </keep-alive>
-    </router-view> -->
-      <!-- <router-view v-slot="{ Component, route }">
-        <transition name="fade">
-          <component :is="Component" :key="route.path" />
-        </transition>
-      </router-view> -->
       <router-view></router-view>
     </q-page-container>
   </q-layout>

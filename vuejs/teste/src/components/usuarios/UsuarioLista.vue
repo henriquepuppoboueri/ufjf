@@ -49,9 +49,9 @@ import { registroPortugues } from "src/helper/functions";
 import { paginacaoOpcoes } from "src/helper/qtableOpcoes";
 import { useUsuariosStore } from "src/stores/usuarios";
 import { storeToRefs } from "pinia";
-import { useRouter } from "vue-router";
-import { Notify } from "quasar";
+import { Notify, useQuasar } from "quasar";
 
+const $q = useQuasar();
 const usuariosStore = useUsuariosStore();
 const { usuarios } = storeToRefs(usuariosStore);
 const isUsuarioSelecionado = computed(() => {
@@ -91,25 +91,35 @@ onMounted(async () => {
 });
 
 async function excluirUsuario() {
-  try {
-    const response = await usuariosStore.delUsuario(idUsuario.value);
-    const usuarioTemp = usuarioSelecionado.value[0];
-    if (response && response.status === 204) {
+  $q.dialog({
+    title: `Confirmação de exclusão de usuário`,
+    message: `Tem certeza de que deseja excluir o usuário '${usuarioSelecionado.value[0].nome}'?`,
+    cancel: { type: "button", label: "Cancelar", color: "primary" },
+    ok: { type: "button", label: "Confirmar", color: "green" },
+  }).onOk(async () => {
+    try {
+      const response = await usuariosStore.delUsuario(idUsuario.value);
+      const usuarioTemp = usuarioSelecionado.value[0];
+      if (response && response.status === 204) {
+        Notify.create({
+          color: "green",
+          message: `Usuário '${usuarioTemp.nome}' excluído!`,
+        });
+      } else {
+        throw new Error(
+          `Não foi possível excluir o usuário '${usuarioTemp.nome}'`
+        );
+      }
+    } catch (err) {
+      console.log(err);
       Notify.create({
-        color: "green",
-        message: `Usuário ${usuarioTemp.nome} excluído!`,
+        color: "red",
+        message: ` ${err}`,
       });
-    } else {
-      throw new Error(
-        `Não foi possível excluir o usuário '${usuarioTemp.nome}'`
-      );
+    } finally {
+      usuarioSelecionado.value = [];
     }
-  } catch (error) {
-    Notify.create({
-      color: "red",
-      message: `${error}`,
-    });
-  }
+  });
 }
 </script>
 

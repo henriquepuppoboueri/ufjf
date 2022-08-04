@@ -140,10 +140,9 @@ async function excluirInventario() {
       inventarioSelecionado.value = [];
     }
   } catch (error) {
-    console.log(error);
     Notify.create({
       color: "red",
-      message: `Erro ao fechar inventário: ${error.response.data}`,
+      message: `Erro ao excluir inventário: ${error.response.data}`,
     });
   } finally {
     mostrarDialog.value = false;

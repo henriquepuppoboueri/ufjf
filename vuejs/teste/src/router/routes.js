@@ -125,6 +125,11 @@ const routes = [
             component: () => import('src/components/inventarios/itens/ItensColetados.vue'),
           },
           {
+            path: 'itens/coletados/novo',
+            name: 'itemColetadoNovo',
+            component: () => import('components/inventarios/itens/item/ItemColetado.vue'),
+          },
+          {
             path: 'itens/coletados/:idItem',
             name: 'itemColetado',
             component: () => import('components/inventarios/itens/item/ItemColetado.vue'),

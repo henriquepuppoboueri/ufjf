@@ -2,7 +2,7 @@
   <div class="q-pa-md">
     <q-form @submit.prevent="onSubmit" class="q-gutter-md">
       <p class="text-center text-h4">Alteração de senha</p>
-      <q-separator />
+      <!-- <q-separator /> -->
       <q-input
         type="password"
         outlined

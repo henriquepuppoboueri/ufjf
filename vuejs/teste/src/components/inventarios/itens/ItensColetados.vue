@@ -100,6 +100,7 @@
         dense
         color="green"
         label="Novo"
+        @click="novoItem"
       />
     </q-card-actions>
   </q-card>
@@ -203,6 +204,14 @@ function verItem() {
     router.push({
       name: "itemColetado",
       params: { idItem: itensSelecionados.value[0] },
+    });
+  }
+}
+
+function novoItem() {
+  if (itensSelecionados.value.length === 0) {
+    router.push({
+      name: "itemColetadoNovo",
     });
   }
 }

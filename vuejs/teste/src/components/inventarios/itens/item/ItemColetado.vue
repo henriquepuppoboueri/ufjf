@@ -1,6 +1,6 @@
 <template>
-  <section>
-    <q-form class="col q-ma-sm q-gutter-y-sm">
+  <q-form @submit.prevent="onSubmit">
+    <section class="col q-ma-sm q-gutter-y-sm">
       <q-input outlined v-model="patrimonio" label="Patrimônio" dense />
       <q-input outlined v-model="identificador" label="Identificador" dense />
       <q-editor
@@ -59,22 +59,29 @@
         label="Situação"
         dense
       />
-      <q-input outlined disabled v-model="usuario" label="Usuário" dense />
-    </q-form>
-  </section>
-  <section class="row q-gutter-x-sm q-px-sm q-my-md">
-    <q-btn dense color="green" label="Salvar" />
-    <q-btn
-      dense
-      color="primary"
-      label="Cancelar"
-      :to="{ name: 'itensColetados' }"
-    />
-  </section>
+      <q-input
+        outlined
+        disabled
+        v-model="usuario"
+        label="Usuário"
+        dense
+        disable
+      />
+    </section>
+    <section class="row q-gutter-x-sm q-px-sm q-my-md">
+      <q-btn dense color="green" label="Salvar" type="submit" />
+      <q-btn
+        dense
+        color="primary"
+        label="Cancelar"
+        :to="{ name: 'itensColetados' }"
+      />
+    </section>
+  </q-form>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useItensColetadosStore } from "src/stores/itensColetados";
 import { useSetoresStore } from "src/stores/setores";
 import { useRoute } from "vue-router";
@@ -107,20 +114,31 @@ const usuario = ref("");
 
 onMounted(async () => {
   const idItem = +route.params.idItem;
-  if (!idItem) return;
+  const idInventario = +route.params.idInventario;
+  const isModoEdicao = !!idItem;
 
-  await montaForm(idItem);
+  await situacaoStore.buscarSituacoes();
+  await plaquetaStore.buscarEstadosPlaquetas();
+
+  if (isModoEdicao) await montaFormEditar(idItem);
+  if (!isModoEdicao) {
+    await setoresStore.buscarSetoresDependencias(idInventario);
+  }
 });
 
-async function montaForm(idItem) {
+watch(setor, (nv, ov) => {
+  dependenciasStore.buscarDependencias(nv.id);
+});
+
+async function montaFormEditar(idItem) {
   await itensColetadosStore.buscarItemColetado(idItem);
   // await setoresStore.buscarSetoresDependencias(itemColetado.value.inventario);
   await setoresStore.buscarSetor(itemColetado.value.setor);
   await dependenciasStore.buscarDependencia(itemColetado.value.dependencia);
   await dependenciasStore.buscarDependencias(itemColetado.value.setor);
-  await situacaoStore.buscarSituacoes();
+  // await situacaoStore.buscarSituacoes();
   await situacaoStore.buscarSituacao(itemColetado.value.situacao);
-  await plaquetaStore.buscarEstadosPlaquetas();
+  // await plaquetaStore.buscarEstadosPlaquetas();
   await plaquetaStore.buscarEstadoPlaqueta(itemColetado.value.estadoPlaqueta);
 
   patrimonio.value = itemColetado.value.patrimonio;
@@ -139,4 +157,14 @@ async function montaForm(idItem) {
 function extraiSituacao(idSituacao) {
   return situacoes.value.find((situ) => situ.id === idSituacao);
 }
+
+function onSubmit() {
+  console.log(setor.value.nome);
+}
 </script>
+
+<style lang="sass">
+
+.q-btn
+  min-width: 5rem
+</style>

@@ -306,6 +306,9 @@ async function deletarUsuario() {
 </template>
 
 <style lang="sass">
+.q-field--outlined
+  border-color: red
+
 .q-dialog-plugin
   padding: 0.5rem
 

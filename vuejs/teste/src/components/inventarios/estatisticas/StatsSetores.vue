@@ -44,7 +44,6 @@ onMounted(() => {
 
     api.get(`v1/restrito/item/qtde/${id}`).then((res) => {
       resumo.value = res.data;
-      console.log(res.data);
       temDados.value = !!resumo.value.qtde;
     });
   } else {
