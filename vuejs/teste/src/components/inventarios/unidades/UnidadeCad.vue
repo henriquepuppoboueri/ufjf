@@ -88,7 +88,7 @@ const colunas = ref([
   {
     name: "desc",
     required: true,
-    label: "Nome",
+    label: "NOME",
     align: "left",
     field: (row) => row.name,
     format: (val) => `${val}`,

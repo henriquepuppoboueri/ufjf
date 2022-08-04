@@ -230,14 +230,14 @@ const colunasInventarios = reactive([
   {
     name: "nome",
     align: "left",
-    label: "Nome",
+    label: "NOME",
     field: "nome",
     sortable: true,
   },
   {
     name: "status",
     align: "left",
-    label: "Status",
+    label: "STATUS",
     field: "situacaoInventario",
     sortable: true,
   },
@@ -247,7 +247,7 @@ const colunasSetores = reactive([
   {
     name: "nome",
     align: "center",
-    label: "Nome",
+    label: "NOME",
     field: "nome",
     sortable: true,
   },
@@ -257,7 +257,7 @@ const colunasDependencias = reactive([
   {
     name: "nome",
     align: "center",
-    label: "Nome",
+    label: "NOME",
     field: "nome",
     sortable: true,
   },

@@ -30,7 +30,7 @@ const colunasTblUsuarios = ref([
   {
     name: "login",
     required: true,
-    label: "Login",
+    label: "LOGIN",
     align: "left",
     // field: (row) => row.name,
     field: "login",
@@ -40,14 +40,14 @@ const colunasTblUsuarios = ref([
   {
     name: "nome",
     align: "left",
-    label: "Nome",
+    label: "NOME",
     field: "nome",
     sortable: true,
   },
   {
     name: "email",
     align: "left",
-    label: "E-mail",
+    label: "E-MAIL",
     field: "email",
     sortable: true,
   },

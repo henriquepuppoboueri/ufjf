@@ -10,14 +10,14 @@ const colunas = [
   {
     name: "data",
     align: "left",
-    label: "Data",
+    label: "DATA",
     field: "data",
     sortable: true,
   },
   {
     name: "qtde",
     align: "left",
-    label: "Quantidade",
+    label: "QUANTIDADE",
     field: "qtde",
     sortable: true,
   },

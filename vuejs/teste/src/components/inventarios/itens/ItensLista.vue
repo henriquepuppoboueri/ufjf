@@ -44,13 +44,13 @@ const colunasInventarios = reactive([
   {
     name: "nome",
     align: "left",
-    label: "Nome",
+    label: "NOME",
     field: "nome",
   },
   {
     name: "status",
     align: "left",
-    label: "Status",
+    label: "STATUS",
     field: "situacaoInventario",
   },
 ]);
@@ -59,13 +59,13 @@ const colunasItens = reactive([
   {
     name: "patrimonio",
     align: "left",
-    label: "Patrimônio",
+    label: "PATRIMÔNIO",
     field: "patrimonio",
   },
   {
     name: "descricao",
     align: "left",
-    label: "Descrição",
+    label: "DESCRIÇÃO",
     field: "descricao",
   },
 ]);

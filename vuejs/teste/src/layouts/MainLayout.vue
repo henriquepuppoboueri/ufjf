@@ -18,7 +18,7 @@
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
-      <div class="q-pa-xs" style="max-width: 350px">
+      <div class="q-pa-sm" style="max-width: 350px">
         <q-list class="rounded-borders">
           <q-item>
             <q-item-section class="col-grow">
@@ -28,12 +28,34 @@
               <q-item-label caption>
                 {{ usuario ? usuario.email : "" }}
               </q-item-label>
+              <q-item-label caption>
+                <q-btn
+                  :to="'/senha'"
+                  size="sm"
+                  dense
+                  class="q-pa-none"
+                  flat
+                  color="blue"
+                  label="Alterar senha"
+                  @click="onClick"
+                />
+              </q-item-label>
             </q-item-section>
             <q-item-section class="col-auto">
-              <router-link to="/logout">Sair</router-link>
+              <q-btn
+                :to="'/logout'"
+                size="md"
+                dense
+                icon="fa-solid fa-door-open"
+                class="q-pa-none"
+                flat
+                color="primary"
+                label="Sair"
+                @click="onClick"
+              />
             </q-item-section>
           </q-item>
-          <q-separator spaced />
+          <q-separator />
           <q-expansion-item
             expand-separator
             icon="fa-solid fa-user"

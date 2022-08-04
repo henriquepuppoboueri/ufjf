@@ -45,15 +45,13 @@
 
 <script setup>
 import { computed, onMounted, onUnmounted, reactive, ref } from "vue";
-import { api } from "boot/axios";
-import { diminuiTexto, registroPortugues } from "src/helper/functions";
+import { registroPortugues } from "src/helper/functions";
 import { paginacaoOpcoes } from "src/helper/qtableOpcoes";
 import { useUsuariosStore } from "src/stores/usuarios";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
 import { Notify } from "quasar";
 
-const router = useRouter();
 const usuariosStore = useUsuariosStore();
 const { usuarios } = storeToRefs(usuariosStore);
 const isUsuarioSelecionado = computed(() => {
@@ -67,21 +65,24 @@ const colunas = ref([
   {
     name: "nome",
     align: "left",
-    label: "Nome",
+    label: "NOME",
     field: "nome",
   },
   {
     name: "email",
     align: "left",
-    label: "E-mail",
+    label: "E-MAIL",
     // field: (row) => row.situacaoInventario.nome,
     field: "email",
   },
+  // {
+  //   name: "id",
+  //   align: "left",
+  //   label: "id",
+  //   // field: (row) => row.situacaoInventario.nome,
+  //   field: "id",
+  // },
 ]);
-
-onUnmounted(() => {
-  console.log("unmounted");
-});
 
 onMounted(async () => {
   try {

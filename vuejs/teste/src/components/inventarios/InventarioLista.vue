@@ -101,13 +101,13 @@ const colunas = ref([
   {
     name: "nome",
     align: "left",
-    label: "Nome",
+    label: "NOME",
     field: "nome",
   },
   {
     name: "status",
     align: "left",
-    label: "Status",
+    label: "STATUS",
     field: (row) => row.situacaoInventario.nome,
   },
 ]);
@@ -141,6 +141,10 @@ async function excluirInventario() {
     }
   } catch (error) {
     console.log(error);
+    Notify.create({
+      color: "red",
+      message: `Erro ao fechar inventário: ${error.response.data}`,
+    });
   } finally {
     mostrarDialog.value = false;
     inventarioSelecionado.value = [];
