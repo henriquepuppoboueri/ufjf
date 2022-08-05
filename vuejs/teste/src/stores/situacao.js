@@ -10,6 +10,11 @@ export const useSituacaoStore = defineStore({
     erro: null,
   }),
   actions: {
+    buscarSituacaoPorId(idSituacao) {
+      const situacao = this.situacoes.find(situacao => situacao.id === idSituacao)
+      // console.log(situacao);
+      return situacao || 'Sem situação'
+    },
     async buscarSituacoes() {
       try {
         this.carregando = true

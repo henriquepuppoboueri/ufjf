@@ -1,8 +1,14 @@
 import { defineStore } from 'pinia';
 import { api } from 'boot/axios';
 import { useSetoresStore } from 'src/stores/setores'
+import { useSituacaoStore } from './situacao';
+import { usePlaquetaStore } from './plaqueta';
 
 const setoresStore = useSetoresStore()
+const situacaoStore = useSituacaoStore()
+const plaquetaStore = usePlaquetaStore()
+situacaoStore.buscarSituacoes()
+plaquetaStore.buscarEstadosPlaquetas()
 
 export const useItensColetadosStore = defineStore({
   id: 'itensColetados',
@@ -14,12 +20,13 @@ export const useItensColetadosStore = defineStore({
   }),
   getters: {
     itensNominais(state) {
-
       try {
         state.carregando = true;
 
         if (state.itensColetados.length > 0) {
           const itensLista = state.itensColetados.map(item => {
+            const situacao = situacaoStore.buscarSituacaoPorId(item.situacao).nome
+            const estadoPlaqueta = plaquetaStore.buscarEstadoPlaqueta(item.estadoPlaqueta).nome
             const setor = setoresStore.buscarSetorPorId(item.setor)
             let dependenciaNome = 'Sem dependência'
             if (
@@ -34,6 +41,8 @@ export const useItensColetadosStore = defineStore({
               ...item,
               setor: setor.nome,
               dependencia: dependenciaNome,
+              situacao,
+              estadoPlaqueta
             }
           })
           return itensLista
@@ -42,7 +51,6 @@ export const useItensColetadosStore = defineStore({
 
       } finally {
       }
-
     }
   },
   actions: {

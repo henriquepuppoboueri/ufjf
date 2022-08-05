@@ -111,23 +111,29 @@ const { situacoes, situacao } = storeToRefs(situacaoStore);
 const { estadoPlaqueta, estadosPlaquetas } = storeToRefs(plaquetaStore);
 const { itemColetado } = storeToRefs(itensColetadosStore);
 const usuario = ref("");
+const isModoEdicao = ref(false);
 
 onMounted(async () => {
   const idItem = +route.params.idItem;
   const idInventario = +route.params.idInventario;
-  const isModoEdicao = !!idItem;
+  isModoEdicao.value = !!idItem;
 
   await situacaoStore.buscarSituacoes();
   await plaquetaStore.buscarEstadosPlaquetas();
 
-  if (isModoEdicao) await montaFormEditar(idItem);
-  if (!isModoEdicao) {
+  if (isModoEdicao.value) await montaFormEditar(idItem);
+  if (!isModoEdicao.value) {
     await setoresStore.buscarSetoresDependencias(idInventario);
+    dependencia.value = null;
+    setor.value = null;
+    estadoPlaqueta.value = null;
   }
 });
 
 watch(setor, (nv, ov) => {
-  dependenciasStore.buscarDependencias(nv.id);
+  if (nv) {
+    dependenciasStore.buscarDependencias(nv.id);
+  }
 });
 
 async function montaFormEditar(idItem) {

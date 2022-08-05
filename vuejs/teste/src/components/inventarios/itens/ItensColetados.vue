@@ -109,34 +109,23 @@
 <script setup>
 import { ref, reactive, watch, computed, onMounted, onUnmounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { Notify } from "quasar";
-import { api } from "boot/axios";
 import { diminuiTexto, registroPortugues } from "src/helper/functions";
 import { paginacaoOpcoes } from "src/helper/qtableOpcoes";
-import { useItensColetadosStore } from "src/stores/itensColetados";
 import { useSetoresStore } from "src/stores/setores";
 import { useDependenciasStore } from "src/stores/dependencias";
 import { storeToRefs } from "pinia";
+import { useQuasar, Notify } from "quasar";
+import { useItensColetadosStore } from "src/stores/itensColetados";
 
-const dependenciasStore = useDependenciasStore();
+const $q = useQuasar();
 const setoresStore = useSetoresStore();
-const { setoresDependencias, setoresDepsComNome } = storeToRefs(setoresStore);
 const itensColetadosStore = useItensColetadosStore();
 const { itensColetados, carregando, itensNominais } =
   storeToRefs(itensColetadosStore);
 const itensSelecionados = ref([]);
 const filtro = ref("");
-const setores = ref([]);
-const dependencias = ref([]);
 const router = useRouter();
 const route = useRoute();
-const inventarios = reactive([]);
-const idInventario = ref(0);
-const idItemSelecionado = ref(0);
-const origemItens = ref("");
-const loadingInventarios = ref(false);
-const loadingItens = ref(false);
-
 const colunasItens = reactive([
   {
     name: "id",
@@ -173,7 +162,37 @@ const colunasItens = reactive([
     field: "dependencia",
     sortable: true,
   },
+  {
+    name: "situacao",
+    align: "left",
+    label: "SITUAÇÃO",
+    field: "situacao",
+    sortable: true,
+  },
+  {
+    name: "estadoPlaqueta",
+    align: "left",
+    label: "ESTADO DA PLAQUETA",
+    field: "estadoPlaqueta",
+    sortable: true,
+  },
 ]);
+
+// function filtroAvancado(row, terms, cols, getCellValue) {
+//   // const columnsValues = terms.split("=").map((term) => term.toLowerCase());
+//   // // console.log(columnsValues);
+//   // if (columnsValues.length > 1)
+//   //   return row.filter((item) => {
+//   //     console.log(item[columnsValues[0]]);
+//   //     return item[columnsValues[0]].toLowerCase().includes(columnsValues[1]);
+//   //   });
+//   // else {
+//   //   return row;
+//   // }
+//   // console.log(row.filter((item) => item["situacao"].includes("")));
+//   row.forEach((item) => console.log(item["setor"]));
+//   return row;
+// }
 
 const qtItensSelec = computed(() => {
   return itensSelecionados.value.length;
@@ -218,13 +237,34 @@ function novoItem() {
 
 function delItens() {
   if (itensSelecionados.value.length > 0) {
-    for (const item of itensSelecionados.value) {
-      console.log(item);
-    }
+    $q.dialog({
+      title: "Exclusão de itens",
+      message:
+        "Tem certeza de que deseja excluir o(s) item(ns) selecionado(s)?",
+      cancel: { type: "button", label: "Cancelar", color: "primary" },
+      ok: { type: "button", label: "Confirmar", color: "green" },
+    }).onOk(async () => {
+      console.log(itensSelecionados.value);
+      for (const item of itensSelecionados.value) {
+        console.log(item);
+        try {
+          await itensColetadosStore.delItemColetado(item);
+          Notify.create({
+            color: "green",
+            message: `Item excluído!`,
+          });
+        } catch (err) {
+          Notify.create({
+            color: "red",
+            message: `Erro ao excluir item: ${err}`,
+          });
+        } finally {
+          itensSelecionados.value = [];
+        }
+      }
+    });
   }
 }
-
-function buscarDependenciaPorId(idDependencia) {}
 
 function refatoraTexto(colNome, colValor) {
   switch (colNome) {
@@ -259,6 +299,12 @@ async function renderPage() {
 
 .q-card__section--vert
   padding: 0
+
+.q-dialog-plugin
+  padding: 0.5rem
+
+.q-dialog__title
+  text-align: center
 
 .q-btn
   min-width: 5rem
