@@ -36,7 +36,12 @@ onMounted(() => {
 });
 
 function somaQtde(item) {
-  return item.coleta.map((i) => i.qtde).reduce((pv, cv) => pv + cv);
+  if (item.coleta === null) return 0;
+  return item.coleta
+    .map((i) => {
+      return i.qtde;
+    })
+    .reduce((pv, cv) => pv + cv);
 }
 </script>
 
@@ -49,7 +54,7 @@ function somaQtde(item) {
         square
         :bordered="false"
         :title="item.usuario.nome"
-        :rows="item.coleta"
+        :rows="item.coleta !== null ? item.coleta : [{ data: '-', qtde: '-' }]"
         :columns="colunas"
         :rows-per-page-options="[0]"
         row-key="data"

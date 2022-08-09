@@ -127,13 +127,13 @@ const filtro = ref("");
 const router = useRouter();
 const route = useRoute();
 const colunasItens = reactive([
-  {
-    name: "id",
-    align: "left",
-    label: "ID",
-    field: "id",
-    sortable: true,
-  },
+  // {
+  //   name: "id",
+  //   align: "left",
+  //   label: "ID",
+  //   field: "id",
+  //   sortable: true,
+  // },
   {
     name: "patrimonio",
     align: "left",

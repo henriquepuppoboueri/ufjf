@@ -35,6 +35,13 @@ const colunas = [
     field: "percentualConcluido",
     sortable: true,
   },
+  // {
+  //   name: "percConcGraph",
+  //   align: "right",
+  //   label: "(%) CONCLUÍDO",
+  //   field: "percConcGraph",
+  //   sortable: true,
+  // },
 ];
 
 onMounted(() => {
@@ -50,6 +57,14 @@ onMounted(() => {
     return;
   }
 });
+
+function corBarra(percValor) {
+  if (percValor > 80) return "green";
+  if (percValor > 60) return "blue";
+  if (percValor > 40) return "orange";
+  if (percValor > 20) return "yellow";
+  return "red";
+}
 </script>
 
 <template>
@@ -69,11 +84,28 @@ onMounted(() => {
         <template v-slot:body="props">
           <q-tr :props="props">
             <q-td v-for="col in props.cols" :key="col.name" :props="props">
-              {{
+              <!-- {{
                 col.name === "percConcluido"
-                  ? parseFloat(col.value).toFixed(2)
+                  ? `${parseFloat(col.value).toFixed(2)}%`
                   : col.value
-              }}
+              }} -->
+              {{ col.name === "percConcluido" ? `` : col.value }}
+              <q-linear-progress
+                stripe
+                rounded
+                v-if="col.name === 'percConcluido'"
+                size="25px"
+                :value="col.value / 100"
+                :color="corBarra(col.value)"
+              >
+                <div class="absolute-full flex flex-center">
+                  <q-badge
+                    color="white"
+                    text-color="black"
+                    :label="`${parseFloat(col.value).toFixed(2)}%`"
+                  />
+                </div>
+              </q-linear-progress>
             </q-td>
           </q-tr>
         </template>
@@ -82,9 +114,25 @@ onMounted(() => {
             <q-td class="text-uppercase text-bold text-left">total</q-td>
             <q-td class="text-bold text-right">{{ item.qtde }}</q-td>
             <q-td class="text-bold text-right">{{ item.qtdeColetada }}</q-td>
-            <q-td class="text-bold text-right">{{
-              parseFloat(item.percentualConcluido).toFixed(2)
-            }}</q-td>
+            <q-td class="text-bold text-right">
+              <q-linear-progress
+                stripe
+                rounded
+                size="25px"
+                :value="item.percentualConcluido / 100"
+                :color="corBarra(item.percentualConcluido)"
+              >
+                <div class="absolute-full flex flex-center">
+                  <q-badge
+                    color="white"
+                    text-color="black"
+                    :label="`${parseFloat(item.percentualConcluido).toFixed(
+                      2
+                    )}%`"
+                  />
+                </div>
+              </q-linear-progress>
+            </q-td>
           </q-tr>
         </template>
       </q-table>
