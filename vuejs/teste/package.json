@@ -13,11 +13,13 @@
   "dependencies": {
     "@quasar/extras": "^1.0.0",
     "axios": "^0.27.2",
+    "chart.js": "^3.9.1",
     "lodash": "^4.17.21",
     "pinia": "^2.0.14",
     "pinia-plugin-persistedstate": "^1.6.3",
     "quasar": "^2.6.0",
     "vue": "^3.0.0",
+    "vue-chartjs": "^4.1.1",
     "vue-router": "^4.0.0",
     "vue3-google-oauth2": "^1.0.6"
   },
