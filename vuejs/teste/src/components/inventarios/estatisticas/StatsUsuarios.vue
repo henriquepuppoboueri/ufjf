@@ -6,6 +6,7 @@ import { api } from "boot/axios";
 const route = useRoute();
 const resumo = ref([]);
 const temDados = ref(false);
+const usuariosDados = ref([]);
 const colunas = [
   {
     name: "data",
@@ -43,6 +44,17 @@ function somaQtde(item) {
     })
     .reduce((pv, cv) => pv + cv);
 }
+
+function mostrarDadosUsuario(idUsuario) {
+  // if (usuariosDados.includes(idUsuario)) {
+  //   const index = usuariosDados.indexOf(idUsuario);
+  //   usuariosDados.pop()
+  // } else {
+  //   usuariosDados.push(idUsuario);
+  // }
+  // if (idUsuario) usuariosDados.push(idUsuario);
+  return usuariosDados.value.includes(idUsuario);
+}
 </script>
 
 <template>
@@ -59,9 +71,26 @@ function somaQtde(item) {
         :rows-per-page-options="[0]"
         row-key="data"
       >
-        <template v-slot:bottom-row>
-          <q-tr>
+        <template v-slot:header="props">
+          <q-tr :props="props">
+            <q-th v-for="col in props.cols" :key="col.name" :props="props">
+              {{ col.label }}
+            </q-th>
+          </q-tr>
+        </template>
+
+        <template v-slot:body="props">
+          <q-tr :props="props" v-show="mostrarDadosUsuario(item.usuario.id)">
+            <q-td v-for="col in props.cols" :key="col.name" :props="props">
+              {{ col.value }}
+            </q-td>
+          </q-tr>
+        </template>
+
+        <template v-slot:bottom-row="props">
+          <q-tr :props="props" @click="usuariosDados.push(item.usuario.id)">
             <q-td class="text-uppercase text-bold text-left">total</q-td>
+
             <q-td class="text-bold text-left">
               {{ somaQtde(item) }}
             </q-td>

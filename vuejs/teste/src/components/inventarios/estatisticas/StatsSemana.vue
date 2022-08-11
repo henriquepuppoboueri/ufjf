@@ -26,24 +26,24 @@ ChartJS.register(
   LineElement
 );
 const labels = [];
-const chartWidth = { type: Number, default: "400" };
+const chartWidth = { type: Number, default: 400 };
 const chartData = reactive({
   labels: labels,
   datasets: [
-    {
-      label: "My First Dataset",
-      data: [65, 59, 80, 81, 56, 55],
-      fill: false,
-      borderColor: "rgb(75, 192, 192)",
-      tension: 0.1,
-    },
-    {
-      label: "My Second Dataset",
-      data: [68, 50, 180, 81, 50, 15],
-      fill: false,
-      borderColor: "rgb(75, 192, 192)",
-      tension: 0.1,
-    },
+    // {
+    //   label: "My First Dataset",
+    //   data: [65, 59, 80, 81, 56, 55],
+    //   fill: false,
+    //   borderColor: "rgb(75, 192, 192)",
+    //   tension: 0.1,
+    // },
+    // {
+    //   label: "My Second Dataset",
+    //   data: [68, 50, 180, 81, 50, 15],
+    //   fill: false,
+    //   borderColor: "rgb(75, 192, 192)",
+    //   tension: 0.1,
+    // },
   ],
 });
 
@@ -111,14 +111,14 @@ onMounted(() => {
             label: item.usuario.nome,
             data: item.coleta.map((itemColetado) => itemColetado.qtde),
             borderColor: gerarCorAleatoria(),
+            tension: 0.3,
           };
         });
         chartData.datasets = [...graphData];
-        console.log(graphData[0].data.length);
         if (graphData.length > 0) {
           if (graphData[0].data.length > 0) {
-            for (let index = 1; index < graphData[0].data.length; index++) {
-              labels.push(`Semana # ${index}`);
+            for (let index = 0; index < graphData[0].data.length; index++) {
+              labels.push(`Semana # ${index + 1}`);
             }
           }
         }

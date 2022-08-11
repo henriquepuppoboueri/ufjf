@@ -133,6 +133,7 @@ onMounted(async () => {
 watch(setor, (nv, ov) => {
   if (nv) {
     dependenciasStore.buscarDependencias(nv.id);
+    dependenciasStore.dependencia = [];
   }
 });
 

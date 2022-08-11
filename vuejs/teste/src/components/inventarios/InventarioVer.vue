@@ -6,7 +6,15 @@
       dense
       class="bg-red text-white shadow-none"
     >
-      <q-btn-dropdown auto-close stretch flat label="Resumo">
+      <q-btn-dropdown
+        auto-close
+        stretch
+        flat
+        label="Resumo"
+        v-if="
+          !!inventario && inventario.situacaoInventario.nome !== 'Preparando'
+        "
+      >
         <q-list>
           <q-item clickable :to="{ name: 'resumoSetores' }" exact>
             <q-item-section>Por setor</q-item-section>
