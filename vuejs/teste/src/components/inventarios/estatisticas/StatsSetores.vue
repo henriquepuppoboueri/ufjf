@@ -59,10 +59,10 @@ onMounted(() => {
 });
 
 function corBarra(percValor) {
-  if (percValor > 80) return "green";
-  if (percValor > 60) return "blue";
-  if (percValor > 40) return "orange";
-  if (percValor > 20) return "yellow";
+  if (percValor === 100) return "green";
+  if (percValor > 75) return "light-green";
+  if (percValor > 50) return "yellow";
+  if (percValor > 25) return "orange";
   return "red";
 }
 </script>

@@ -62,13 +62,12 @@ function mostrarDadosUsuario(idUsuario) {
     <div v-for="item in resumo" :key="item.usuario">
       <q-table
         flat
-        hide-pagination
         square
         :bordered="false"
         :title="item.usuario.nome"
         :rows="item.coleta !== null ? item.coleta : [{ data: '-', qtde: '-' }]"
         :columns="colunas"
-        :rows-per-page-options="[0]"
+        :rows-per-page-options="[5]"
         row-key="data"
       >
         <template v-slot:header="props">
