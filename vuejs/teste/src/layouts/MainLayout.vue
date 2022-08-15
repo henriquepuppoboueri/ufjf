@@ -121,7 +121,7 @@
             </q-item>
           </q-expansion-item>
 
-          <q-expansion-item
+          <!-- <q-expansion-item
             expand-separator
             icon="fa-solid fa-receipt"
             label="Relatórios"
@@ -135,7 +135,7 @@
 
               <q-item-section>Relatório consolidado</q-item-section>
             </q-item>
-          </q-expansion-item>
+          </q-expansion-item> -->
         </q-list>
       </div>
     </q-drawer>

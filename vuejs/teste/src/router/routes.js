@@ -154,6 +154,38 @@ const routes = [
             name: 'Permissoes',
             component: () => import('components/inventarios/usuarios/UsuariosInventario.vue'),
           },
+          {
+            path: 'relatorio',
+            name: 'relatorioGeral',
+            component: () => import('pages/RelatorioPage.vue'),
+            children: [
+              {
+                path: 'ident-danificadas',
+                name: 'identDanificadas',
+                component: () => import('components/inventarios/relatorio/BensIdentDanificadas.vue'),
+              },
+              {
+                path: 'nao-encontrados',
+                name: 'naoEncontrados',
+                component: () => import('components/inventarios/relatorio/BensNaoEncontrados.vue'),
+              },
+              {
+                path: 'bens-outras-unidades',
+                name: 'bensOutrasUnidades',
+                component: () => import('components/inventarios/relatorio/BensOutrasUnidades.vue'),
+              },
+              {
+                path: 'sem-ident',
+                name: 'bensSemIdent',
+                component: () => import('components/inventarios/relatorio/BensSemIdent.vue'),
+              },
+              {
+                path: 'resumo-geral',
+                name: 'resumoGeral',
+                component: () => import('components/inventarios/relatorio/ResumoInventario.vue'),
+              },
+            ]
+          },
         ]
       },
       {
