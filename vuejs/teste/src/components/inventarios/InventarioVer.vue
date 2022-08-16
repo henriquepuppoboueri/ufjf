@@ -51,19 +51,19 @@
       >
         <q-list>
           <q-item clickable :to="{ name: 'identDanificadas' }" exact>
-            <q-item-section>Bens com identificação danificada</q-item-section>
+            <q-item-section>[Bens com identificação danificada]</q-item-section>
           </q-item>
           <q-item clickable :to="{ name: 'naoEncontrados' }" exact>
             <q-item-section>Bens não encontrados</q-item-section>
           </q-item>
           <q-item clickable :to="{ name: 'bensOutrasUnidades' }" exact>
-            <q-item-section>Bens em outras unidades</q-item-section>
+            <q-item-section>[Bens em outras unidades]</q-item-section>
           </q-item>
           <q-item clickable :to="{ name: 'bensSemIdent' }" exact>
-            <q-item-section>Bens sem identificação</q-item-section>
+            <q-item-section>[Bens sem identificação]</q-item-section>
           </q-item>
           <q-item clickable :to="{ name: 'resumoGeral' }" exact>
-            <q-item-section>Resumo geral</q-item-section>
+            <q-item-section>[Resumo geral]</q-item-section>
           </q-item>
         </q-list>
       </q-btn-dropdown>
