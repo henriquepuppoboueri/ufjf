@@ -4,7 +4,7 @@ import { api } from 'boot/axios'
 export const useRelatoriosStore = defineStore({
   id: 'relatorios',
   state: () => ({
-    relatorio: null,
+    relatorio: [],
     carregando: false,
     erro: null
   }),
