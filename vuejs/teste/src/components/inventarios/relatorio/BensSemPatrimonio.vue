@@ -3,9 +3,12 @@ import { storeToRefs } from "pinia";
 import { useRelatoriosStore } from "src/stores/relatorios";
 import { onMounted, ref, watch, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { exportFile } from "quasar";
 
-import { diminuiTexto, registroPortugues } from "src/helper/functions";
+import {
+  diminuiTexto,
+  registroPortugues,
+  exportTable,
+} from "src/helper/functions";
 import { paginacaoOpcoes } from "src/helper/qtableOpcoes";
 
 const router = useRouter();
@@ -43,77 +46,20 @@ watch(itensSelecionados, (nv, ov) => {
 
 onMounted(async () => {
   const idInventario = route.params["idInventario"];
-  await relatoriosStore.bensNaoEncontrados(idInventario);
+  await relatoriosStore.bensSemPatrimonio(idInventario);
 });
 
 function verItem() {
   if (itensSelecionados.value.length === 1) {
     router.push({
-      name: "itemImportado",
+      name: "itemColetado",
       params: { idItem: itensSelecionados.value[0] },
-    });
-  }
-}
-function wrapCsvValue(val, formatFn, row) {
-  let formatted = formatFn !== void 0 ? formatFn(val, row) : val;
-
-  formatted =
-    formatted === void 0 || formatted === null ? "" : String(formatted);
-
-  formatted = formatted.split('"').join('""');
-  /**
-   * Excel accepts \n and \r in strings, but some other CSV parsers do not
-   * Uncomment the next two lines to escape new lines
-   */
-  // .split('\n').join('\\n')
-  // .split('\r').join('\\r')
-
-  return `"${formatted}"`;
-}
-
-function exportTable() {
-  // naive encoding to csv format
-  const content = [colunasItens.map((col) => wrapCsvValue(col.label))]
-    .concat(
-      relatorio.value.map((row) =>
-        colunasItens
-          .map((col) =>
-            wrapCsvValue(
-              typeof col.field === "function"
-                ? col.field(row)
-                : row[col.field === void 0 ? col.name : col.field],
-              col.format,
-              row
-            )
-          )
-          .join(",")
-      )
-    )
-    .join("\r\n");
-
-  const status = exportFile("table-export.csv", content, "text/csv");
-
-  if (status !== true) {
-    $q.notify({
-      message: "Browser denied file download...",
-      color: "negative",
-      icon: "warning",
     });
   }
 }
 
 function exportarDados() {
-  const status = exportFile("bens-sem-patrimonio.csv", relatorio, {
-    encoding: "windows-1252",
-    mimeType: "text/csv;charset=windows-1252;",
-  });
-
-  if (status === true) {
-    // browser allowed it
-  } else {
-    // browser denied it
-    console.log("Error: " + status);
-  }
+  exportTable(colunasItens, relatorio.value, "coletas-sem-itens");
 }
 </script>
 
@@ -205,7 +151,7 @@ function exportarDados() {
         color="red"
         class="text-white"
         label="Exportar"
-        @click="exportTable"
+        @click="exportarDados"
       />
     </q-card-actions>
   </q-card>

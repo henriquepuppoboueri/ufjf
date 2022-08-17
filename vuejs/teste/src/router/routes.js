@@ -160,14 +160,19 @@ const routes = [
             component: () => import('pages/RelatorioPage.vue'),
             children: [
               {
-                path: 'ident-danificadas',
-                name: 'identDanificadas',
-                component: () => import('components/inventarios/relatorio/BensIdentDanificadas.vue'),
+                path: 'sem-patrimonio',
+                name: 'bensSemPatrimonio',
+                component: () => import('components/inventarios/relatorio/BensSemPatrimonio.vue'),
               },
               {
-                path: 'nao-encontrados',
-                name: 'naoEncontrados',
-                component: () => import('components/inventarios/relatorio/BensNaoEncontrados.vue'),
+                path: 'nao-coletados',
+                name: 'bensNaoColetados',
+                component: () => import('components/inventarios/relatorio/BensNaoColetados.vue'),
+              },
+              {
+                path: 'plaquetas-problemas',
+                name: 'plaquetasComProblemas',
+                component: () => import('components/inventarios/relatorio/ProblemaNaPlaqueta.vue'),
               },
               {
                 path: 'bens-outras-unidades',
@@ -175,9 +180,9 @@ const routes = [
                 component: () => import('components/inventarios/relatorio/BensOutrasUnidades.vue'),
               },
               {
-                path: 'sem-ident',
-                name: 'bensSemIdent',
-                component: () => import('components/inventarios/relatorio/BensSemIdent.vue'),
+                path: 'sem-itens',
+                name: 'bensSemItens',
+                component: () => import('components/inventarios/relatorio/BensSemItens.vue'),
               },
               {
                 path: 'resumo-geral',

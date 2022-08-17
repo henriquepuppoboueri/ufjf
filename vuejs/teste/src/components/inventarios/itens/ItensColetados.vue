@@ -12,6 +12,7 @@
         selection="multiple"
         :wrap-cells="true"
         :filter="filtro"
+        :filter-method="filtroAvancado"
         class="my-sticky-header-table"
         :selected-rows-label="registroPortugues"
         :pagination="paginacaoOpcoes"
@@ -30,18 +31,47 @@
         </template>
 
         <template v-slot:top-right>
-          <q-input
-            borderless
-            dense
-            filled
-            debounce="300"
-            v-model="filtro"
-            placeholder="Filtrar"
-          >
-            <template v-slot:append>
-              <q-icon name="search" />
-            </template>
-          </q-input>
+          <div class="row q-gutter-sm">
+            <q-select
+              dense
+              filled
+              v-model="colunasFiltro"
+              :options="colunasItens"
+              stack-label
+              label="Filtrar por coluna"
+              single
+              clearable
+              @clear="() => (colunasFiltro = [])"
+            >
+              <template
+                v-slot:option="{ itemProps, opt, selected, toggleOption }"
+              >
+                <q-item v-bind="itemProps">
+                  <q-item-section>
+                    <q-item-label v-html="opt.label" />
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-toggle
+                      :model-value="selected"
+                      @update:model-value="toggleOption(opt)"
+                    />
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+            <q-input
+              borderless
+              dense
+              filled
+              debounce="300"
+              v-model="filtro"
+              placeholder="Filtrar"
+            >
+              <template v-slot:append>
+                <q-icon name="search" />
+              </template>
+            </q-input>
+          </div>
         </template>
 
         <template v-slot:body="props">
@@ -177,22 +207,41 @@ const colunasItens = reactive([
     sortable: true,
   },
 ]);
+const colunasFiltro = ref([]);
 
-// function filtroAvancado(row, terms, cols, getCellValue) {
-//   // const columnsValues = terms.split("=").map((term) => term.toLowerCase());
-//   // // console.log(columnsValues);
-//   // if (columnsValues.length > 1)
-//   //   return row.filter((item) => {
-//   //     console.log(item[columnsValues[0]]);
-//   //     return item[columnsValues[0]].toLowerCase().includes(columnsValues[1]);
-//   //   });
-//   // else {
-//   //   return row;
-//   // }
-//   // console.log(row.filter((item) => item["situacao"].includes("")));
-//   row.forEach((item) => console.log(item["setor"]));
-//   return row;
-// }
+function filtroAvancado(row, terms, cols, getCellValue) {
+  // const columnsValues = terms.split("=").map((term) => term.toLowerCase());
+  // // console.log(columnsValues);
+  // if (columnsValues.length > 1)
+  //   return row.filter((item) => {
+  //     console.log(item[columnsValues[0]]);
+  //     return item[columnsValues[0]].toLowerCase().includes(columnsValues[1]);
+  //   });
+  // else {
+  //   return row;
+  // }
+  // console.log(row.filter((item) => item["situacao"].includes("")));
+  // row.forEach((item) => console.log(item["setor"]));
+  if (!terms) return row;
+
+  if (colunasFiltro.value.hasOwnProperty("field")) {
+    return row.filter((item) =>
+      item[colunasFiltro.value.field]
+        .toLowerCase()
+        .includes(terms.toLowerCase())
+    );
+  }
+
+  // return row;
+  const data = row.filter((item) => {
+    return Object.values(item)
+      .toString()
+      .toLowerCase()
+      .includes(terms.toLowerCase());
+  });
+
+  return data;
+}
 
 const qtItensSelec = computed(() => {
   return itensSelecionados.value.length;
