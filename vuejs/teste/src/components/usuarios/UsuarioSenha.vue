@@ -6,18 +6,24 @@
       <q-input
         type="password"
         outlined
-        v-model="usuario.email"
+        v-model="novaSenha"
         label="Inserir nova senha"
       />
       <q-input
         type="password"
         outlined
-        v-model="usuario.email"
+        v-model="novaSenhaConfirmacao"
         label="Repetir nova senha"
       />
 
       <div>
-        <q-btn dense label="Salvar" type="submit" color="green" />
+        <q-btn
+          :disabled="desabilitaBtnSalvar"
+          dense
+          label="Salvar"
+          type="submit"
+          color="green"
+        />
         <q-btn
           dense
           label="Voltar"
@@ -36,7 +42,10 @@ import { onMounted, reactive, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { Notify } from "quasar";
 import { useUsuariosStore } from "stores/usuarios";
+import { computed } from "@vue/reactivity";
 
+const novaSenha = ref("");
+const novaSenhaConfirmacao = ref("");
 const usuariosStore = useUsuariosStore();
 const isModoEdicao = ref(false);
 const router = useRouter();
@@ -51,21 +60,15 @@ const usuario = reactive({
   senha: "123456",
   nascimento: "",
 });
-
-onMounted(async () => {
-  if (
-    route.params.hasOwnProperty("id") &&
-    typeof +route.params.id === "number"
-  ) {
-    id.value = route.params.id;
-    isModoEdicao.value = id.value !== 0;
-  }
-
-  if (isModoEdicao.value) {
-    const response = await usuariosStore.buscarUsuario(id.value);
-    Object.assign(usuario, response.data);
-  }
+const desabilitaBtnSalvar = computed(() => {
+  return (
+    novaSenhaConfirmacao.value === "" ||
+    novaSenha.value === "" ||
+    novaSenhaConfirmacao.value !== novaSenha.value
+  );
 });
+
+onMounted(async () => {});
 
 async function onSubmit() {
   if (isModoEdicao.value) {

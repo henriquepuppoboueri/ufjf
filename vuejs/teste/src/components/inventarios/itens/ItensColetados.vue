@@ -132,6 +132,13 @@
         label="Novo"
         @click="novoItem"
       />
+      <q-btn
+        icon="download"
+        dense
+        color="green"
+        label="Exportar"
+        @click="exportTable(colunasItens, itensNominais, 'itens-coletados')"
+      />
     </q-card-actions>
   </q-card>
 </template>
@@ -146,6 +153,7 @@ import { useDependenciasStore } from "src/stores/dependencias";
 import { storeToRefs } from "pinia";
 import { useQuasar, Notify } from "quasar";
 import { useItensColetadosStore } from "src/stores/itensColetados";
+import { exportTable } from "src/helper/functions";
 
 const $q = useQuasar();
 const setoresStore = useSetoresStore();

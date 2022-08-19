@@ -26,7 +26,7 @@ export const useItensColetadosStore = defineStore({
         if (state.itensColetados.length > 0) {
           const itensLista = state.itensColetados.map(item => {
             const situacao = situacaoStore.buscarSituacaoPorId(item.situacao).nome
-            const estadoPlaqueta = plaquetaStore.buscarEstadoPlaqueta(item.estadoPlaqueta).nome
+            const estadoPlaqueta = plaquetaStore.buscarEstadoPlaqueta(item.idEstadoPlaqueta).nome
             const setor = setoresStore.buscarSetorPorId(item.setor)
             let dependenciaNome = 'Sem dependência'
             if (
@@ -69,7 +69,7 @@ export const useItensColetadosStore = defineStore({
     async editItemColetado(idItem, item) {
       try {
         this.carregando = true
-        const response = await api.delete(`v1/restrito/coleta/${idItem}`, item)
+        const response = await api.put(`v1/restrito/coleta/${idItem}`, item)
         return response;
       } catch (error) {
         this.error = error;

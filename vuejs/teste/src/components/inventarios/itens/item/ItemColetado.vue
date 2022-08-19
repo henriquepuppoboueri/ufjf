@@ -84,13 +84,14 @@
 import { ref, onMounted, watch } from "vue";
 import { useItensColetadosStore } from "src/stores/itensColetados";
 import { useSetoresStore } from "src/stores/setores";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 import { useSituacaoStore } from "src/stores/situacao";
 import { useDependenciasStore } from "src/stores/dependencias";
 import { usePlaquetaStore } from "src/stores/plaqueta";
 
 console.clear();
+const router = useRouter();
 const plaquetaStore = usePlaquetaStore();
 const dependenciasStore = useDependenciasStore();
 const situacaoStore = useSituacaoStore();
@@ -100,6 +101,7 @@ const itensColetadosStore = useItensColetadosStore();
 const identificador = ref("");
 const itemDescricao = ref("");
 const dependenciaAtual = ref("");
+const setorAtual = ref("");
 const empenho = ref("");
 const nomeFornecedor = ref("");
 const itemLocalizacao = ref("");
@@ -120,10 +122,10 @@ onMounted(async () => {
 
   await situacaoStore.buscarSituacoes();
   await plaquetaStore.buscarEstadosPlaquetas();
+  await setoresStore.buscarSetoresDependencias(idInventario);
 
   if (isModoEdicao.value) await montaFormEditar(idItem);
   if (!isModoEdicao.value) {
-    await setoresStore.buscarSetoresDependencias(idInventario);
     dependencia.value = null;
     setor.value = null;
     estadoPlaqueta.value = null;
@@ -146,14 +148,15 @@ async function montaFormEditar(idItem) {
   // await situacaoStore.buscarSituacoes();
   await situacaoStore.buscarSituacao(itemColetado.value.situacao);
   // await plaquetaStore.buscarEstadosPlaquetas();
-  await plaquetaStore.buscarEstadoPlaqueta(itemColetado.value.estadoPlaqueta);
+  await plaquetaStore.buscarEstadoPlaqueta(itemColetado.value.idEstadoPlaqueta);
 
   patrimonio.value = itemColetado.value.patrimonio;
   identificador.value = itemColetado.value.identificador;
   itemDescricao.value = itemColetado.value.descricao;
   empenho.value = itemColetado.value.empenho;
 
-  dependenciaAtual.value = itemColetado.value.dependencia;
+  // dependenciaAtual.value = itemColetado.value.dependencia;
+  setorAtual.value = setor.value;
   nomeFornecedor.value = itemColetado.value.fornecedor;
   usuario.value = itemColetado.value.usuario;
   situacao.value = extraiSituacao(itemColetado.value.situacao);
@@ -166,7 +169,28 @@ function extraiSituacao(idSituacao) {
 }
 
 function onSubmit() {
-  console.log(setor.value.nome);
+  if (isModoEdicao.value) {
+    const item = {
+      descricao: itemDescricao.value,
+      id: itemColetado.value.id,
+      idSetor: setor.value.id,
+      idDependencia: dependencia.value.id,
+      idEstadoPlaqueta: estadoPlaqueta.value.id,
+      idInventario: itemColetado.value.inventario,
+      idItem: itemColetado.value.item,
+      identificador: identificador.value,
+      fornecedor: nomeFornecedor.value,
+      localizacao: itemColetado.value.localizacao,
+      observacao: itemColetado.value.observacao,
+      patrimonio: itemColetado.value.patrimonio,
+      situacao: situacao.value.id,
+      // usuario: itemColetado.value.usuario,
+    };
+    try {
+      itensColetadosStore.editItemColetado(item.id, item);
+      router.replace({ name: "itensColetados" });
+    } catch (error) {}
+  }
 }
 </script>
 
