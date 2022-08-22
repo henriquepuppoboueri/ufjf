@@ -4,13 +4,13 @@ import { useRouter } from 'vue-router'
 
 export const useAuthStore = defineStore({
   id: 'auth',
-  state: () => {
-    ({
-      usuario: null,
-      carregando: false,
-      erro: null
-    })
-  },
+  state: () =>
+  ({
+    usuario: null,
+    carregando: false,
+    erro: null
+  })
+  ,
   // persist: true,
   getters: {
     isUsuarioLogado: (state) => {
@@ -60,6 +60,18 @@ export const useAuthStore = defineStore({
         router.push('/login')
       }
 
+    },
+
+    async trocarSenha(idUsuario, login, novaSenha) {
+      try {
+        this.carregando = true
+        const response = await api.put(`v1/restrito/usuarios/novasenhasemCPF`, { id: idUsuario, login, senha: novaSenha })
+        return response
+      } catch (error) {
+        throw new Error(error.message)
+      } finally {
+        this.carregando = false
+      }
     }
   }
 })

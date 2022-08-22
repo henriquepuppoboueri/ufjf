@@ -54,9 +54,10 @@ export const useItensColetadosStore = defineStore({
     }
   },
   actions: {
-    async addItemColetado() {
+    async addItemColetado(item) {
       try {
         this.carregando = true
+        console.log(item);
         const response = await api.post(`v1/restrito/coleta`, item)
         return response;
       } catch (error) {
