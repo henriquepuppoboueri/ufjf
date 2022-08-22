@@ -27,13 +27,13 @@ export const useItensColetadosStore = defineStore({
           const itensLista = state.itensColetados.map(item => {
             const situacao = situacaoStore.buscarSituacaoPorId(item.situacao).nome
             const estadoPlaqueta = plaquetaStore.buscarEstadoPlaqueta(item.idEstadoPlaqueta).nome
-            const setor = setoresStore.buscarSetorPorId(item.setor)
+            const setor = setoresStore.buscarSetorPorId(item.idSetor)
             let dependenciaNome = 'Sem dependência'
             if (
               setor !== "Sem setor" &&
               setor.hasOwnProperty("dependencias") & (setor.dependencias.length > 0)
             ) {
-              const dependencia = setor.dependencias.find((dep) => dep.id === item.dependencia)
+              const dependencia = setor.dependencias.find((dep) => dep.id === item.idDependencia)
               if (dependencia) dependenciaNome = dependencia.nome
             }
             state.carregando = false;

@@ -192,9 +192,8 @@ async function onSubmit() {
     try {
       item.id = itemColetado.value.id;
       item.idItem = itemColetado.value.item;
-      // item.usuario = itemUsuario.value;
       await itensColetadosStore.editItemColetado(item.id, item);
-      // router.replace({ name: "itensColetados" });
+      router.replace({ name: "itensColetados" });
     } catch (error) {}
   } else {
     item.usuario = usuario.value.id;

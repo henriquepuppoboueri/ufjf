@@ -18,7 +18,13 @@
       />
 
       <div>
-        <q-btn dense label="Enviar" type="submit" color="green" />
+        <q-btn
+          :disabled="!inventario.nome"
+          dense
+          label="Enviar"
+          type="submit"
+          color="green"
+        />
         <q-btn
           dense
           label="Voltar"

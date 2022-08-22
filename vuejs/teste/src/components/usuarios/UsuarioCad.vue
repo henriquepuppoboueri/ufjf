@@ -15,7 +15,13 @@
       <q-input outlined v-model="usuario.login" disable label="Login" />
 
       <div>
-        <q-btn dense label="Salvar" type="submit" color="green" />
+        <q-btn
+          dense
+          :disabled="!isBtnEnabled"
+          label="Salvar"
+          type="submit"
+          color="green"
+        />
         <q-btn
           dense
           label="Voltar"
@@ -30,7 +36,7 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref, watch } from "vue";
+import { onMounted, reactive, ref, watch, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { Notify } from "quasar";
 import { useUsuariosStore } from "stores/usuarios";
@@ -48,6 +54,9 @@ const usuario = reactive({
   login: "",
   senha: "123456",
   nascimento: "",
+});
+const isBtnEnabled = computed(() => {
+  return usuario.email.includes("@ufjf.br");
 });
 
 onMounted(async () => {
