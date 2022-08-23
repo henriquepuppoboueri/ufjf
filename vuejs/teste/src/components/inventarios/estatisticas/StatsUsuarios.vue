@@ -55,6 +55,15 @@ function mostrarDadosUsuario(idUsuario) {
   // if (idUsuario) usuariosDados.push(idUsuario);
   return usuariosDados.value.includes(idUsuario);
 }
+
+function addDelMostrarUsuario(idUsuario) {
+  if (usuariosDados.value.includes(idUsuario)) {
+    const index = usuariosDados.value.indexOf(idUsuario);
+    usuariosDados.value.splice(index, 1);
+  } else {
+    usuariosDados.value.push(idUsuario);
+  }
+}
 </script>
 
 <template>
@@ -79,7 +88,7 @@ function mostrarDadosUsuario(idUsuario) {
         </template>
 
         <template v-slot:body="props">
-          <q-tr :props="props" v-show="mostrarDadosUsuario(item.usuario.id)">
+          <q-tr :props="props" v-if="mostrarDadosUsuario(item.usuario.id)">
             <q-td v-for="col in props.cols" :key="col.name" :props="props">
               {{ col.value }}
             </q-td>
@@ -87,7 +96,7 @@ function mostrarDadosUsuario(idUsuario) {
         </template>
 
         <template v-slot:bottom-row="props">
-          <q-tr :props="props" @click="usuariosDados.push(item.usuario.id)">
+          <q-tr :props="props" @click="addDelMostrarUsuario(item.usuario.id)">
             <q-td class="text-uppercase text-bold text-left">total</q-td>
 
             <q-td class="text-bold text-left">
