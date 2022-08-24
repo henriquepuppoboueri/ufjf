@@ -1,18 +1,34 @@
 <template>
   <div class="q-pa-md">
-    <q-form @submit.prevent="onSubmit" class="q-gutter-md">
+    <q-form @submit.prevent="onSubmit" class="q-gutter-sm">
       <q-input
+        stack-label
         type="e-mail"
         outlined
-        v-model="usuario.email"
+        v-model="usuarioTemp.email"
         label="E-mail (@ufjf.br)"
         :disable="isModoEdicao"
-        :rules="[
-          (value) => value.includes('@ufjf.br') || 'E-mail não pertence à UFJF',
-        ]"
+        :rules="[(v) => v.includes('@ufjf.br') || 'E-mail não pertence à UFJF']"
       />
-      <q-input outlined v-model="usuario.nome" disable label="Nome" />
-      <q-input outlined v-model="usuario.login" disable label="Login" />
+      <q-input stack-label outlined v-model="usuarioTemp.nome" label="Nome" />
+      <q-input stack-label outlined v-model="usuarioTemp.login" label="Login" />
+      <div v-if="!isModoEdicao" class="q-gutter-y-sm">
+        <q-separator></q-separator>
+        <q-input
+          type="password"
+          outlined
+          v-model="senha"
+          label="Senha"
+          stack-label
+        />
+        <q-input
+          type="password"
+          outlined
+          v-model="senhaConfirmacao"
+          label="Repetir senha"
+          stack-label
+        />
+      </div>
 
       <div>
         <q-btn
@@ -36,27 +52,41 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref, watch, computed } from "vue";
+import { onMounted, ref, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { Notify } from "quasar";
 import { useUsuariosStore } from "stores/usuarios";
+import { storeToRefs } from "pinia";
 
 const usuariosStore = useUsuariosStore();
+const { usuario } = storeToRefs(usuariosStore);
 const isModoEdicao = ref(false);
 const router = useRouter();
 const route = useRoute();
 const id = ref(null);
-const usuario = reactive({
+const senha = ref(null);
+const senhaConfirmacao = ref(null);
+
+const usuarioTemp = ref({
   nome: "",
   email: "",
   cpf: `${Math.floor(Math.random() * 99999999999)}`,
   id: 0,
   login: "",
-  senha: "123456",
+  senha: "",
   nascimento: "",
 });
+
 const isBtnEnabled = computed(() => {
-  return usuario.email.includes("@ufjf.br");
+  if (!isModoEdicao.value) {
+    return (
+      usuarioTemp.value.email.includes("@ufjf.br") &&
+      senha.value === senhaConfirmacao.value &&
+      !!senha.value
+    );
+  } else {
+    return true;
+  }
 });
 
 onMounted(async () => {
@@ -69,15 +99,18 @@ onMounted(async () => {
   }
 
   if (isModoEdicao.value) {
-    const response = await usuariosStore.buscarUsuario(id.value);
-    Object.assign(usuario, response.data);
+    await usuariosStore.buscarUsuario(id.value);
+    Object.assign(usuarioTemp.value, usuario.value);
   }
 });
 
 async function onSubmit() {
   if (isModoEdicao.value) {
     try {
-      const response = await usuariosStore.editUsuario(id.value, usuario);
+      const response = await usuariosStore.editUsuario(
+        id.value,
+        usuarioTemp.value
+      );
       Notify.create({ color: "green", message: "Usuário atualizado!" });
       router.push({ path: "/usuario" });
     } catch (err) {
@@ -86,7 +119,10 @@ async function onSubmit() {
   } else {
     // novo, então
     try {
-      const response = await usuariosStore.addUsuario(usuario);
+      const response = await usuariosStore.addUsuario({
+        ...usuarioTemp.value,
+        senha: senha.value,
+      });
       Notify.create({ color: "green", message: "Usuário cadastrado!" });
       router.push({ path: "/usuario" });
     } catch (err) {
@@ -96,14 +132,14 @@ async function onSubmit() {
 }
 
 // temporário, até arrumar a API
-watch(usuario, (nv) => {
-  if (!isModoEdicao.value) {
-    usuario.login = nv.email.split("@")[0];
-    const nomeSeparado = nv.login.split(".").map((palavra) => {
-      if (palavra && typeof palavra === "string")
-        return `${palavra[0].toUpperCase()}${palavra.slice(1)}`;
-    });
-    usuario.nome = nomeSeparado.join(" ");
-  }
-});
+// watch(usuario, (nv) => {
+//   if (!isModoEdicao.value) {
+//     usuario.login = nv.email.split("@")[0];
+//     const nomeSeparado = nv.login.split(".").map((palavra) => {
+//       if (palavra && typeof palavra === "string")
+//         return `${palavra[0].toUpperCase()}${palavra.slice(1)}`;
+//     });
+//     usuario.nome = nomeSeparado.join(" ");
+//   }
+// });
 </script>

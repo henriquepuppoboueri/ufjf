@@ -4,8 +4,8 @@ import { useRouter } from "vue-router";
 import { useAuthStore } from "src/stores/auth";
 import { storeToRefs } from "pinia";
 
-const usuarioForm = ref("puppo");
-const senha = ref("33");
+const usuarioForm = ref("");
+const senha = ref("");
 const router = useRouter();
 const authStore = useAuthStore();
 // const { usuario } = storeToRefs(authStore);

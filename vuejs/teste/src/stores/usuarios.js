@@ -3,13 +3,14 @@ import { api } from 'boot/axios'
 
 
 export const useUsuariosStore = defineStore({
-  id: 'usuarios', state: () => {
-    return {
-      usuarios: [],
-      carregando: false,
-      erro: null
-    }
-  },
+  id: 'usuarios', state: () =>
+  ({
+    usuario: null,
+    usuarios: [],
+    carregando: false,
+    erro: null
+  })
+  ,
   getters: {},
   actions: {
     async addUsuario(usuario) {
@@ -55,6 +56,8 @@ export const useUsuariosStore = defineStore({
       try {
         this.carregando = true
         const response = await api.get(`v1/restrito/usuarios/${idUsuario}`)
+        if (response.data)
+          this.usuario = await response.data
         return response;
       } catch (error) {
         this.error = error
