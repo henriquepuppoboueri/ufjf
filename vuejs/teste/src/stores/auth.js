@@ -40,6 +40,8 @@ export const useAuthStore = defineStore({
       if (usuarioStorage && this.verificarValidadeToken(usuarioStorage.dataExt)) {
         this.usuario = usuarioStorage
       } else {
+        localStorage.removeItem('usuarioLogado')
+        this.usuario = null
         useRouter().push('/login')
       }
     },
@@ -61,6 +63,8 @@ export const useAuthStore = defineStore({
       }
 
     },
+
+
 
     async trocarSenha(idUsuario, login, novaSenha) {
       try {
