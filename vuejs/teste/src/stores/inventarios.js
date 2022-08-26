@@ -14,11 +14,11 @@ export const useInventariosStore = defineStore({
   getters: {
   },
   actions: {
-
     async liberarInventario(idInventario) {
       try {
         const inventarioResponse = await api
           .patch(`v1/restrito/inventario/liberar/${idInventario}`)
+        this.buscarInventarios();
         return inventarioResponse.status
       } catch (error) {
         throw new Error(error.response.data)

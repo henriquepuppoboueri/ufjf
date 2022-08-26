@@ -196,9 +196,9 @@ async function onSubmit() {
       router.replace({ name: "itensColetados" });
     } catch (error) {}
   } else {
-    item.usuario = usuario.value.id;
-    item.idItem = 54923;
-    const response = await itensColetadosStore.addItemColetado(item);
+    // item.usuario = usuario.value.id;
+    // item.idItem = 54923;
+    // const response = await itensColetadosStore.addItemColetado(item);
   }
 }
 </script>

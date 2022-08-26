@@ -21,6 +21,7 @@
         no-data-label="Não foram encontrados dados."
         rows-per-page-label="Registros por página:"
       >
+        <!-- header -->
         <template v-slot:header="props">
           <q-tr :props="props">
             <q-th auto-width></q-th>
@@ -30,6 +31,7 @@
           </q-tr>
         </template>
 
+        <!-- pesquisa -->
         <template v-slot:top-right>
           <div class="row q-gutter-sm">
             <q-select
@@ -66,6 +68,7 @@
               debounce="300"
               v-model="filtro"
               placeholder="Filtrar"
+              clearable
             >
               <template v-slot:append>
                 <q-icon name="search" />
@@ -74,6 +77,7 @@
           </div>
         </template>
 
+        <!-- corpo da tabela -->
         <template v-slot:body="props">
           <q-tr :props="props">
             <q-td>
@@ -89,14 +93,12 @@
               :props="props"
               @click="props.expand = !props.expand"
             >
-              {{ refatoraTexto(col.name, col.value) }}
+              {{ diminuiTexto(col.value) }}
             </q-td>
           </q-tr>
           <q-tr v-show="props.expand" :props="props">
             <q-td colspan="100%">
-              <div class="text-left">
-                {{ props.row.descricao }}
-              </div>
+              <div class="text-left">{{ props.row.descricao }}</div>
             </q-td>
           </q-tr>
         </template>
