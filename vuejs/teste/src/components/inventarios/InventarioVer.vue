@@ -68,6 +68,9 @@
           <q-item clickable :to="{ name: 'resumoGeral' }" exact>
             <q-item-section>[Resumo geral]</q-item-section>
           </q-item>
+          <q-item clickable :to="{ name: 'etiqueta' }" exact>
+            <q-item-section>Imprimir etiquetas</q-item-section>
+          </q-item>
         </q-list>
       </q-btn-dropdown>
     </q-tabs>

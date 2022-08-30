@@ -189,6 +189,11 @@ const routes = [
                 name: 'resumoGeral',
                 component: () => import('components/inventarios/relatorio/ResumoInventario.vue'),
               },
+              {
+                path: 'etiqueta',
+                name: 'etiqueta',
+                component: () => import('components/inventarios/relatorio/ImprimirEtiqueta.vue'),
+              },
             ]
           },
         ]
@@ -198,6 +203,11 @@ const routes = [
         component: () => import("components/inventarios/InventarioCad.vue"),
       },
     ],
+  },
+  {
+    path: "/print-label",
+    meta: { restrito: false },
+    component: () => import("pages/PrintLabel.vue"),
   },
   // Always leave this as last one,
   // but you can also remove it
