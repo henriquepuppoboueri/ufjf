@@ -18,11 +18,7 @@ console.log(ano);
 
 <template>
   <div class="container">
-    <div
-      class="etiqueta flex-center"
-      v-for="(label, index) in amountOfLabels"
-      :key="index"
-    >
+    <div class="etiqueta" v-for="(label, index) in amountOfLabels" :key="index">
       <qr-etiqueta
         :label-text="{
           prefix,
@@ -38,9 +34,10 @@ console.log(ano);
 .container
   // padding-left: 15px
   // padding-top: 15px
-  margin: 0 auto
+  // margin: 0 auto
 
 .etiqueta
   display: inline
+  // height: 90px
   // height: 10px
 </style>

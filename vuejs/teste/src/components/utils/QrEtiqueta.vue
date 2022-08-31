@@ -11,8 +11,8 @@ const fullLabel = computed(() => {
 </script>
 
 <template>
-  <div class="label-container row inline flex-center">
-    <vue-qrious :value="`${fullLabel}`" level="M" :size="50"></vue-qrious>
+  <div class="label-container text-bold row inline flex-center">
+    <vue-qrious :value="`${fullLabel}`" level="M" :size="42"></vue-qrious>
     <span class="label-description text-center text-uppercase text-subtitle3">
       {{ fullLabel }}
       <br />
@@ -25,12 +25,12 @@ const fullLabel = computed(() => {
 .label-container
   // margin-right: 25px
   // margin-bottom: 40px
-  height: 104px
+  // height: 85px
   width: 136px
-  padding-top: 20px
+  padding-top:49px
 
   img
-    height: 50px
+    height: 42px
 
 .row
   // min-width: 150px
@@ -40,10 +40,10 @@ const fullLabel = computed(() => {
   display: inline-block
   vertical-align: middle
   line-height: 0.8
-  font-size: 9px
+  font-size: 8px
   letter-spacing: -2px
   writing-mode: vertical-lr
   text-orientation: upright
   word-wrap: break-word
-  max-height: 40px
+  max-height: 42px
 </style>
