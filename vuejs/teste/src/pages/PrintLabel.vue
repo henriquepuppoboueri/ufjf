@@ -6,7 +6,7 @@ import QrEtiqueta from "src/components/utils/QrEtiqueta.vue";
 
 const route = useRoute();
 const prefix = route.query.prefix;
-const firstSequence = route.query.start.padStart(5, 0);
+const firstSequence = +route.query.start;
 const pages = route.query.pages;
 
 const qrInput = computed(() => {
@@ -14,24 +14,28 @@ const qrInput = computed(() => {
 });
 
 const amountOfLabels = computed(() => {
-  return pages * 50;
+  return pages * 108;
 });
 </script>
 
 <template>
   <div class="container">
-    <div v-for="(label, index) in amountOfLabels" :key="index">
-      <qr-etiqueta :label-text="{ prefix, sequence: index }"></qr-etiqueta>
+    <div
+      class="etiquetas"
+      v-for="(label, index) in amountOfLabels"
+      :key="index"
+    >
+      <qr-etiqueta
+        :label-text="{ prefix, sequence: firstSequence + index }"
+      ></qr-etiqueta>
     </div>
   </div>
 </template>
 
 <style lang="sass">
 
-.input
-  margin: auto 0
-  font-size: 25px
 
-div
+
+.etiquetas
   display: inline
 </style>

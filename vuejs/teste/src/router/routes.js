@@ -206,6 +206,7 @@ const routes = [
   },
   {
     path: "/print-label",
+    name: "printLabel",
     meta: { restrito: false },
     component: () => import("pages/PrintLabel.vue"),
   },
