@@ -27,27 +27,11 @@
         label="Dependência"
         dense
       />
-      <q-input outlined v-model="empenho" label="Empenho" dense />
-      <q-select
-        outlined
-        v-model="estadoPlaqueta"
-        :options="estadosPlaquetas"
-        :option-label="(item) => item.nome"
-        :option-value="(item) => item.nome"
-        label="Estado da plaqueta"
-        dense
-      />
-      <q-input outlined v-model="nomeFornecedor" label="Fornecedor" dense />
+      <!-- <q-input outlined v-model="empenho" label="Empenho" dense /> -->
       <q-editor
         v-model="itemLocalizacao"
-        min-height="5rem"
+        min-height="2rem"
         placeholder="Localização"
-        dense
-      />
-      <q-editor
-        v-model="itemObservacao"
-        min-height="5rem"
-        placeholder="Observação"
         dense
       />
       <q-select
@@ -57,6 +41,22 @@
         :option-label="(item) => item.nome"
         :option-value="(item) => item.nome"
         label="Situação"
+        dense
+      />
+      <q-select
+        outlined
+        v-model="estadoPlaqueta"
+        :options="estadosPlaquetas"
+        :option-label="(item) => item.nome"
+        :option-value="(item) => item.nome"
+        label="Estado da plaqueta"
+        dense
+      />
+      <!-- <q-input outlined v-model="nomeFornecedor" label="Fornecedor" dense /> -->
+      <q-editor
+        v-model="itemObservacao"
+        min-height="5rem"
+        placeholder="Observação"
         dense
       />
       <q-input
