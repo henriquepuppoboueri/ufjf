@@ -28,8 +28,8 @@ export const useAuthStore = defineStore({
           this.usuario = responseData;
         }
       } catch (error) {
-        console.log(error);
         this.erro = error
+        throw new Error(error.message)
       } finally {
         this.carregando = false
       }

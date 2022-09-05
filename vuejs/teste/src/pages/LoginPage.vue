@@ -3,6 +3,7 @@ import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "src/stores/auth";
 import { storeToRefs } from "pinia";
+import { Notify } from "quasar";
 
 const usuarioForm = ref("");
 const senha = ref("");
@@ -15,10 +16,16 @@ async function onLogar() {
   if (!usuarioForm.value || !senha.value) return;
 
   const data = { username: usuarioForm.value, password: senha.value };
-  await logar(data);
-
-  if (authStore.isUsuarioLogado) {
-    router.push("/inventario");
+  try {
+    await logar(data);
+    if (authStore.isUsuarioLogado) {
+      router.push("/inventario");
+    }
+  } catch (error) {
+    Notify.create({
+      color: "red",
+      message: `Erro ao logar: ${error}`,
+    });
   }
 }
 </script>

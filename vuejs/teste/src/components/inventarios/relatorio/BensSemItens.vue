@@ -123,13 +123,13 @@ function exportarDados() {
               :props="props"
               @click="props.expand = !props.expand"
             >
-              {{ diminuiTexto(col.value) }}
+              <span v-html="diminuiTexto(col.value)"></span>
             </q-td>
           </q-tr>
           <q-tr v-show="props.expand" :props="props">
             <q-td colspan="100%">
               <div class="text-left">
-                {{ props.row.descricao }}
+                <span v-html="props.row.descricao"></span>
               </div>
             </q-td>
           </q-tr>

@@ -3,7 +3,8 @@ import { exportFile } from "quasar";
 export function diminuiTexto(text) {
   const limiteCaracteres = 250;
   if (text && text.length > limiteCaracteres) {
-    return text.substr(0, limiteCaracteres) + " <clique para expandir>";
+    const returnText = text.substr(0, limiteCaracteres) + '... <i><b> clique para expandir <b><i>'
+    return returnText;
   }
   return text;
 }

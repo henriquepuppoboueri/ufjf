@@ -60,16 +60,16 @@
             <q-item-section>Plaquetas com problemas</q-item-section>
           </q-item>
           <q-item clickable :to="{ name: 'bensOutrasUnidades' }" exact>
-            <q-item-section>[Bens em outras unidades]</q-item-section>
+            <q-item-section>Bens em outras unidades</q-item-section>
           </q-item>
           <q-item clickable :to="{ name: 'bensSemItens' }" exact>
             <q-item-section>Coletas sem itens (não-importados)</q-item-section>
           </q-item>
-          <q-item clickable :to="{ name: 'resumoGeral' }" exact>
-            <q-item-section>[Resumo geral]</q-item-section>
-          </q-item>
           <q-item clickable :to="{ name: 'etiqueta' }" exact>
             <q-item-section>Imprimir etiquetas</q-item-section>
+          </q-item>
+          <q-item clickable :to="{ name: 'resumoGeral' }" exact>
+            <q-item-section>[Resumo geral]</q-item-section>
           </q-item>
         </q-list>
       </q-btn-dropdown>

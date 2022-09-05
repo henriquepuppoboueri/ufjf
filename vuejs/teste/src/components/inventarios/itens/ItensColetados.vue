@@ -93,12 +93,14 @@
               :props="props"
               @click="props.expand = !props.expand"
             >
-              {{ diminuiTexto(col.value) }}
+              <span v-html="diminuiTexto(col.value)"></span>
             </q-td>
           </q-tr>
           <q-tr v-show="props.expand" :props="props">
             <q-td colspan="100%">
-              <div class="text-left">{{ props.row.descricao }}</div>
+              <div class="text-left">
+                <span v-html="props.row.descricao"></span>
+              </div>
             </q-td>
           </q-tr>
         </template>
@@ -216,8 +218,52 @@ const colunasItens = reactive([
     field: "estadoPlaqueta",
     sortable: true,
   },
+  {
+    name: "usuario",
+    align: "left",
+    label: "USUÁRIO",
+    field: "usuario",
+    sortable: true,
+  },
 ]);
 const colunasFiltro = ref([]);
+const colunasMostrar = ref([
+  {
+    name: "patrimonio",
+    align: "left",
+    label: "PATRIMÔNIO",
+    field: "patrimonio",
+    sortable: true,
+  },
+  {
+    name: "descricao",
+    align: "left",
+    label: "DESCRIÇÃO",
+    field: "descricao",
+    sortable: true,
+  },
+  {
+    name: "setor",
+    align: "left",
+    label: "SETOR",
+    field: "setor",
+    sortable: true,
+  },
+  {
+    name: "dependencia",
+    align: "left",
+    label: "DEPENDÊNCIA",
+    field: "dependencia",
+    sortable: true,
+  },
+  {
+    name: "situacao",
+    align: "left",
+    label: "SITUAÇÃO",
+    field: "situacao",
+    sortable: true,
+  },
+]);
 
 function filtroAvancado(row, terms, cols, getCellValue) {
   // const columnsValues = terms.split("=").map((term) => term.toLowerCase());
