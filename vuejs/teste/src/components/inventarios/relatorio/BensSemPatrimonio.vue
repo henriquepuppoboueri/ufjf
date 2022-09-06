@@ -29,6 +29,13 @@ const colunasItens = [
     field: "descricao",
     sortable: true,
   },
+  {
+    name: "localizacao",
+    align: "left",
+    label: "LOCALIZAÇÃO",
+    field: "localizacao",
+    sortable: true,
+  },
 ];
 const route = useRoute();
 const relatoriosStore = useRelatoriosStore();

@@ -29,6 +29,34 @@ const colunasItens = [
     field: "descricao",
     sortable: true,
   },
+  {
+    name: "setorEncontrado",
+    align: "left",
+    label: "SETOR ENCONTRADO",
+    field: "setorEncontrado",
+    sortable: true,
+  },
+  {
+    name: "setorPrevisto",
+    align: "left",
+    label: "SETOR PREVISTO",
+    field: "setorPrevisto",
+    sortable: true,
+  },
+  {
+    name: "dependenciaEncontrada",
+    align: "left",
+    label: "DEP. ENCONTRADA",
+    field: "dependenciaEncontrada",
+    sortable: true,
+  },
+  {
+    name: "dependenciaPrevista",
+    align: "left",
+    label: "DEP. PREVISTA",
+    field: "dependenciaPrevista",
+    sortable: true,
+  },
 ];
 const route = useRoute();
 const relatoriosStore = useRelatoriosStore();
