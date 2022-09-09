@@ -2,7 +2,12 @@
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { api } from "boot/axios";
+import { useEstatisticasStore } from "stores/estatisticas";
+import { storeToRefs } from "pinia";
 
+const estatisticasStore = useEstatisticasStore();
+const { carregando, dados } = storeToRefs(estatisticasStore);
+const { buscarTotaisSetores } = estatisticasStore;
 const route = useRoute();
 const resumo = ref([]);
 const temDados = ref(false);
@@ -44,15 +49,19 @@ const colunas = [
   // },
 ];
 
-onMounted(() => {
+onMounted(async () => {
   if ("idInventario" in route.params) {
     // modo de edição ou visualização
     const id = +route.params.idInventario;
 
-    api.get(`v1/restrito/item/qtde/${id}`).then((res) => {
-      resumo.value = res.data;
-      temDados.value = !!resumo.value.qtde;
-    });
+    const response = await buscarTotaisSetores(id);
+    resumo.value = dados.value;
+    temDados.value = !!resumo.value.qtde;
+
+    // api.get(`v1/restrito/item/qtde/${id}`).then((res) => {
+    //   resumo.value = res.data;
+    //   temDados.value = !!resumo.value.qtde;
+    // });
   } else {
     return;
   }
@@ -140,6 +149,7 @@ function corBarra(percValor) {
     </div>
   </div>
   <div v-if="!temDados">
-    <p>Nada a exibir.</p>
+    <p v-if="!carregando">Nada a exibir.</p>
+    <q-spinner-dots v-if="carregando" color="primary" size="2em" />
   </div>
 </template>
