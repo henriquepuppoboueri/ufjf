@@ -20,11 +20,16 @@ async function onLogar() {
     await logar(data);
     if (authStore.isUsuarioLogado) {
       router.push("/inventario");
+      Notify.create({
+        color: "green",
+        message: `Bem vindo de volta!`,
+      });
     }
   } catch (error) {
     Notify.create({
+      icon: "report",
       color: "red",
-      message: `Erro ao logar: ${error}`,
+      message: `${error}`,
     });
   }
 }
