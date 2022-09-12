@@ -349,9 +349,7 @@ function delItens() {
       cancel: { type: "button", label: "Cancelar", color: "primary" },
       ok: { type: "button", label: "Confirmar", color: "green" },
     }).onOk(async () => {
-      console.log(itensSelecionados.value);
       for (const item of itensSelecionados.value) {
-        console.log(item);
         try {
           await itensColetadosStore.delItemColetado(item);
           Notify.create({

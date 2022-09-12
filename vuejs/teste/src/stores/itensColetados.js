@@ -57,7 +57,6 @@ export const useItensColetadosStore = defineStore({
     async addItemColetado(item) {
       try {
         this.carregando = true
-        console.log(item);
         const response = await api.post(`v1/restrito/coleta`, item)
         return response;
       } catch (error) {
@@ -83,6 +82,10 @@ export const useItensColetadosStore = defineStore({
       try {
         this.carregando = true
         const response = await api.delete(`v1/restrito/coleta/${idItem}`)
+        const itemIndex = this.itensColetados.findIndex(item => item.id === idItem)
+        this.itensColetados.splice(itemIndex, 1)
+        // const filtrados = this.itensColetados.filter(item => item.id !== idItem)
+        // this.itensColetados = filtrados
         return response;
       } catch (error) {
         this.error = error;
