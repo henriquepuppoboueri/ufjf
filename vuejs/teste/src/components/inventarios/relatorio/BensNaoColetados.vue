@@ -10,7 +10,14 @@ import {
   exportTable,
 } from "src/helper/functions";
 import { paginacaoOpcoes } from "src/helper/qtableOpcoes";
+import { useSetoresStore } from "src/stores/setores";
+import { useDependenciasStore } from "src/stores/dependencias";
 
+let idInventario = null;
+const dependenciasStore = useDependenciasStore();
+const setoresStore = useSetoresStore();
+const { dependencias, dependencia } = storeToRefs(dependenciasStore);
+const { setoresDependencias, setor } = storeToRefs(setoresStore);
 const router = useRouter();
 const itensSelecionados = ref([]);
 const filtro = ref("");
@@ -44,9 +51,18 @@ watch(itensSelecionados, (nv, ov) => {
   }
 });
 
+watch(setor, (nv, ov) => {
+  if (nv) {
+    dependenciasStore.buscarDependencias(nv.id);
+    dependenciasStore.dependencia = [];
+  }
+});
+
 onMounted(async () => {
-  const idInventario = route.params["idInventario"];
-  await relatoriosStore.bensNaoEncontrados(idInventario);
+  // const idInventario = route.params["idInventario"];
+  idInventario = route.params["idInventario"];
+  await setoresStore.buscarSetoresDependencias(idInventario);
+  // await relatoriosStore.bensNaoEncontrados(idInventario);
 });
 
 function verItem() {
@@ -61,10 +77,58 @@ function verItem() {
 function exportarDados() {
   exportTable(colunasItens, relatorio.value, "bens-sem-patrimonios");
 }
+
+async function filtrarSetorDep() {
+  await relatoriosStore.bensNaoEncontrados(
+    idInventario,
+    setor.value.id,
+    dependencia.value.id
+  );
+}
+
+function limparFiltro() {
+  setor.value = null;
+  dependencia.value = null;
+}
 </script>
 
 <template>
   <q-card square>
+    <q-card-section class="q-gutter-sm">
+      <q-select
+        outlined
+        v-model="setor"
+        :options="setoresDependencias"
+        :option-label="(item) => item.nome"
+        :option-value="(item) => item.nome"
+        label="Setor"
+        dense
+      />
+      <q-select
+        outlined
+        v-model="dependencia"
+        :options="dependencias"
+        :option-label="(item) => item.nome"
+        :option-value="(item) => item.nome"
+        label="Dependência"
+        dense
+      />
+      <q-btn
+        :disable="carregando"
+        dense
+        color="blue"
+        label="Pesquisar"
+        @click="filtrarSetorDep"
+      />
+      <q-btn
+        :disable="carregando"
+        dense
+        color="green"
+        label="Limpar filtro"
+        @click="limparFiltro"
+      />
+    </q-card-section>
+    <q-separator inset />
     <q-card-section>
       <!-- <q-card-section v-if="!carregando"> -->
       <q-table
