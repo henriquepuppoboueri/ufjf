@@ -78,12 +78,7 @@
     </q-form>
   </section>
   <section class="row q-gutter-x-sm q-px-sm q-my-md">
-    <q-btn
-      dense
-      color="primary"
-      label="Voltar"
-      :to="{ name: 'itensImportados' }"
-    />
+    <q-btn dense color="primary" label="Voltar" @click="router.go(-1)" />
   </section>
 </template>
 
@@ -96,7 +91,7 @@ import { useRouter, useRoute } from "vue-router";
 import { storeToRefs } from "pinia";
 import { useDependenciasStore } from "src/stores/dependencias";
 
-console.clear();
+const router = useRouter();
 const dependenciasStore = useDependenciasStore();
 const route = useRoute();
 const setoresStore = useSetoresStore();

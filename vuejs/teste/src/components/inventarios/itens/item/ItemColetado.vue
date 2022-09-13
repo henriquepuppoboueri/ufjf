@@ -70,12 +70,7 @@
     </section>
     <section class="row q-gutter-x-sm q-px-sm q-my-md">
       <q-btn dense color="green" label="Salvar" type="submit" />
-      <q-btn
-        dense
-        color="primary"
-        label="Cancelar"
-        :to="{ name: 'itensColetados' }"
-      />
+      <q-btn dense color="primary" label="Cancelar" @click="router.go(-1)" />
     </section>
   </q-form>
 </template>
@@ -193,7 +188,8 @@ async function onSubmit() {
       item.id = itemColetado.value.id;
       item.idItem = itemColetado.value.item;
       await itensColetadosStore.editItemColetado(item.id, item);
-      router.replace({ name: "itensColetados" });
+      router.go(-1);
+      // router.replace({ name: "itensColetados" });
     } catch (error) {}
   } else {
     // item.usuario = usuario.value.id;

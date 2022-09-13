@@ -116,6 +116,8 @@ function limparFiltro() {
       <q-btn
         :disable="carregando"
         dense
+        size="0.7rem"
+        icon="fa-solid fa-magnifying-glass"
         color="blue"
         label="Pesquisar"
         @click="filtrarSetorDep"
@@ -123,6 +125,7 @@ function limparFiltro() {
       <q-btn
         :disable="carregando"
         dense
+        size="0.7rem"
         color="green"
         label="Limpar filtro"
         @click="limparFiltro"
