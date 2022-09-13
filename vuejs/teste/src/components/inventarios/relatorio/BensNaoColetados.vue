@@ -45,6 +45,18 @@ const qtItensSelec = computed(() => {
   return itensSelecionados.value.length;
 });
 
+const idSetor = computed(() => {
+  return setor.value !== null && setor.value.hasOwnProperty("id")
+    ? setor.value.id
+    : "";
+});
+
+const idDependencia = computed(() => {
+  return dependencia.value !== null && dependencia.value.hasOwnProperty("id")
+    ? dependencia.value.id
+    : "";
+});
+
 watch(itensSelecionados, (nv, ov) => {
   if (nv.length > 1) {
     itensSelecionados.value.shift();
@@ -81,8 +93,8 @@ function exportarDados() {
 async function filtrarSetorDep() {
   await relatoriosStore.bensNaoEncontrados(
     idInventario,
-    setor.value.id,
-    dependencia.value.id
+    idSetor.value,
+    idDependencia.value
   );
 }
 

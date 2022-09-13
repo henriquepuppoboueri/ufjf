@@ -22,8 +22,6 @@ export const useRelatoriosStore = defineStore({
     },
     async coletasSemItens(idInventario, idSetor, idDependencia) {
       try {
-        idSetor = idSetor || ''
-        idDependencia = idDependencia || ''
         this.carregando = true
         const response = await api.get(`v1/restrito/relatorios/semItem/${idInventario}?idSetor=${idSetor}&idDependencia=${idDependencia}`)
         const data = await response.data
