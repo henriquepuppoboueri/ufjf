@@ -97,14 +97,26 @@ const relatoriosOpcoes = ref([
     titulo: "Plaquetas com problemas",
     itemTipo: "itemColetado",
     fn: relatoriosStore.plaquetasComProblemas,
-    colunasVisiveis: ["patrimonio", "descricao", "localizacao"],
+    colunasVisiveis: [
+      "patrimonio",
+      "descricao",
+      "localizacao",
+      "setorEncontrado",
+      "dependenciaEncontrada",
+    ],
   },
   {
     nome: "sem-patrimonio",
     titulo: "Bens sem patrimônio",
     itemTipo: "itemColetado",
     fn: relatoriosStore.bensSemPatrimonio,
-    colunasVisiveis: ["patrimonio", "descricao", "localizacao"],
+    colunasVisiveis: [
+      "patrimonio",
+      "descricao",
+      "localizacao",
+      "setorEncontrado",
+      "dependenciaEncontrada",
+    ],
   },
   {
     nome: "local-diferente",
@@ -203,7 +215,7 @@ function limparFiltro() {
 </script>
 
 <template>
-  <q-card square>
+  <q-card bordered>
     <q-card-section class="q-gutter-sm">
       <q-select
         outlined
@@ -240,8 +252,8 @@ function limparFiltro() {
         label="Limpar filtro"
         @click="limparFiltro"
       />
+      <q-separator inset />
     </q-card-section>
-    <q-separator inset />
     <q-card-section>
       <!-- <q-card-section v-if="!carregando"> -->
       <q-table
