@@ -40,6 +40,34 @@ const colunasItens = [
     sortable: true,
   },
   {
+    name: "setorEncontrado",
+    align: "left",
+    label: "SETOR ENCONTRADO",
+    field: "setorEncontrado",
+    sortable: true,
+  },
+  {
+    name: "setorPrevisto",
+    align: "left",
+    label: "SETOR PREVISTO",
+    field: "setorPrevisto",
+    sortable: true,
+  },
+  {
+    name: "dependenciaEncontrada",
+    align: "left",
+    label: "DEP. ENCONTRADA",
+    field: "dependenciaEncontrada",
+    sortable: true,
+  },
+  {
+    name: "dependenciaPrevista",
+    align: "left",
+    label: "DEP. PREVISTA",
+    field: "dependenciaPrevista",
+    sortable: true,
+  },
+  {
     name: "localizacao",
     align: "left",
     label: "LOCALIZAÇÃO",
@@ -77,6 +105,21 @@ const relatoriosOpcoes = ref([
     itemTipo: "itemColetado",
     fn: relatoriosStore.bensSemPatrimonio,
     colunasVisiveis: ["patrimonio", "descricao", "localizacao"],
+  },
+  {
+    nome: "local-diferente",
+    titulo: "Bens em outras unidades",
+    itemTipo: "itemColetado",
+    fn: relatoriosStore.localDiferente,
+    colunasVisiveis: [
+      "patrimonio",
+      "descricao",
+      "localizacao",
+      "setorEncontrado",
+      "setorPrevisto",
+      "dependenciaEncontrada",
+      "dependenciaPrevista",
+    ],
   },
 ]);
 

@@ -59,10 +59,10 @@ export const useRelatoriosStore = defineStore({
         this.erro = error
       }
     },
-    async localDiferente(idInventario) {
+    async localDiferente(idInventario, idSetor, idDependencia) {
       try {
         this.carregando = true
-        const response = await api.get(`v1/restrito/relatorios/localDiferente/${idInventario}?idSetor=&idDepartamento`)
+        const response = await api.get(`v1/restrito/relatorios/localDiferente/${idInventario}?idSetor=${idSetor}&idDependencia=${idDependencia}`)
         const data = await response.data
         this.relatorio = await data
         this.carregando = false

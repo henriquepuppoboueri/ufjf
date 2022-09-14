@@ -80,7 +80,14 @@
           >
             <q-item-section>Plaquetas com problemas</q-item-section>
           </q-item>
-          <q-item clickable :to="{ name: 'bensOutrasUnidades' }" exact>
+          <q-item
+            clickable
+            :to="{
+              name: 'relatorioBase',
+              query: { relatorio: 'local-diferente' },
+            }"
+            exact
+          >
             <q-item-section>Bens em outras unidades</q-item-section>
           </q-item>
           <q-item clickable :to="{ name: 'bensSemItens' }" exact>
