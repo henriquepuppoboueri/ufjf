@@ -50,13 +50,34 @@
         "
       >
         <q-list>
-          <q-item clickable :to="{ name: 'bensSemPatrimonio' }" exact>
+          <q-item
+            clickable
+            :to="{
+              name: 'relatorioBase',
+              query: { relatorio: 'sem-patrimonio' },
+            }"
+            exact
+          >
             <q-item-section>Bem sem patrimônio</q-item-section>
           </q-item>
-          <q-item clickable :to="{ name: 'bensNaoColetados' }" exact>
+          <q-item
+            clickable
+            :to="{
+              name: 'relatorioBase',
+              query: { relatorio: 'nao-coletados' },
+            }"
+            exact
+          >
             <q-item-section>Bens não coletados</q-item-section>
           </q-item>
-          <q-item clickable :to="{ name: 'plaquetasComProblemas' }" exact>
+          <q-item
+            clickable
+            :to="{
+              name: 'relatorioBase',
+              query: { relatorio: 'plaquetas-problemas' },
+            }"
+            exact
+          >
             <q-item-section>Plaquetas com problemas</q-item-section>
           </q-item>
           <q-item clickable :to="{ name: 'bensOutrasUnidades' }" exact>
@@ -75,11 +96,6 @@
       </q-btn-dropdown>
     </q-tabs>
     <div class="q-px-none">
-      <!-- <router-view v-slot="{ Component }">
-      <keep-alive>
-        <component :is="Component" />
-      </keep-alive>
-    </router-view> -->
       <router-view v-slot="{ Component, route }">
         <transition name="fade">
           <div :key="route.path">
@@ -87,7 +103,6 @@
           </div>
         </transition>
       </router-view>
-      <!-- <router-view></router-view> -->
     </div>
   </div>
 </template>

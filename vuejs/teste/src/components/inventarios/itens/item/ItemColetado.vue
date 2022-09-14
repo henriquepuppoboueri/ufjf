@@ -86,7 +86,6 @@ import { useDependenciasStore } from "src/stores/dependencias";
 import { usePlaquetaStore } from "src/stores/plaqueta";
 import { useAuthStore } from "src/stores/auth";
 
-console.clear();
 const router = useRouter();
 const authStore = useAuthStore();
 const plaquetaStore = usePlaquetaStore();
@@ -140,13 +139,10 @@ watch(setor, (nv, ov) => {
 
 async function montaFormEditar(idItem) {
   await itensColetadosStore.buscarItemColetado(idItem);
-  // await setoresStore.buscarSetoresDependencias(itemColetado.value.inventario);
   await setoresStore.buscarSetor(itemColetado.value.idSetor);
   await dependenciasStore.buscarDependencia(itemColetado.value.idDependencia);
   await dependenciasStore.buscarDependencias(itemColetado.value.idSetor);
-  // await situacaoStore.buscarSituacoes();
   await situacaoStore.buscarSituacao(itemColetado.value.situacao);
-  // await plaquetaStore.buscarEstadosPlaquetas();
   await plaquetaStore.buscarEstadoPlaqueta(itemColetado.value.idEstadoPlaqueta);
 
   patrimonio.value = itemColetado.value.patrimonio;
@@ -154,7 +150,6 @@ async function montaFormEditar(idItem) {
   itemDescricao.value = itemColetado.value.descricao;
   empenho.value = itemColetado.value.empenho;
 
-  // dependenciaAtual.value = itemColetado.value.dependencia;
   setorAtual.value = setor.value;
   nomeFornecedor.value = itemColetado.value.fornecedor;
   itemUsuario.value = itemColetado.value.usuario;
@@ -170,12 +165,10 @@ function extraiSituacao(idSituacao) {
 async function onSubmit() {
   const item = {
     descricao: itemDescricao.value,
-    // id: !!itemColetado.value.id ? itemColetado.value.id : 0,
     idSetor: setor.value.id,
     idDependencia: dependencia.value.id,
     idEstadoPlaqueta: estadoPlaqueta.value.id,
     idInventario: idInventario.value,
-    // idItem: itemColetado.value.item,
     identificador: identificador.value,
     fornecedor: nomeFornecedor.value,
     localizacao: itemLocalizacao.value,
@@ -189,12 +182,9 @@ async function onSubmit() {
       item.idItem = itemColetado.value.item;
       await itensColetadosStore.editItemColetado(item.id, item);
       router.go(-1);
-      // router.replace({ name: "itensColetados" });
     } catch (error) {}
   } else {
-    // item.usuario = usuario.value.id;
-    // item.idItem = 54923;
-    // const response = await itensColetadosStore.addItemColetado(item);
+    return;
   }
 }
 </script>

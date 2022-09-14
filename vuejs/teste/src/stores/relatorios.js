@@ -21,6 +21,8 @@ export const useRelatoriosStore = defineStore({
       }
     },
     async coletasSemItens(idInventario, idSetor, idDependencia) {
+      idSetor = idSetor || ''
+      idDependencia = idDependencia || ''
       try {
         this.carregando = true
         const response = await api.get(`v1/restrito/relatorios/semItem/${idInventario}?idSetor=${idSetor}&idDependencia=${idDependencia}`)
@@ -31,10 +33,12 @@ export const useRelatoriosStore = defineStore({
         this.erro = error
       }
     },
-    async bensSemPatrimonio(idInventario) {
+    async bensSemPatrimonio(idInventario, idSetor, idDependencia) {
+      idSetor = idSetor || ''
+      idDependencia = idDependencia || ''
       try {
         this.carregando = true
-        const response = await api.get(`v1/restrito/relatorios/semPatrimonio/${idInventario}?idSetor=&idDependencia=`)
+        const response = await api.get(`v1/restrito/relatorios/semPatrimonio/${idInventario}?idSetor=${idSetor}&idDependencia=${idDependencia}`)
         const data = await response.data
         this.relatorio = await data
         this.carregando = false
@@ -42,10 +46,12 @@ export const useRelatoriosStore = defineStore({
         this.erro = error
       }
     },
-    async plaquetasComProblemas(idInventario) {
+    async plaquetasComProblemas(idInventario, idSetor, idDependencia) {
+      idSetor = idSetor || ''
+      idDependencia = idDependencia || ''
       try {
         this.carregando = true
-        const response = await api.get(`v1/restrito/relatorios/problemaNaPlaqueta/${idInventario}?idSetor=&idDependencia=`)
+        const response = await api.get(`v1/restrito/relatorios/problemaNaPlaqueta/${idInventario}?idSetor=${idSetor}&idDependencia=${idDependencia}`)
         const data = await response.data
         this.relatorio = await data
         this.carregando = false

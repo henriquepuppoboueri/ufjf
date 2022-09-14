@@ -160,6 +160,11 @@ const routes = [
             component: () => import('pages/RelatorioPage.vue'),
             children: [
               {
+                path: '',
+                name: 'relatorioBase',
+                component: () => import('components/inventarios/relatorio/RelatorioBase.vue'),
+              },
+              {
                 path: 'sem-patrimonio',
                 name: 'bensSemPatrimonio',
                 component: () => import('components/inventarios/relatorio/BensSemPatrimonio.vue'),
@@ -168,6 +173,11 @@ const routes = [
                 path: 'nao-coletados',
                 name: 'bensNaoColetados',
                 component: () => import('components/inventarios/relatorio/BensNaoColetados.vue'),
+              },
+              {
+                path: 'nao-coletados2',
+                name: 'bensNaoColetados2',
+                component: () => import('components/inventarios/relatorio/RelatorioBase.vue'),
               },
               {
                 path: 'plaquetas-problemas',
