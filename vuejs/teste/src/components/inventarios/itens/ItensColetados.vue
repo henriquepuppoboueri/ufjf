@@ -205,6 +205,13 @@ const colunasItens = reactive([
     sortable: true,
   },
   {
+    name: "localizacao",
+    align: "left",
+    label: "LOCALIZAÇÃO",
+    field: "localizacao",
+    sortable: true,
+  },
+  {
     name: "situacao",
     align: "left",
     label: "SITUAÇÃO",

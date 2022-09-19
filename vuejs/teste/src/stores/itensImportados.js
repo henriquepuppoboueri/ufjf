@@ -67,6 +67,17 @@ export const useItensImportadosStore = defineStore({
       } finally {
         this.carregando = false
       }
-    }
+    },
+    async buscarItemImportadoPorPatrimonio(patrimonio, idInventario) {
+      try {
+        this.carregando = true
+        const response = await api.get(`/v1/restrito/item/patrimonio/${patrimonio}&${idInventario}`)
+        this.itemImportado = await response.data
+      } catch (error) {
+        this.error = error
+      } finally {
+        this.carregando = false
+      }
+    },
   }
 });

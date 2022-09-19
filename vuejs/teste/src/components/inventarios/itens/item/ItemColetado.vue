@@ -1,7 +1,24 @@
 <template>
   <q-form @submit.prevent="onSubmit">
     <section class="col q-ma-sm q-gutter-y-sm">
-      <q-input outlined v-model="patrimonio" label="Patrimônio" dense />
+      <div class="row q-gutter-x-sm justify-between no-wrap">
+        <q-input
+          outlined
+          v-model="patrimonio"
+          label="Patrimônio"
+          dense
+          class="fit"
+        />
+        <q-btn
+          color="blue"
+          label="Buscar"
+          type="button"
+          @click="buscarItemPorPatrimonio"
+          :disable="patrimonio.length < 6"
+          v-if="!isModoEdicao"
+        />
+      </div>
+
       <q-input outlined v-model="identificador" label="Identificador" dense />
       <q-editor
         v-model="itemDescricao"
@@ -79,6 +96,7 @@
 import { ref, onMounted, watch } from "vue";
 import { useItensColetadosStore } from "src/stores/itensColetados";
 import { useSetoresStore } from "src/stores/setores";
+import { useItensImportadosStore } from "src/stores/itensImportados";
 import { useRoute, useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 import { useSituacaoStore } from "src/stores/situacao";
@@ -94,6 +112,7 @@ const situacaoStore = useSituacaoStore();
 const route = useRoute();
 const setoresStore = useSetoresStore();
 const itensColetadosStore = useItensColetadosStore();
+const itensImportadosStore = useItensImportadosStore();
 const identificador = ref("");
 const itemDescricao = ref("");
 const dependenciaAtual = ref("");
@@ -107,6 +126,8 @@ const { dependencias, dependencia } = storeToRefs(dependenciasStore);
 const { setoresDependencias, setor } = storeToRefs(setoresStore);
 const { situacoes, situacao } = storeToRefs(situacaoStore);
 const { estadoPlaqueta, estadosPlaquetas } = storeToRefs(plaquetaStore);
+const { itemImportado } = storeToRefs(itensImportadosStore);
+const { buscarItemImportadoPorPatrimonio } = itensImportadosStore;
 const { itemColetado } = storeToRefs(itensColetadosStore);
 const { usuario } = storeToRefs(authStore);
 const itemUsuario = ref("");
@@ -127,13 +148,7 @@ onMounted(async () => {
     dependencia.value = null;
     setor.value = null;
     estadoPlaqueta.value = null;
-  }
-});
-
-watch(setor, (nv, ov) => {
-  if (nv) {
-    dependenciasStore.buscarDependencias(nv.id);
-    dependenciasStore.dependencia = [];
+    itemUsuario.value = usuario.value.login;
   }
 });
 
@@ -156,6 +171,13 @@ async function montaFormEditar(idItem) {
   situacao.value = extraiSituacao(itemColetado.value.situacao);
   itemLocalizacao.value = itemColetado.value.localizacao;
   itemObservacao.value = itemColetado.value.observacao;
+}
+
+async function buscarItemPorPatrimonio() {
+  await buscarItemImportadoPorPatrimonio(patrimonio.value, idInventario.value);
+  itemDescricao.value = itemImportado.value.descricao;
+  setor.value = itemImportado.value.setor;
+  dependencia.value = itemImportado.value.dependencia;
 }
 
 function extraiSituacao(idSituacao) {
@@ -184,7 +206,12 @@ async function onSubmit() {
       router.go(-1);
     } catch (error) {}
   } else {
-    return;
+    // if (Object.hasOwnProperty(itemImportado.value.id)) {
+    item.idItem = itemImportado.value.id;
+    item.usuario = usuario.value.id;
+    // }
+    await itensColetadosStore.addItemColetado(item);
+    router.go(-1);
   }
 }
 </script>
