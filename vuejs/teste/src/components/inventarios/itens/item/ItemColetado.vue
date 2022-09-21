@@ -8,9 +8,7 @@
           label="Patrimônio"
           dense
           class="fit"
-          :rules="[
-            (val) => exactLength(val, 6, 'Patrimônio deve conter 6 caracteres'),
-          ]"
+          :rules="[(val) => exactLength(val, 6, 'Patrimônio')]"
         />
         <q-btn
           color="blue"
@@ -27,10 +25,7 @@
         v-model="identificador"
         label="Identificador"
         dense
-        :rules="[
-          (val) =>
-            exactLength(val, 5, 'Identificador deve conter 5 caracteres'),
-        ]"
+        :rules="[(val) => exactLength(val, 5, 'Identificador')]"
       />
       <q-editor
         v-model="itemDescricao"
