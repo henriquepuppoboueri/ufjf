@@ -8,6 +8,9 @@
           label="Patrimônio"
           dense
           class="fit"
+          :rules="[
+            (val) => exactLength(val, 6, 'Patrimônio deve conter 6 caracteres'),
+          ]"
         />
         <q-btn
           color="blue"
@@ -19,7 +22,16 @@
         />
       </div>
 
-      <q-input outlined v-model="identificador" label="Identificador" dense />
+      <q-input
+        outlined
+        v-model="identificador"
+        label="Identificador"
+        dense
+        :rules="[
+          (val) =>
+            exactLength(val, 5, 'Identificador deve conter 5 caracteres'),
+        ]"
+      />
       <q-editor
         v-model="itemDescricao"
         min-height="5rem"
@@ -109,6 +121,7 @@ import { useSituacaoStore } from "src/stores/situacao";
 import { useDependenciasStore } from "src/stores/dependencias";
 import { usePlaquetaStore } from "src/stores/plaqueta";
 import { useAuthStore } from "src/stores/auth";
+import { exactLength } from "src/helper/formValidation";
 
 const patrimonioBuscado = false;
 const router = useRouter();
@@ -153,7 +166,7 @@ const desabilitaSalvar = computed(() => {
 watch(setor, (nv, ov) => {
   if (nv) {
     dependenciasStore.buscarDependencias(nv.id);
-    dependenciasStore.dependencia = [];
+    dependenciasStore.dependencia = null;
   }
 });
 
@@ -171,6 +184,7 @@ onMounted(async () => {
     dependencia.value = null;
     setor.value = null;
     estadoPlaqueta.value = null;
+    situacao.value = null;
     itemUsuario.value = usuario.value.login;
   }
 });
