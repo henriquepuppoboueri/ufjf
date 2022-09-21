@@ -86,14 +86,20 @@
       />
     </section>
     <section class="row q-gutter-x-sm q-px-sm q-my-md">
-      <q-btn dense color="green" label="Salvar" type="submit" />
+      <q-btn
+        dense
+        color="green"
+        label="Salvar"
+        type="submit"
+        :disabled="desabilitaSalvar"
+      />
       <q-btn dense color="primary" label="Cancelar" @click="router.go(-1)" />
     </section>
   </q-form>
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, computed } from "vue";
 import { useItensColetadosStore } from "src/stores/itensColetados";
 import { useSetoresStore } from "src/stores/setores";
 import { useItensImportadosStore } from "src/stores/itensImportados";
@@ -133,6 +139,15 @@ const { usuario } = storeToRefs(authStore);
 const itemUsuario = ref("");
 const isModoEdicao = ref(false);
 const idInventario = ref(null);
+
+const desabilitaSalvar = computed(() => {
+  if (patrimonio.value.length !== 6) return true;
+  if (identificador.value.length !== 5) return true;
+  if (!setor.value) return true;
+  if (!dependencia.value) return true;
+
+  return false;
+});
 
 onMounted(async () => {
   const idItem = +route.params.idItem;
