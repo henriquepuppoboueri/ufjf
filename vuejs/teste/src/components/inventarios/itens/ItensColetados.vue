@@ -13,7 +13,6 @@
         :wrap-cells="true"
         :filter="filtro"
         :filter-method="filtroAvancado"
-        class="my-sticky-header-table"
         :selected-rows-label="registroPortugues"
         :pagination="paginacaoOpcoes"
         :bordered="false"
@@ -137,6 +136,7 @@
         @click="novoItem"
       />
       <q-btn
+        v-if="!carregando"
         icon="download"
         dense
         color="green"
@@ -148,12 +148,11 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch, computed, onMounted, onUnmounted } from "vue";
+import { ref, reactive, watch, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { diminuiTexto, registroPortugues } from "src/helper/functions";
 import { paginacaoOpcoes } from "src/helper/qtableOpcoes";
 import { useSetoresStore } from "src/stores/setores";
-import { useDependenciasStore } from "src/stores/dependencias";
 import { storeToRefs } from "pinia";
 import { useQuasar, Notify } from "quasar";
 import { useItensColetadosStore } from "src/stores/itensColetados";
@@ -169,13 +168,6 @@ const filtro = ref("");
 const router = useRouter();
 const route = useRoute();
 const colunasItens = reactive([
-  // {
-  //   name: "id",
-  //   align: "left",
-  //   label: "ID",
-  //   field: "id",
-  //   sortable: true,
-  // },
   {
     name: "patrimonio",
     align: "left",
@@ -273,18 +265,6 @@ const colunasMostrar = ref([
 ]);
 
 function filtroAvancado(row, terms, cols, getCellValue) {
-  // const columnsValues = terms.split("=").map((term) => term.toLowerCase());
-  // // console.log(columnsValues);
-  // if (columnsValues.length > 1)
-  //   return row.filter((item) => {
-  //     console.log(item[columnsValues[0]]);
-  //     return item[columnsValues[0]].toLowerCase().includes(columnsValues[1]);
-  //   });
-  // else {
-  //   return row;
-  // }
-  // console.log(row.filter((item) => item["situacao"].includes("")));
-  // row.forEach((item) => console.log(item["setor"]));
   if (!terms) return row;
 
   if (colunasFiltro.value.hasOwnProperty("field")) {
@@ -295,7 +275,6 @@ function filtroAvancado(row, terms, cols, getCellValue) {
     );
   }
 
-  // return row;
   const data = row.filter((item) => {
     return Object.values(item)
       .toString()
@@ -378,13 +357,6 @@ function delItens() {
 
 function refatoraTexto(colNome, colValor) {
   switch (colNome) {
-    // case "setor":
-    //   return buscarSetorPorId(colValor);
-    //   break;
-    // case "dependencia":
-    //   return buscarDependenciaPorId(colValor);
-    //   break;
-
     default:
       return diminuiTexto(colValor);
       break;

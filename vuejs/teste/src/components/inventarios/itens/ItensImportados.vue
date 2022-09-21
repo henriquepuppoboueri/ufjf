@@ -2,6 +2,7 @@
   <q-card square>
     <q-card-section>
       <q-table
+        flat
         :loading="carregando"
         title="Itens importados"
         :rows="itensNominais"
@@ -10,15 +11,14 @@
         separator="cell"
         selection="multiple"
         :wrap-cells="true"
-        no-data-label="Não foram encontrados dados."
-        rows-per-page-label="Registros por página:"
-        :selected-rows-label="registroPortugues"
         :filter="filtro"
-        class="my-sticky-header-table"
+        :filter-method="filtroAvancado"
+        :selected-rows-label="registroPortugues"
         :pagination="paginacaoOpcoes"
         :bordered="false"
         loading-label="Carregando"
-        flat
+        no-data-label="Não foram encontrados dados."
+        rows-per-page-label="Registros por página:"
       >
         <template v-slot:header="props">
           <q-tr :props="props">
@@ -30,18 +30,48 @@
         </template>
 
         <template v-slot:top-right>
-          <q-input
-            borderless
-            dense
-            filled
-            debounce="300"
-            v-model="filtro"
-            placeholder="Filtrar"
-          >
-            <template v-slot:append>
-              <q-icon name="search" />
-            </template>
-          </q-input>
+          <div class="row q-gutter-sm">
+            <q-select
+              dense
+              filled
+              v-model="colunasFiltro"
+              :options="colunasItens"
+              stack-label
+              label="Filtrar por coluna"
+              single
+              clearable
+              @clear="() => (colunasFiltro = [])"
+            >
+              <template
+                v-slot:option="{ itemProps, opt, selected, toggleOption }"
+              >
+                <q-item v-bind="itemProps">
+                  <q-item-section>
+                    <q-item-label v-html="opt.label" />
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-toggle
+                      :model-value="selected"
+                      @update:model-value="toggleOption(opt)"
+                    />
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+            <q-input
+              borderless
+              dense
+              filled
+              debounce="300"
+              v-model="filtro"
+              placeholder="Filtrar"
+              clearable
+            >
+              <template v-slot:append>
+                <q-icon name="search" />
+              </template>
+            </q-input>
+          </div>
         </template>
 
         <template v-slot:body="props">
@@ -59,13 +89,13 @@
               :props="props"
               @click="props.expand = !props.expand"
             >
-              {{ refatoraTexto(col.name, col.value) }}
+              <span v-html="diminuiTexto(col.value)"></span>
             </q-td>
           </q-tr>
           <q-tr v-show="props.expand" :props="props">
             <q-td colspan="100%">
               <div class="text-left">
-                {{ props.row.descricao }}
+                <span v-html="props.row.descricao"></span>
               </div>
             </q-td>
           </q-tr>
@@ -81,6 +111,14 @@
         label="Visualizar"
         @click="verItem"
       />
+      <q-btn
+        v-if="!carregando"
+        icon="download"
+        dense
+        color="green"
+        label="Exportar"
+        @click="exportTable(colunasItens, itensNominais, 'itens-importados')"
+      />
     </q-card-actions>
   </q-card>
 </template>
@@ -92,6 +130,7 @@ import { diminuiTexto, registroPortugues } from "src/helper/functions";
 import { paginacaoOpcoes } from "src/helper/qtableOpcoes";
 import { useItensImportadosStore } from "src/stores/itensImportados.js";
 import { useSetoresStore } from "src/stores/setores.js";
+import { exportTable } from "src/helper/functions";
 import { storeToRefs } from "pinia";
 
 const setoresStore = useSetoresStore();
@@ -100,18 +139,9 @@ const { itensImportados, carregando, itensNominais } =
   storeToRefs(itensImportadosStore);
 const itensSelecionados = ref([]);
 const filtro = ref("");
-
 const router = useRouter();
 const route = useRoute();
-
 const colunasItens = reactive([
-  {
-    name: "id",
-    align: "left",
-    label: "ID",
-    field: "id",
-    sortable: true,
-  },
   {
     name: "patrimonio",
     align: "left",
@@ -141,6 +171,29 @@ const colunasItens = reactive([
     sortable: true,
   },
 ]);
+const colunasFiltro = ref([]);
+
+function filtroAvancado(row, terms, cols, getCellValue) {
+  if (!terms) return row;
+
+  if (colunasFiltro.value.hasOwnProperty("field")) {
+    return row.filter((item) =>
+      item[colunasFiltro.value.field]
+        .toLowerCase()
+        .includes(terms.toLowerCase())
+    );
+  }
+
+  // return row;
+  const data = row.filter((item) => {
+    return Object.values(item)
+      .toString()
+      .toLowerCase()
+      .includes(terms.toLowerCase());
+  });
+
+  return data;
+}
 
 const qtItensSelec = computed(() => {
   return itensSelecionados.value.length;
