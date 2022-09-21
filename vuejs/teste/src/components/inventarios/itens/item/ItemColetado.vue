@@ -110,6 +110,7 @@ import { useDependenciasStore } from "src/stores/dependencias";
 import { usePlaquetaStore } from "src/stores/plaqueta";
 import { useAuthStore } from "src/stores/auth";
 
+const patrimonioBuscado = false;
 const router = useRouter();
 const authStore = useAuthStore();
 const plaquetaStore = usePlaquetaStore();
@@ -147,6 +148,13 @@ const desabilitaSalvar = computed(() => {
   if (!dependencia.value) return true;
 
   return false;
+});
+
+watch(setor, (nv, ov) => {
+  if (nv) {
+    dependenciasStore.buscarDependencias(nv.id);
+    dependenciasStore.dependencia = [];
+  }
 });
 
 onMounted(async () => {
@@ -192,6 +200,7 @@ async function buscarItemPorPatrimonio() {
   await buscarItemImportadoPorPatrimonio(patrimonio.value, idInventario.value);
   itemDescricao.value = itemImportado.value.descricao;
   setor.value = itemImportado.value.setor;
+  await dependenciasStore.buscarDependencias(itemImportado.value.setor.id);
   dependencia.value = itemImportado.value.dependencia;
 }
 
