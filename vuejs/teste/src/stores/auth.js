@@ -64,8 +64,6 @@ export const useAuthStore = defineStore({
 
     },
 
-
-
     async trocarSenha(idUsuario, login, novaSenha) {
       try {
         this.carregando = true

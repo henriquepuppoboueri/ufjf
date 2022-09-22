@@ -72,7 +72,8 @@ export const useItensImportadosStore = defineStore({
       try {
         this.carregando = true
         const response = await api.get(`/v1/restrito/item/patrimonio/${patrimonio}&${idInventario}`)
-        this.itemImportado = await response.data
+        const data = await response.data
+        this.itemImportado = data || null
       } catch (error) {
         this.error = error
       } finally {

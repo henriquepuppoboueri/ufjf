@@ -8,8 +8,10 @@
           label="Patrimônio"
           dense
           class="fit"
+          maxlength="6"
           :rules="[(val) => exactLength(val, 6, 'Patrimônio')]"
-        />
+        >
+        </q-input>
         <q-btn
           color="blue"
           label="Buscar"
@@ -25,6 +27,7 @@
         v-model="identificador"
         label="Identificador"
         dense
+        maxlength="5"
         :rules="[(val) => exactLength(val, 5, 'Identificador')]"
       />
       <q-editor
@@ -117,6 +120,7 @@ import { useDependenciasStore } from "src/stores/dependencias";
 import { usePlaquetaStore } from "src/stores/plaqueta";
 import { useAuthStore } from "src/stores/auth";
 import { exactLength } from "src/helper/formValidation";
+import { Notify } from "quasar";
 
 const patrimonioBuscado = false;
 const router = useRouter();
@@ -207,10 +211,21 @@ async function montaFormEditar(idItem) {
 
 async function buscarItemPorPatrimonio() {
   await buscarItemImportadoPorPatrimonio(patrimonio.value, idInventario.value);
-  itemDescricao.value = itemImportado.value.descricao;
-  setor.value = itemImportado.value.setor;
-  await dependenciasStore.buscarDependencias(itemImportado.value.setor.id);
-  dependencia.value = itemImportado.value.dependencia;
+  if (itemImportado.value) {
+    itemDescricao.value = itemImportado.value.descricao;
+    setor.value = itemImportado.value.setor;
+    await dependenciasStore.buscarDependencias(itemImportado.value.setor.id);
+    dependencia.value = itemImportado.value.dependencia;
+  } else {
+    Notify.create({
+      color: "red",
+      message: `Patrimônio não encontrado!`,
+    });
+    // identificador.value = null;
+    // itemDescricao.value = null;
+    // setor.value = null;
+    // dependencia.value = null;
+  }
 }
 
 function extraiSituacao(idSituacao) {
