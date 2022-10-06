@@ -25,6 +25,9 @@
           <q-item clickable :to="{ name: 'resumoSemana' }" exact>
             <q-item-section>Por semana</q-item-section>
           </q-item>
+          <q-item clickable :to="{ name: 'resumoDia' }" exact>
+            <q-item-section>Por dia</q-item-section>
+          </q-item>
         </q-list>
       </q-btn-dropdown>
       <!-- <q-btn class="btn-nav" :to="{ name: 'resumo' }">RESUMO</q-btn> -->

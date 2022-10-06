@@ -1,8 +1,8 @@
 import { boot } from 'quasar/wrappers'
 import axios from 'axios'
 
-const api_options = { baseURL: ' http://api.inventario.gv.ufjf.br:9001' }
-// const api_options = { baseURL: 'http://10.1.2.90:9001' }
+// const api_options = { baseURL: ' http://api.inventario.gv.ufjf.br:9001' }
+const api_options = { baseURL: 'http://10.1.2.90:9001' }
 const api = axios.create(api_options)
 // const usuarioLogado = localStorage.getItem('usuarioLogado')
 // if (usuarioLogado) {

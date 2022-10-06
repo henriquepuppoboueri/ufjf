@@ -113,6 +113,11 @@ const routes = [
                 name: 'resumoSemana',
                 component: () => import('components/inventarios/estatisticas/StatsSemana.vue'),
               },
+              {
+                path: 'dia',
+                name: 'resumoDia',
+                component: () => import('components/inventarios/estatisticas/StatsDia.vue'),
+              },
             ]
           },
           {
