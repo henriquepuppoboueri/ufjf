@@ -29,7 +29,6 @@ ChartJS.register(
 );
 const relatoriosStore = useRelatoriosStore();
 const { relatorio, carregando } = storeToRefs(relatoriosStore);
-// const { estatisticasPorDia } = { relatoriosStore };
 const labels = [];
 const chartWidth = { type: Number, default: 400 };
 const chartData = reactive({
@@ -42,7 +41,6 @@ const temDados = ref(false);
 
 onMounted(async () => {
   if ("idInventario" in route.params) {
-    // modo de edição ou visualização
     const id = +route.params.idInventario;
     await relatoriosStore.estatisticasPorDia(id);
 
@@ -53,7 +51,6 @@ onMounted(async () => {
       borderColor: gerarCorAleatoria(),
       tension: 0.3,
     }));
-    // chartData.datasets = [...graphData];
     if (relatorio.value.length > 0)
       if (relatorio.value[0].coleta.length > 0)
         relatorio.value[0].coleta.forEach((coletaDiaria) => {
