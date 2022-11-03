@@ -51,15 +51,15 @@ const colunasTblUsuarios = ref([
     field: "email",
     sortable: true,
   },
-  // {
-  //   name: "tipo",
-  //   required: true,
-  //   label: "É presidente?",
-  //   align: "left",
-  //   field: "presidente",
-  //   format: (val) => `${val}`,
-  //   sortable: true,
-  // },
+  {
+    name: "tipo",
+    required: true,
+    label: "ADMINISTRADOR",
+    align: "left",
+    field: "admin",
+    format: (val) => `${val ? "Sim" : "Não"}`,
+    sortable: true,
+  },
 ]);
 
 const presidente = computed(() => {
@@ -74,7 +74,7 @@ const presidente = computed(() => {
       };
 });
 
-function toggleTipoUsuarioInventario() {
+function togglePresidenteInventario() {
   if (usuariosSelecionados.value.length > 0) {
     const usuario = usuariosSelecionados.value[0];
 
@@ -96,7 +96,7 @@ function toggleTipoUsuarioInventario() {
       api = inventariosStore.setUsuarioInventarioPresidente;
     }
 
-    mostrarDialogPresidente(
+    mostrarDialog(
       tituloInicio,
       mensagemInicio,
       mensagemSucesso,
@@ -107,7 +107,42 @@ function toggleTipoUsuarioInventario() {
     );
   }
 }
-function mostrarDialogPresidente(
+
+function toggleAdminInventario() {
+  if (usuariosSelecionados.value.length > 0) {
+    const usuario = usuariosSelecionados.value[0];
+
+    // Usuário era presidente
+    let tituloInicio = "Revogação de administrador";
+    let mensagemInicio =
+      "Tem certeza de que deseja revogar o status de administrador do usuário selecionado?";
+    let mensagemSucesso = `Usuário ${usuario.nome} revogado como administrador!`;
+    let mensagemErro = "";
+    let api = inventariosStore.setUsuarioInventarioNaoAdmin;
+
+    // Usuário não era administrador
+    if (!usuario.admin) {
+      tituloInicio = "Definição de administrador";
+      mensagemInicio =
+        "Tem certeza de que deseja definir o usuário selecionado administrador do inventário?";
+      mensagemSucesso = `Usuário ${usuario.nome} definido como administrador!`;
+      mensagemErro = "";
+      api = inventariosStore.setUsuarioInventarioAdmin;
+    }
+
+    mostrarDialog(
+      tituloInicio,
+      mensagemInicio,
+      mensagemSucesso,
+      mensagemErro,
+      api,
+      idInventario,
+      usuario.id
+    );
+  }
+}
+
+function mostrarDialog(
   tituloInicio,
   mensagemInicio,
   mensagemSucesso,
@@ -129,9 +164,10 @@ function mostrarDialogPresidente(
         message: `${mensagemSucesso}`,
       });
     } catch (err) {
+      console.log(err);
       Notify.create({
         color: "red",
-        message: ` ${err}`,
+        message: ` ${err.response.data}`,
       });
     } finally {
       novoUsuario.value = null;
@@ -294,11 +330,22 @@ async function deletarUsuario() {
         v-if="usuariosSelecionados.length === 1"
         color="green"
         :label="`${
+          usuariosSelecionados[0].admin
+            ? 'Revogar administrador'
+            : 'Definir como administrador'
+        }`"
+        @click="toggleAdminInventario"
+        :disable="!usuariosSelecionados.length === 1"
+      />
+      <q-btn
+        v-if="usuariosSelecionados.length === 1"
+        color="blue"
+        :label="`${
           usuariosSelecionados[0].presidente
             ? 'Revogar presidência'
             : 'Definir como presidente'
         }`"
-        @click="toggleTipoUsuarioInventario"
+        @click="togglePresidenteInventario"
         :disable="!usuariosSelecionados.length === 1"
       />
     </div>
