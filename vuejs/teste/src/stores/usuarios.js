@@ -8,10 +8,22 @@ export const useUsuariosStore = defineStore({
     usuario: null,
     usuarios: [],
     carregando: false,
-    erro: null
+    erro: null,
   })
   ,
-  getters: {},
+  getters: {
+    async usuarioInventarios(state) {
+      try {
+        state.carregando = true
+        const response = await api.get(`v1/restrito/usuarios/inventarios`)
+        return await response.data
+      } catch (error) {
+
+      } finally {
+        state.carregando = false
+      }
+    }
+  },
   actions: {
     async addUsuario(usuario) {
       try {

@@ -6,12 +6,15 @@ export const useInventariosStore = defineStore({
   id: 'inventarios',
   state: () => ({
     inventarios: [],
-    usuariosInventario: [{ id: 1, nome: 'Novo 4444', cpf: '03667333625', email: 'jpaniceto@gmail.com', login: 'novo' }],
+    usuariosInventario: [],
     carregando: false,
     erro: null,
     inventario: null
   }),
   getters: {
+    // filtrarInventarios(state) {
+
+    // }
   },
   actions: {
     async liberarInventario(idInventario) {
@@ -38,13 +41,13 @@ export const useInventariosStore = defineStore({
     async addInventario(inventario) {
       const inventarioResponse = await api
         .post(`v1/restrito/inventario`, inventario)
-      this.buscarInventarios();
+      this.buscarInventarios()
     },
 
     async delInventario(idInventario) {
       const res = await api
         .delete(`v1/restrito/inventario/${idInventario}`)
-      this.buscarInventarios();
+      this.buscarInventarios()
       return res.status
     },
 
@@ -60,16 +63,24 @@ export const useInventariosStore = defineStore({
       this.inventario = await inventarioResponse.data
     },
 
-    async buscarInventarios() {
+    async buscarInventarios(usuarioInventarios) {
       const inventariosResponse = await api.get(`v1/restrito/inventario`)
-      this.inventarios = inventariosResponse.data
-      // return this.inventarios;
+      const data = await inventariosResponse.data
+      const idsInventariosUsuario = usuarioInventarios.map(usuarioInventario => usuarioInventario.idInventario)
+
+      if (idsInventariosUsuario && data) {
+        const filtro = data.filter(inventario => {
+          return idsInventariosUsuario.includes(inventario.id)
+        })
+        this.inventarios = filtro
+      } else {
+        this.inventarios = data
+      }
     },
 
     async buscarInventariosEmPreparacao() {
       const inventariosResponse = await api.get(`v1/restrito/inventario_preparando`)
       this.inventarios = await inventariosResponse.data
-      // return this.inventarios;
     },
 
     async addUsuarioInventario(idInventario, usuario) {

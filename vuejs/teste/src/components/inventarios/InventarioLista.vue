@@ -19,9 +19,9 @@
     <q-card-section>
       <q-table
         flat
-        :loading="inventariosStore.carregando"
+        :loading="carregando"
         title="Inventários"
-        :rows="inventariosStore.inventarios"
+        :rows="inventarios"
         :columns="colunas"
         row-key="id"
         selection="single"
@@ -82,20 +82,23 @@
 </template>
 
 <script setup>
-import { onMounted, ref, reactive, computed } from "vue";
+import { onMounted, ref, computed } from "vue";
 import { useRouter } from "vue-router";
-import { api } from "boot/axios";
 import { Notify } from "quasar";
 import { useQuasar } from "quasar";
 import { useInventariosStore } from "src/stores/inventarios";
+import { useUsuariosStore } from "src/stores/usuarios";
 import { diminuiTexto, registroPortugues } from "src/helper/functions";
 import { paginacaoOpcoes } from "src/helper/qtableOpcoes";
+import { storeToRefs } from "pinia";
 
 const mostrarDialog = ref(false);
 const inventariosStore = useInventariosStore();
+const usuariosStore = useUsuariosStore();
+const { inventarios, carregando } = storeToRefs(inventariosStore);
+const { usuarioInventarios } = storeToRefs(usuariosStore);
 const $q = useQuasar();
 const inventarioSelecionado = ref([]);
-const inventarios = ref([]);
 const router = useRouter();
 const colunas = ref([
   {
@@ -169,7 +172,7 @@ const statusInventarioBtn = computed(() => {
 });
 
 onMounted(async () => {
-  const inventariosResponse = await inventariosStore.buscarInventarios();
+  await inventariosStore.buscarInventarios(await usuarioInventarios.value);
 });
 
 async function mudarSituacaoInventario() {
