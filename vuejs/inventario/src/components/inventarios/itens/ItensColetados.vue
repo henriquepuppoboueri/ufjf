@@ -5,7 +5,7 @@
         flat
         :loading="carregando"
         title="Itens coletados"
-        :rows="itensColetados"
+        :rows="itensNominais"
         :columns="colunasItens"
         row-key="id"
         separator="cell"

@@ -23,9 +23,7 @@ export const useItensColetadosStore = defineStore({
     itensNominais(state) {
       try {
         state.carregando = true;
-
-
-        if (state.itensColetados.content.length > 0) {
+        if (state.itensColetados.length > 0) {
           const itensLista = state.itensColetados.map(item => {
             const situacao = situacaoStore.buscarSituacaoPorId(item.situacao).nome
             const estadoPlaqueta = plaquetaStore.buscarEstadoPlaqueta(item.idEstadoPlaqueta).nome
