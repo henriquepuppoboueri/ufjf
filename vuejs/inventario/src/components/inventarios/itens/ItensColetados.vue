@@ -5,16 +5,17 @@
         flat
         :loading="carregando"
         title="Itens coletados"
-        :rows="itensNominais"
+        :rows="itensColetados"
         :columns="colunasItens"
         row-key="id"
         separator="cell"
         selection="multiple"
         :wrap-cells="true"
-        :filter="filtro"
-        :filter-method="filtroAvancado"
+        v-model:pagination="pagination"
+        :filter="filter"
+        @request="onRequest"
         :selected-rows-label="registroPortugues"
-        :pagination="paginacaoOpcoes"
+        :rows-per-page-options="[1, 5, 10, 15, 50]"
         :bordered="false"
         loading-label="Carregando"
         no-data-label="Não foram encontrados dados."
@@ -33,39 +34,11 @@
         <!-- pesquisa -->
         <template v-slot:top-right>
           <div class="row q-gutter-sm">
-            <q-select
-              dense
-              filled
-              v-model="colunasFiltro"
-              :options="colunasItens"
-              stack-label
-              label="Filtrar por coluna"
-              single
-              clearable
-              @clear="() => (colunasFiltro = [])"
-            >
-              <template
-                v-slot:option="{ itemProps, opt, selected, toggleOption }"
-              >
-                <q-item v-bind="itemProps">
-                  <q-item-section>
-                    <q-item-label v-html="opt.label" />
-                  </q-item-section>
-                  <q-item-section side>
-                    <q-toggle
-                      :model-value="selected"
-                      @update:model-value="toggleOption(opt)"
-                    />
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
             <q-input
-              borderless
               dense
               filled
               debounce="300"
-              v-model="filtro"
+              v-model="filter"
               placeholder="Filtrar"
               clearable
             >
@@ -151,7 +124,6 @@
 import { ref, reactive, watch, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { diminuiTexto, registroPortugues } from "src/helper/functions";
-import { paginacaoOpcoes } from "src/helper/qtableOpcoes";
 import { useSetoresStore } from "src/stores/setores";
 import { storeToRefs } from "pinia";
 import { useQuasar, Notify } from "quasar";
@@ -161,12 +133,20 @@ import { exportTable } from "src/helper/functions";
 const $q = useQuasar();
 const setoresStore = useSetoresStore();
 const itensColetadosStore = useItensColetadosStore();
-const { itensColetados, carregando, itensNominais } =
+const { itensColetados, carregando, paginacaoDados, itensNominais } =
   storeToRefs(itensColetadosStore);
 const itensSelecionados = ref([]);
-const filtro = ref("");
+const filter = ref("");
 const router = useRouter();
 const route = useRoute();
+let idInventario = route.params.idInventario || false;
+const pagination = ref({
+  descending: false,
+  page: 1,
+  rowsPerPage: 10,
+  rowsNumber: 0,
+  sortBy: "id",
+});
 const colunasItens = reactive([
   {
     name: "patrimonio",
@@ -225,65 +205,42 @@ const colunasItens = reactive([
     sortable: true,
   },
 ]);
-const colunasFiltro = ref([]);
-const colunasMostrar = ref([
-  {
-    name: "patrimonio",
-    align: "left",
-    label: "PATRIMÔNIO",
-    field: "patrimonio",
-    sortable: true,
-  },
-  {
-    name: "descricao",
-    align: "left",
-    label: "DESCRIÇÃO",
-    field: "descricao",
-    sortable: true,
-  },
-  {
-    name: "setor",
-    align: "left",
-    label: "SETOR",
-    field: "setor",
-    sortable: true,
-  },
-  {
-    name: "dependencia",
-    align: "left",
-    label: "DEPENDÊNCIA",
-    field: "dependencia",
-    sortable: true,
-  },
-  {
-    name: "situacao",
-    align: "left",
-    label: "SITUAÇÃO",
-    field: "situacao",
-    sortable: true,
-  },
-]);
-
-function filtroAvancado(row, terms, cols, getCellValue) {
-  if (!terms) return row;
-
-  if (colunasFiltro.value.hasOwnProperty("field")) {
-    return row.filter((item) =>
-      item[colunasFiltro.value.field]
-        .toLowerCase()
-        .includes(terms.toLowerCase())
+const fetchData = async (
+  page = 0,
+  sortBy = "id",
+  sortDirection = "asc",
+  filter = "",
+  rowsPerPage = 10
+) => {
+  try {
+    await itensColetadosStore.buscarItensColetados(
+      idInventario,
+      page,
+      rowsPerPage,
+      `${sortBy},${sortDirection}`,
+      filter
     );
+    pagination.value.page = paginacaoDados.value.currentPage + 1;
+    pagination.value.sortBy = sortBy || "id";
+    pagination.value.descending = sortDirection === "desc";
+    pagination.value.rowsPerPage = rowsPerPage;
+    pagination.value.rowsNumber = paginacaoDados.value.totalElements;
+  } finally {
   }
+};
 
-  const data = row.filter((item) => {
-    return Object.values(item)
-      .toString()
-      .toLowerCase()
-      .includes(terms.toLowerCase());
-  });
+const onRequest = (props) => {
+  fetchData(
+    props.pagination.page - 1,
+    props.pagination.sortBy,
+    props.pagination.descending ? "desc" : "asc",
+    props.filter,
+    props.pagination.rowsPerPage
+  );
+};
 
-  return data;
-}
+// The initial fetch
+fetchData();
 
 const qtItensSelec = computed(() => {
   return itensSelecionados.value.length;
@@ -355,24 +312,16 @@ function delItens() {
   }
 }
 
-function refatoraTexto(colNome, colValor) {
-  switch (colNome) {
-    default:
-      return diminuiTexto(colValor);
-      break;
-  }
-}
-
 async function renderPage() {
+  idInventario = route.params.idInventario || false;
   itensColetados.value = [];
   itensSelecionados.value = [];
-  const id = route.params.idInventario || false;
 
-  if (!id) return;
+  if (!idInventario) return;
 
   try {
-    await setoresStore.buscarSetoresDependencias(id);
-    await itensColetadosStore.buscarItensColetados(id);
+    await setoresStore.buscarSetoresDependencias(idInventario);
+    await itensColetadosStore.buscarItensColetados(idInventario);
   } catch (error) {}
 }
 </script>

@@ -14,6 +14,7 @@ export const useItensColetadosStore = defineStore({
   id: 'itensColetados',
   state: () => ({
     itensColetados: [],
+    paginacaoDados: {},
     itemColetado: null,
     carregando: false,
     erro: null,
@@ -23,7 +24,8 @@ export const useItensColetadosStore = defineStore({
       try {
         state.carregando = true;
 
-        if (state.itensColetados.length > 0) {
+
+        if (state.itensColetados.content.length > 0) {
           const itensLista = state.itensColetados.map(item => {
             const situacao = situacaoStore.buscarSituacaoPorId(item.situacao).nome
             const estadoPlaqueta = plaquetaStore.buscarEstadoPlaqueta(item.idEstadoPlaqueta).nome
@@ -50,6 +52,8 @@ export const useItensColetadosStore = defineStore({
       } catch (error) {
 
       } finally {
+        state.carregando = false;
+
       }
     }
   },
@@ -94,12 +98,20 @@ export const useItensColetadosStore = defineStore({
       }
     },
 
-    async buscarItensColetados(idInventario) {
+    async buscarItensColetados(idInventario, page = 0, rowsPerPage = 10, sortBy = 'id,asc', filter = '') {
       try {
         this.carregando = true
-        const response = await api.get(`v1/restrito/item/coleta/${idInventario}`)
-        if (response.data.length > 0)
-          this.itensColetados = await response.data
+        const response = await api.get(`v1/restrito/item/coleta2/${idInventario}`, {
+          params: {
+            page,
+            rowsPerPage,
+            sortBy,
+            filter
+          }
+        })
+        this.itensColetados = await response.data.content
+        this.paginacaoDados = { ...response.data }
+        delete this.paginacaoDados.content
       } catch (error) {
         this.error = error;
       } finally {
