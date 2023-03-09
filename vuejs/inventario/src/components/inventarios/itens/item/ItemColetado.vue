@@ -22,14 +22,15 @@
         />
       </div>
 
-      <q-input
+      <q-input outlined v-model="identificador" label="Identificador" dense />
+      <!-- <q-input
         outlined
         v-model="identificador"
         label="Identificador"
         dense
         maxlength="5"
         :rules="[(val) => exactLength(val, 5, 'Identificador')]"
-      />
+      /> -->
       <q-editor
         v-model="itemDescricao"
         min-height="5rem"

@@ -60,6 +60,7 @@
             label="Usuários"
             caption="Controle de usuários"
             :content-inset-level="0.5"
+            v-if="usuario.adminSistema"
           >
             <q-item dense clickable v-ripple to="/usuario/novo" exact>
               <q-item-section avatar>
@@ -149,7 +150,7 @@
 <script setup>
 import { storeToRefs } from "pinia";
 import { useAuthStore } from "src/stores/auth";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 
 const authStore = useAuthStore();
 const { carregando, erro } = storeToRefs(authStore);
@@ -159,4 +160,8 @@ const leftDrawerOpen = ref(false);
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 }
+
+onMounted(() => {
+  console.log(usuario);
+});
 </script>

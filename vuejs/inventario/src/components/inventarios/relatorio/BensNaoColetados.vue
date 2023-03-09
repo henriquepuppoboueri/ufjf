@@ -15,9 +15,10 @@ import { useDependenciasStore } from "src/stores/dependencias";
 
 let idInventario = null;
 const dependenciasStore = useDependenciasStore();
+const { setoresDependencias, setor } = storeToRefs(setoresStore);
+
 const setoresStore = useSetoresStore();
 const { dependencias, dependencia } = storeToRefs(dependenciasStore);
-const { setoresDependencias, setor } = storeToRefs(setoresStore);
 const router = useRouter();
 const itensSelecionados = ref([]);
 const filtro = ref("");

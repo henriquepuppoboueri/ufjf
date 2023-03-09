@@ -1,7 +1,3 @@
-import { extractIdentifiers } from '@vue/compiler-core';
-import { createRouter, createWebHistory } from 'vue-router';
-
-
 const routes = [
   {
     path: "/", redirect: '/inventario',

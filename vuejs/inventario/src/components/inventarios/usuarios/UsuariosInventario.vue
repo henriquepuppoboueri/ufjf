@@ -222,9 +222,11 @@ async function addUsuarioInventario() {
       message: `Usuário ${novoUsuario.value.nome} vinculado!`,
     });
   } catch (err) {
+    console.log(err);
     Notify.create({
       color: "red",
-      message: `Erro ao vincular usuário: ${err}`,
+      message: `${err.response.data}`,
+      // message: `Erro ao vincular usuário: ${err.response.data}`,
     });
   } finally {
     novoUsuario.value = null;
