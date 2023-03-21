@@ -120,6 +120,13 @@
 
               <q-item-section>Importar arquivo do SIGA</q-item-section>
             </q-item>
+            <q-item dense clickable v-ripple to="/etiquetas">
+              <q-item-section avatar>
+                <q-icon text-color="white" name="fa-solid fa-book" />
+              </q-item-section>
+
+              <q-item-section>Imprimir etiquetas</q-item-section>
+            </q-item>
           </q-expansion-item>
 
           <!-- <q-expansion-item
@@ -161,7 +168,5 @@ function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 }
 
-onMounted(() => {
-  console.log(usuario);
-});
+onMounted(() => {});
 </script>

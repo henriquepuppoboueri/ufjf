@@ -1,8 +1,7 @@
 <script setup>
-import { useRelatoriosStore } from "stores/relatorios";
+import { useEstatisticasStore } from "stores/estatisticas";
 import { onMounted, reactive, ref } from "vue";
 import { useRoute } from "vue-router";
-import { api } from "boot/axios";
 import { Bar, Line } from "vue-chartjs";
 import {
   Chart as ChartJS,
@@ -28,8 +27,9 @@ ChartJS.register(
   PointElement,
   LineElement
 );
-const relatoriosStore = useRelatoriosStore();
-const { relatorio, carregando } = storeToRefs(relatoriosStore);
+const estatisticasStore = useEstatisticasStore();
+const { carregando, dados } = storeToRefs(estatisticasStore);
+const { buscarResumoSemana } = estatisticasStore;
 const labels = [];
 const chartWidth = { type: Number, default: 400 };
 const chartData = reactive({
@@ -43,22 +43,20 @@ const temDados = ref(false);
 onMounted(async () => {
   if ("idInventario" in route.params) {
     const id = +route.params.idInventario;
-    await relatoriosStore.estatisticasPorSemana(id);
+    await buscarResumoSemana(id);
 
-    temDados.value = !!relatorio.value;
-    chartData.datasets = relatorio.value.map((row) => ({
+    temDados.value = !!dados.value.coleta.length;
+    chartData.datasets = dados.value.coleta.map((row) => ({
       label: row.usuario.nome,
       data: row.coleta.map((semana) => semana.qtde),
       borderColor: gerarCorAleatoria(),
       tension: 0.3,
     }));
-    if (relatorio.value.length > 0) {
-      if (relatorio.value[0].coleta.length > 0) {
-        for (let index = 0; index < relatorio.value[0].coleta.length; index++) {
+    if (temDados.value)
+      if (dados.value.coleta.length > 0)
+        for (let index = 0; index < dados.value.coleta.length; index++) {
           labels.push(`Semana # ${index + 1}`);
         }
-      }
-    }
   } else {
     return;
   }

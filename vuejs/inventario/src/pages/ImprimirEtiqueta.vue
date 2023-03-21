@@ -34,7 +34,7 @@ function onGerarEtiquetas() {
           type="text"
           label="Primeira sequência"
           mask="####"
-          fill-mask="0000"
+          fill-mask="0000000"
           reverse-fill-mask
         />
         <q-input v-model="ano" type="text" label="Unidade - Ano" />

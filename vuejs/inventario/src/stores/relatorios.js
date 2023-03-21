@@ -73,7 +73,7 @@ export const useRelatoriosStore = defineStore({
     async estatisticasPorDia(idInventario) {
       try {
         this.carregando = true
-        const response = await api.get(`v1/restrito/inventario/usuario/qtdecoletadia/${idInventario}`)
+        const response = await api.get(`v1/restrito/resumo/obtemResumoPorUsuario/${idInventario}`)
         const data = await response.data
         this.relatorio = await data
         this.carregando = false

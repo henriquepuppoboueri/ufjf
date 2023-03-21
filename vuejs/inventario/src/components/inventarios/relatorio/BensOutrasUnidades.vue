@@ -87,7 +87,7 @@ function verItem() {
 }
 
 function exportarDados() {
-  exportTable(colunasItens, relatorio.value, "plaquetas-com-problemas");
+  exportTable(colunasItens, relatorio.value, "bens-em-outras-unidades");
 }
 </script>
 

@@ -60,6 +60,18 @@ const routes = [
     ]
   },
   {
+    path: "/etiquetas",
+    component: () => import("layouts/MainLayout.vue"),
+    meta: { restrito: true },
+    children: [
+      {
+        path: "",
+        component: () =>
+          import("pages/ImprimirEtiqueta.vue"),
+      }
+    ]
+  },
+  {
     path: "/inventario",
     name: 'inventario',
     component: () => import("layouts/MainLayout.vue"),
@@ -203,7 +215,7 @@ const routes = [
               {
                 path: 'etiqueta',
                 name: 'etiqueta',
-                component: () => import('components/inventarios/relatorio/ImprimirEtiqueta.vue'),
+                component: () => import('src/pages/ImprimirEtiqueta.vue'),
               },
             ]
           },

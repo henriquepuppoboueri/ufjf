@@ -1,5 +1,4 @@
 <script setup>
-import { useRelatoriosStore } from "stores/relatorios";
 import { onMounted, reactive, ref } from "vue";
 import { useRoute } from "vue-router";
 import { Line } from "vue-chartjs";
@@ -16,6 +15,7 @@ import {
 } from "chart.js";
 import { storeToRefs } from "pinia";
 import { gerarCorAleatoria } from "src/helper/functions";
+import { useEstatisticasStore } from "stores/estatisticas";
 
 ChartJS.register(
   Title,
@@ -27,8 +27,10 @@ ChartJS.register(
   PointElement,
   LineElement
 );
-const relatoriosStore = useRelatoriosStore();
-const { relatorio, carregando } = storeToRefs(relatoriosStore);
+
+const estatisticasStore = useEstatisticasStore();
+const { carregando, dados } = storeToRefs(estatisticasStore);
+const { buscarResumoDia } = estatisticasStore;
 const labels = [];
 const chartWidth = { type: Number, default: 400 };
 const chartData = reactive({
@@ -42,18 +44,19 @@ const temDados = ref(false);
 onMounted(async () => {
   if ("idInventario" in route.params) {
     const id = +route.params.idInventario;
-    await relatoriosStore.estatisticasPorDia(id);
+    await buscarResumoDia(id);
 
-    temDados.value = !!relatorio.value;
-    chartData.datasets = relatorio.value.map((row) => ({
+    temDados.value = !!dados.value.coleta.length;
+    chartData.datasets = dados.value.coleta.map((row) => ({
       label: row.usuario.nome,
-      data: row.coleta.map((dia) => dia.qtde),
+      data: row.coleta.map((semana) => semana.qtde),
       borderColor: gerarCorAleatoria(),
       tension: 0.3,
     }));
-    if (relatorio.value.length > 0)
-      if (relatorio.value[0].coleta.length > 0)
-        relatorio.value[0].coleta.forEach((coletaDiaria) => {
+    if (temDados.value)
+      if (dados.value.coleta.length > 0)
+        dados.value.coleta[0].coleta.forEach((coletaDiaria) => {
+          console.log(coletaDiaria);
           labels.push(coletaDiaria.data);
         });
   } else {

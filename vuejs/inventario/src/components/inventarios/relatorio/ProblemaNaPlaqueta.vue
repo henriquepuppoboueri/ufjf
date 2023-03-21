@@ -36,6 +36,13 @@ const colunasItens = [
     field: "localizacao",
     sortable: true,
   },
+  {
+    name: "estadoPlaqueta",
+    align: "left",
+    label: "ESTADO DA PLAQUETA",
+    field: "estadoPlaqueta",
+    sortable: true,
+  },
 ];
 const route = useRoute();
 const relatoriosStore = useRelatoriosStore();

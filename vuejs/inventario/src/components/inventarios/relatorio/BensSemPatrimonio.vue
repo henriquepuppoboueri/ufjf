@@ -66,7 +66,7 @@ function verItem() {
 }
 
 function exportarDados() {
-  exportTable(colunasItens, relatorio.value, "coletas-sem-itens");
+  exportTable(colunasItens, relatorio.value, "bens-sem-patrimonio");
 }
 </script>
 

@@ -8,10 +8,19 @@
           label="Patrimônio"
           dense
           class="fit"
-          maxlength="6"
-          :rules="[(val) => exactLength(val, 6, 'Patrimônio')]"
         >
         </q-input>
+        <!-- <q-input
+          outlined
+          v-model="patrimonio"
+          label="Patrimônio"
+          dense
+          class="fit"
+          maxlength="6"
+          :rules="[(val) => exactLength(val, 6, 'Patrimônio')]"
+          :rules="[(val) => isNumber(val, 'Identificador')]"
+        >
+        </q-input> -->
         <q-btn
           color="blue"
           label="Buscar"
@@ -22,7 +31,17 @@
         />
       </div>
 
-      <q-input outlined v-model="identificador" label="Identificador" dense />
+      <q-input
+        outlined
+        v-model="identificador"
+        label="Identificador"
+        dense
+        :rules="[
+          (val) => isNumber(val, 'Identificador'),
+          (val) => notStartWith(val, '0', 'Identificador'),
+        ]"
+      >
+      </q-input>
       <!-- <q-input
         outlined
         v-model="identificador"
@@ -120,7 +139,7 @@ import { useSituacaoStore } from "src/stores/situacao";
 import { useDependenciasStore } from "src/stores/dependencias";
 import { usePlaquetaStore } from "src/stores/plaqueta";
 import { useAuthStore } from "src/stores/auth";
-import { exactLength } from "src/helper/formValidation";
+import { isNumber, notStartWith } from "src/helper/formValidation";
 import { Notify } from "quasar";
 
 const patrimonioBuscado = false;

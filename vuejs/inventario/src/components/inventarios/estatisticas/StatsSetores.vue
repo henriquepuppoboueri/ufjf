@@ -1,7 +1,6 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
-import { api } from "boot/axios";
 import { useEstatisticasStore } from "stores/estatisticas";
 import { storeToRefs } from "pinia";
 
@@ -15,7 +14,7 @@ const colunas = [
   {
     name: "setor",
     align: "left",
-    label: "SETOR",
+    label: "DEPENDÊNCIA",
     field: "nomeDependencia",
     sortable: true,
   },
@@ -57,11 +56,6 @@ onMounted(async () => {
     const response = await buscarTotaisSetores(id);
     resumo.value = dados.value;
     temDados.value = !!resumo.value.qtde;
-
-    // api.get(`v1/restrito/item/qtde/${id}`).then((res) => {
-    //   resumo.value = res.data;
-    //   temDados.value = !!resumo.value.qtde;
-    // });
   } else {
     return;
   }
