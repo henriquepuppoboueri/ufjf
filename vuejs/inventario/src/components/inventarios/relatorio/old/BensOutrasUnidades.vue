@@ -74,7 +74,7 @@ watch(itensSelecionados, (nv, ov) => {
 
 onMounted(async () => {
   const idInventario = route.params["idInventario"];
-  await relatoriosStore.localDiferente(idInventario);
+  const response = await relatoriosStore.localDiferente(idInventario);
 });
 
 function verItem() {

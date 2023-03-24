@@ -12,7 +12,9 @@ import {
 import { paginacaoOpcoes } from "src/helper/qtableOpcoes";
 import { useSetoresStore } from "src/stores/setores";
 import { useDependenciasStore } from "src/stores/dependencias";
+import { useQuasar } from "quasar";
 
+const $q = useQuasar();
 const route = useRoute();
 let idInventario = null;
 const dependenciasStore = useDependenciasStore();
@@ -74,6 +76,13 @@ const colunasItens = [
     field: "localizacao",
     sortable: true,
   },
+  {
+    name: "estadoPlaqueta",
+    align: "left",
+    label: "ESTADO PLAQUETA",
+    field: "estadoPlaqueta",
+    sortable: true,
+  },
 ];
 
 const colunasVisiveis = ref([]);
@@ -103,6 +112,7 @@ const relatoriosOpcoes = ref([
       "localizacao",
       "setorEncontrado",
       "dependenciaEncontrada",
+      "estadoPlaqueta",
     ],
   },
   {
@@ -133,6 +143,21 @@ const relatoriosOpcoes = ref([
       "dependenciaPrevista",
     ],
   },
+  {
+    nome: "sem-itens",
+    titulo: "Coletas sem itens",
+    itemTipo: "itemColetado",
+    fn: relatoriosStore.coletasSemItens,
+    colunasVisiveis: [
+      "patrimonio",
+      "descricao",
+      "localizacao",
+      "setorEncontrado",
+      "setorPrevisto",
+      "dependenciaEncontrada",
+      "dependenciaPrevista",
+    ],
+  },
 ]);
 
 const relatorioSelec = computed(() => {
@@ -149,7 +174,6 @@ watch(
     nomeRelatorio.value = query.relatorio;
   }
 );
-
 const { relatorio, carregando, erro } = storeToRefs(relatoriosStore);
 
 const qtItensSelec = computed(() => {
@@ -201,11 +225,18 @@ function exportarDados() {
 }
 
 async function filtrarSetorDep() {
-  await relatorioSelec.value.fn(
-    idInventario,
-    idSetor.value,
-    idDependencia.value
-  );
+  try {
+    await relatorioSelec.value.fn(
+      idInventario,
+      idSetor.value,
+      idDependencia.value
+    );
+    console.log(erro.value.response);
+    if (erro.value.response.status == "403")
+      throw new Error(erro.value.response.data);
+  } catch (error) {
+    $q.dialog({ title: "Erro", message: error.message });
+  }
 }
 
 function limparFiltro() {

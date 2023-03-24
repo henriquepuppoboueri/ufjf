@@ -180,12 +180,12 @@ const routes = [
               {
                 path: 'sem-patrimonio',
                 name: 'bensSemPatrimonio',
-                component: () => import('components/inventarios/relatorio/BensSemPatrimonio.vue'),
+                component: () => import('src/components/inventarios/relatorio/old/BensSemPatrimonio.vue'),
               },
               {
                 path: 'nao-coletados',
                 name: 'bensNaoColetados',
-                component: () => import('components/inventarios/relatorio/BensNaoColetados.vue'),
+                component: () => import('src/components/inventarios/relatorio/old/BensNaoColetados.vue'),
               },
               {
                 path: 'nao-coletados2',
@@ -195,22 +195,22 @@ const routes = [
               {
                 path: 'plaquetas-problemas',
                 name: 'plaquetasComProblemas',
-                component: () => import('components/inventarios/relatorio/ProblemaNaPlaqueta.vue'),
+                component: () => import('src/components/inventarios/relatorio/old/ProblemaNaPlaqueta.vue'),
               },
               {
                 path: 'bens-outras-unidades',
                 name: 'bensOutrasUnidades',
-                component: () => import('components/inventarios/relatorio/BensOutrasUnidades.vue'),
+                component: () => import('src/components/inventarios/relatorio/old/BensOutrasUnidades.vue'),
               },
               {
                 path: 'sem-itens',
                 name: 'bensSemItens',
-                component: () => import('components/inventarios/relatorio/BensSemItens.vue'),
+                component: () => import('src/components/inventarios/relatorio/old/BensSemItens.vue'),
               },
               {
                 path: 'resumo-geral',
                 name: 'resumoGeral',
-                component: () => import('components/inventarios/relatorio/ResumoInventario.vue'),
+                component: () => import('src/components/inventarios/relatorio/old/ResumoInventario.vue'),
               },
               {
                 path: 'etiqueta',

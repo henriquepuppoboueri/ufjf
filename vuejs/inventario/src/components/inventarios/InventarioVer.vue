@@ -93,12 +93,22 @@
           >
             <q-item-section>Bens em outras unidades</q-item-section>
           </q-item>
-          <q-item clickable :to="{ name: 'bensSemItens' }" exact>
+          <q-item
+            clickable
+            :to="{
+              name: 'relatorioBase',
+              query: { relatorio: 'sem-itens' },
+            }"
+            exact
+          >
+            <q-item-section>Coletas sem itens</q-item-section>
+          </q-item>
+          <!-- <q-item clickable :to="{ name: 'bensSemItens' }" exact>
             <q-item-section>Coletas sem itens (não-importados)</q-item-section>
-          </q-item>
-          <q-item clickable :to="{ name: 'etiqueta' }" exact>
+          </q-item> -->
+          <!-- <q-item clickable :to="{ name: 'etiqueta' }" exact>
             <q-item-section>Imprimir etiquetas</q-item-section>
-          </q-item>
+          </q-item> -->
           <!-- <q-item clickable :to="{ name: 'resumoGeral' }" exact>
             <q-item-section>[Resumo geral]</q-item-section>
           </q-item> -->

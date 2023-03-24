@@ -1,11 +1,10 @@
 <script setup>
 import { computed } from "vue";
 import VueQrious from "vue-qrious";
-import { useRoute } from "vue-router";
 
 const props = defineProps({ labelText: Object });
 const fullLabel = computed(() => {
-  const paddedSequence = String(props.labelText.sequence).padStart(4, 0);
+  const paddedSequence = String(props.labelText.sequence).padStart(7, 0);
   return `${props.labelText.prefix}${paddedSequence}`;
 });
 </script>

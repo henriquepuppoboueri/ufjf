@@ -33,7 +33,7 @@ function onGerarEtiquetas() {
           v-model="start"
           type="text"
           label="Primeira sequência"
-          mask="####"
+          mask="#######"
           fill-mask="0000000"
           reverse-fill-mask
         />

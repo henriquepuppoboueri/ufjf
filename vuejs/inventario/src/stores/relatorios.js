@@ -18,6 +18,7 @@ export const useRelatoriosStore = defineStore({
         this.carregando = false
       } catch (error) {
         this.erro = error
+        this.carregando = false
       }
     },
     async coletasSemItens(idInventario, idSetor, idDependencia) {
@@ -31,6 +32,7 @@ export const useRelatoriosStore = defineStore({
         this.carregando = false
       } catch (error) {
         this.erro = error
+        this.carregando = false
       }
     },
     async bensSemPatrimonio(idInventario, idSetor, idDependencia) {
@@ -44,6 +46,7 @@ export const useRelatoriosStore = defineStore({
         this.carregando = false
       } catch (error) {
         this.erro = error
+        this.carregando = false
       }
     },
     async plaquetasComProblemas(idInventario, idSetor, idDependencia) {
@@ -57,6 +60,7 @@ export const useRelatoriosStore = defineStore({
         this.carregando = false
       } catch (error) {
         this.erro = error
+        this.carregando = false
       }
     },
     async localDiferente(idInventario, idSetor, idDependencia) {
@@ -68,6 +72,7 @@ export const useRelatoriosStore = defineStore({
         this.carregando = false
       } catch (error) {
         this.erro = error
+        this.carregando = false
       }
     },
     async estatisticasPorDia(idInventario) {
@@ -79,6 +84,7 @@ export const useRelatoriosStore = defineStore({
         this.carregando = false
       } catch (error) {
         this.erro = error
+        this.carregando = false
       }
     },
     async estatisticasPorSemana(idInventario) {
@@ -90,6 +96,7 @@ export const useRelatoriosStore = defineStore({
         this.carregando = false
       } catch (error) {
         this.erro = error
+        this.carregando = false
       }
     },
   }

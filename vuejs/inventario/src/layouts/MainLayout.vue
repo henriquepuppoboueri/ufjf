@@ -122,7 +122,7 @@
             </q-item>
             <q-item dense clickable v-ripple to="/etiquetas">
               <q-item-section avatar>
-                <q-icon text-color="white" name="fa-solid fa-book" />
+                <q-icon text-color="white" name="fa-solid fa-tag" />
               </q-item-section>
 
               <q-item-section>Imprimir etiquetas</q-item-section>

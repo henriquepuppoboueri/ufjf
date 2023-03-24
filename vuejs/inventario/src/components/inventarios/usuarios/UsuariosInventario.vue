@@ -60,6 +60,14 @@ const colunasTblUsuarios = ref([
     format: (val) => `${val ? "Sim" : "Não"}`,
     sortable: true,
   },
+  {
+    name: "permissoes",
+    required: true,
+    label: "PERMISSÕES",
+    align: "left",
+    field: "permissoes",
+    sortable: false,
+  },
 ]);
 
 const presidente = computed(() => {
@@ -175,6 +183,10 @@ function mostrarDialog(
     }
   });
 }
+
+const setUsuarioPermissoes = (user) => {
+  console.log(user);
+};
 
 const usuariosSemVinculo = computed(() => {
   return lodash.differenceBy(usuarios.value, usuariosInventario.value, "id");
@@ -319,6 +331,30 @@ async function deletarUsuario() {
       rows-per-page-label="Registros por página:"
       :selected-rows-label="registroPortugues"
     >
+      <template v-slot:body-cell-permissoes="props">
+        <q-td :props="props">
+          <q-btn
+            color="white"
+            text-color="black"
+            icon="fa-solid fa-bars"
+            @click="setUsuarioPermissoes(props.row)"
+          >
+            <q-menu v-model="showing">
+              <div class="row no-wrap q-pa-md">
+                <div class="column">
+                  <div class="text-h6">Permissões</div>
+                  <q-separator spaced />
+                  <q-toggle
+                    v-model="props.row.presidente"
+                    label="Emitir relatórios"
+                  />
+                  <!-- <q-toggle v-model="bluetooth" label="Bluetooth" /> -->
+                </div>
+              </div>
+            </q-menu>
+          </q-btn>
+        </q-td>
+      </template>
     </q-table>
     <div class="row q-gutter-x-sm" v-if="usuariosSelecionados.length > 0">
       <q-btn

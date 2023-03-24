@@ -1,6 +1,5 @@
 <script setup>
 import { computed } from "vue";
-import VueQrious from "vue-qrious";
 import { useRoute } from "vue-router";
 import QrEtiqueta from "src/components/utils/QrEtiqueta.vue";
 
