@@ -259,7 +259,7 @@ async function onSubmit() {
     idDependencia: dependencia.value.id,
     idEstadoPlaqueta: estadoPlaqueta.value.id,
     idInventario: idInventario.value,
-    identificador: identificador.value,
+    identificador: +identificador.value,
     fornecedor: nomeFornecedor.value,
     localizacao: itemLocalizacao.value,
     observacao: itemObservacao.value,
@@ -274,8 +274,8 @@ async function onSubmit() {
       router.go(-1);
     } catch (error) {}
   } else {
-    // if (Object.hasOwnProperty(itemImportado.value.id)) {
-    item.idItem = itemImportado.value.id;
+    // if (Object.hasOwnProperty(itemImportado.value.id))
+    item.idItem = !!itemImportado.value ? itemImportado.value.id : 0;
     item.usuario = usuario.value.id;
     // }
     await itensColetadosStore.addItemColetado(item);

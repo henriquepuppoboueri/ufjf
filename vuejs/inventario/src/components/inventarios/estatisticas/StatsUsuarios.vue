@@ -65,6 +65,7 @@ function addDelMostrarUsuario(idUsuario) {
   <div class="col q-gutter-y-md" v-if="temDados">
     <div v-for="item in resumo" :key="item.usuario">
       <q-table
+        :loading="carregando"
         flat
         square
         :bordered="false"
