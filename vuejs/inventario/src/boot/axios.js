@@ -5,7 +5,7 @@ import axios from 'axios'
 // const api_options = { baseURL: 'https://10.1.2.90:9002' }
 // const api_options = { baseURL: 'http://10.1.2.90:9001' }
 // const api_options = { baseURL: 'https://tomcat.gv.ufjf.br:8443/apiinventario' }
-const api_options = { baseURL: 'https://ip20013116234.gv.ufjf.br:8443/apiinventario-1.17' }
+const api_options = { baseURL: 'https://ip20013116234.gv.ufjf.br:8443/apiinventario-1.18' }
 const api = axios.create(api_options)
 // const usuarioLogado = localStorage.getItem('usuarioLogado')
 // if (usuarioLogado) {
