@@ -12,6 +12,7 @@ const containerPaddingTop = route.query.containerPaddingTop;
 const containerMarginLeft = route.query.containerMarginLeft;
 const containerWidth = route.query.containerWidth;
 const imgHeight = route.query.imgHeight;
+const nrCasasSequencia = route.query.nrCasasSequencia;
 
 const amountOfLabels = computed(() => {
   return pages * 60;
@@ -39,6 +40,7 @@ const amountOfLabels = computed(() => {
           containerWidth,
           containerMarginLeft,
           imgHeight,
+          nrCasasSequencia,
         }"
       ></qr-etiqueta>
     </div>

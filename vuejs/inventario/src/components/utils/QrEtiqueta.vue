@@ -5,7 +5,10 @@ import VueQrious from "vue-qrious";
 
 const props = defineProps({ labelText: Object, pageOptions: Object });
 const fullLabel = computed(() => {
-  const paddedSequence = String(props.labelText.sequence).padStart(7, 0);
+  const paddedSequence = String(props.labelText.sequence).padStart(
+    props.pageOptions.nrCasasSequencia,
+    0
+  );
   return `${props.labelText.prefix}${paddedSequence}`;
 });
 </script>

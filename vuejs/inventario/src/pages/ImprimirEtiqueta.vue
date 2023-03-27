@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import { format } from "quasar";
 
@@ -7,6 +7,7 @@ const { pad } = format;
 
 const router = useRouter();
 const prefix = ref("");
+const nrCasasSequencia = ref(7);
 const start = ref();
 const pages = ref();
 const ano = ref();
@@ -14,6 +15,19 @@ const containerPaddingTop = ref("49");
 const containerMarginLeft = ref("0");
 const containerWidth = ref("136");
 const imgHeight = ref("42");
+
+const nrCasasZeros = computed(() => {
+  return geraStringConcat("0");
+});
+
+const nrCasasCerquilha = computed(() => {
+  return geraStringConcat("#");
+});
+
+const geraStringConcat = (val) =>
+  new Array(+nrCasasSequencia.value)
+    .fill(val, 0, nrCasasSequencia.value)
+    .join("");
 
 function onGerarEtiquetas() {
   router.push({
@@ -27,6 +41,7 @@ function onGerarEtiquetas() {
       containerMarginLeft: containerMarginLeft.value,
       containerWidth: containerWidth.value,
       imgHeight: imgHeight.value,
+      nrCasasSequencia: nrCasasSequencia.value,
     },
   });
 }
@@ -38,11 +53,16 @@ function onGerarEtiquetas() {
       <q-card-section>
         <q-input v-model="prefix" type="text" label="Prefixo" />
         <q-input
+          v-model="nrCasasSequencia"
+          type="number"
+          label="Número de casas"
+        />
+        <q-input
           v-model="start"
           type="text"
           label="Primeira sequência"
-          mask="#######"
-          fill-mask="0000000"
+          :mask="nrCasasCerquilha"
+          :fill-mask="nrCasasZeros"
           reverse-fill-mask
         />
         <q-input v-model="ano" type="text" label="Unidade - Ano" />
