@@ -339,7 +339,7 @@ async function deletarUsuario() {
             icon="fa-solid fa-bars"
             @click="setUsuarioPermissoes(props.row)"
           >
-            <q-menu v-model="showing">
+            <q-menu>
               <div class="row no-wrap q-pa-md">
                 <div class="column">
                   <div class="text-h6">Permissões</div>

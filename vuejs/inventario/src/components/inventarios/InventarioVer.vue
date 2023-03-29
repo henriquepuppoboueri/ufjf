@@ -128,45 +128,62 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
-import { useInventariosStore } from "stores/inventarios";
-import { storeToRefs } from "pinia";
-// import { useItensImportadosStore } from "src/stores/itensImportados";
-// import { useItensColetadosStore } from "src/stores/itensColetados";
+import { ref, onMounted, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
-// const itensImportadosStore = useItensColetadosStore();
-// const { itensImportados } = storeToRefs(itensImportadosStore);
-// const itensColetadosStore = useItensColetadosStore();
-// const { itensColetados } = storeToRefs(itensColetadosStore);
-// const { buscarItensImportados } = useItensImportadosStore();
-// const { buscarItensColetados } = useItensColetadosStore();
+import { Notify } from "quasar";
+import { storeToRefs } from "pinia";
+
+import { useInventariosStore } from "stores/inventarios";
+import { useUsuariosStore } from "src/stores/usuarios";
+
 const inventariosStore = useInventariosStore();
-const { buscarInventario } = useInventariosStore();
-const { inventario } = storeToRefs(inventariosStore);
+const { buscarInventario, buscarUsuariosInventario } = useInventariosStore();
+const { inventario, usuariosInventario } = storeToRefs(inventariosStore);
+
+const usuariosStore = useUsuariosStore();
+const { usuarioInventarios } = storeToRefs(usuariosStore);
+
 const tabSelecionada = ref("itens_coletados");
-const id = ref(0);
+const idInventario = ref(0);
 const route = useRoute();
+const router = useRouter();
 
 const nomeInventario = ref("");
-
-// onBeforeRouteLeave((to, from, next) => {
-//   console.log("beforeLeave");
-//   console.log(to, from);
-// });
+const usuInventarios = ref([]);
 
 onMounted(async () => {
   if ("idInventario" in route.params) {
-    // modo de edição ou visualização
-    id.value = +route.params.idInventario;
+    await usuarioPodeVerInventario();
 
-    // await buscarItensColetados(id.value);
-    // await buscarItensImportados(id.value);
-
-    await buscarInventario(id.value);
+    await buscarInventario(idInventario.value);
     nomeInventario.value = inventario.value.nome;
   }
 });
+
+const usuarioPodeVerInventario = async () => {
+  idInventario.value = +route.params.idInventario;
+  usuInventarios.value = await usuarioInventarios.value;
+
+  if (
+    !usuInventarios.value
+      .map((inventario) => inventario.idInventario)
+      .includes(idInventario.value)
+  ) {
+    Notify.create({
+      color: "red",
+      message: `Usuário não tem permissão ao inventário.`,
+    });
+    router.replace({
+      path: `/inventario`,
+    });
+  }
+};
+
+watch(
+  () => route.path,
+  (to, from) => usuarioPodeVerInventario()
+);
 </script>
 
 <style>

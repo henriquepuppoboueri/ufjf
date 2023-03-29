@@ -103,12 +103,12 @@ export const useInventariosStore = defineStore({
     },
 
     async setUsuarioInventarioPresidente(idInventario, idUsuario) {
-      const response = await api.patch(`/v1/restrito/inventario/usuario/presidente/${idInventario}&${idUsuario}`)
+      await api.patch(`/v1/restrito/inventario/usuario/presidente/${idInventario}&${idUsuario}`)
       await this.buscarUsuariosInventario(idInventario);
     },
 
     async setUsuarioInventarioNormal(idInventario, idUsuario) {
-      const response = await api.patch(`/v1/restrito/inventario/usuario/normal/${idInventario}&${idUsuario}`)
+      await api.patch(`/v1/restrito/inventario/usuario/normal/${idInventario}&${idUsuario}`)
       await this.buscarUsuariosInventario(idInventario);
     },
 
