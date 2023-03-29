@@ -111,7 +111,6 @@ async function excluirUsuario() {
         );
       }
     } catch (err) {
-      console.log(err);
       Notify.create({
         color: "red",
         message: ` ${err}`,

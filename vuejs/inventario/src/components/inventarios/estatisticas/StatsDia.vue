@@ -56,7 +56,6 @@ onMounted(async () => {
     if (temDados.value)
       if (dados.value.coleta.length > 0)
         dados.value.coleta[0].coleta.forEach((coletaDiaria) => {
-          console.log(coletaDiaria);
           labels.push(coletaDiaria.data);
         });
   } else {

@@ -172,7 +172,6 @@ function mostrarDialog(
         message: `${mensagemSucesso}`,
       });
     } catch (err) {
-      console.log(err);
       Notify.create({
         color: "red",
         message: ` ${err.response.data}`,
@@ -234,7 +233,6 @@ async function addUsuarioInventario() {
       message: `Usuário ${novoUsuario.value.nome} vinculado!`,
     });
   } catch (err) {
-    console.log(err);
     Notify.create({
       color: "red",
       message: `${err.response.data}`,

@@ -86,18 +86,15 @@ function salvarAddUnidade(isEditando) {
 
   let promise = null;
   if (isUnidade) {
-    console.log("É unidade!");
     if (isEditando) {
-      console.log("Editando unidade");
     } else {
-      console.log("Cadastrando unidade");
       promise = api.post(`v1/restrito/setor`, unidade);
     }
   } else {
     if (isEditando) {
-      console.log("Editando dependência");
+      // console.log("Editando dependência");
     } else {
-      console.log("Cadastrando dependência");
+      // console.log("Cadastrando dependência");
     }
   }
 

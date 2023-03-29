@@ -118,7 +118,6 @@ watch(itensSelecionados, (nv, ov) => {
 watch(setor, (nv, ov) => {
   if (nv) {
     dependenciasStore.buscarDependencias(nv.id);
-    console.log("Setor mudou.");
     dependenciasStore.dependencia = [];
   }
 });

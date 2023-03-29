@@ -69,10 +69,8 @@ export default {
     async handleClickGetAuthCode() {
       try {
         const authCode = await this.$gAuth.getAuthCode();
-        console.log("authCode", authCode);
       } catch (error) {
         //on fail do something
-        console.error(error);
         return null;
       }
     },
@@ -80,7 +78,6 @@ export default {
     async handleClickSignOut() {
       try {
         await this.$gAuth.signOut();
-        console.log("isAuthorized", this.Vue3GoogleOauth.isAuthorized);
         this.user = "";
       } catch (error) {
         console.error(error);

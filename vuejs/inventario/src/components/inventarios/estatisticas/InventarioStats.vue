@@ -41,7 +41,6 @@ const { dados, carregando, ultimaBusca } = storeToRefs(estatisticasStore);
 onMounted(() => {});
 
 const refreshReportData = () => {
-  // console.log(ultimaBusca.value.funcao());
   ultimaBusca.value.recalcular();
 };
 </script>

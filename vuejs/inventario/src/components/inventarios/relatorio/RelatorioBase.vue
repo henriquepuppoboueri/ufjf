@@ -231,7 +231,6 @@ async function filtrarSetorDep() {
       idSetor.value,
       idDependencia.value
     );
-    console.log(erro.value.response);
     if (erro.value.response.status == "403")
       throw new Error(erro.value.response.data);
   } catch (error) {
