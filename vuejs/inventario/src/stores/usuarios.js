@@ -91,17 +91,6 @@ export const useUsuariosStore = defineStore({
       }
     },
 
-    async definirPresidente(idInventario, idUsuario) {
-      try {
-        this.carregando = true
-        const response = await api.get(`v1/restrito/inventario/usuario/presidente/${idInventario}&${idUsuario}`)
-        if (response)
-          this.usuario = await response.data;
-      } catch (error) {
-        this.error = error
-      } finally {
-        this.carregando = false
-      }
-    },
+
   }
 })

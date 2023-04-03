@@ -78,6 +78,19 @@ export const useInventariosStore = defineStore({
       }
     },
 
+    async definirPresidente(idInventario, idUsuario) {
+      try {
+        this.carregando = true
+        const response = await api.get(`v1/restrito/inventario/usuario/presidente/${idInventario}&${idUsuario}`)
+        if (response)
+          this.usuario = await response.data;
+      } catch (error) {
+        this.error = error
+      } finally {
+        this.carregando = false
+      }
+    },
+
     async buscarInventariosEmPreparacao() {
       const inventariosResponse = await api.get(`v1/restrito/inventario_preparando`)
       this.inventarios = await inventariosResponse.data
@@ -120,6 +133,14 @@ export const useInventariosStore = defineStore({
     async setUsuarioInventarioNaoAdmin(idInventario, idUsuario) {
       const response = await api.patch(`/v1/restrito/inventario/usuario/naoadmin/${idInventario}&${idUsuario}`)
       await this.buscarUsuariosInventario(idInventario);
-    }
+    },
+
+    async setUsuarioEmitenteRel(idInventario, idUsuario) {
+      await api.patch(`/v1/restrito/inventario/usuario/emitente/${idInventario}&${idUsuario}`)
+    },
+
+    async setUsuarioNaoEmitenteRel(idInventario, idUsuario) {
+      await api.patch(`/v1/restrito/inventario/usuario/naoemitente/${idInventario}&${idUsuario}`)
+    },
   }
 })

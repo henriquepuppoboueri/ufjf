@@ -226,15 +226,17 @@ function exportarDados() {
 
 async function filtrarSetorDep() {
   try {
+    erro.value = null;
     await relatorioSelec.value.fn(
       idInventario,
       idSetor.value,
       idDependencia.value
     );
-    if (erro.value.response.status == "403")
+    if (erro.value && erro.value.response.status == "403") {
       throw new Error(erro.value.response.data);
+    }
   } catch (error) {
-    $q.dialog({ title: "Erro", message: error.message });
+    $q.dialog({ title: "Erro!", message: error.message });
   }
 }
 

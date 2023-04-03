@@ -6,13 +6,17 @@ import { registroPortugues } from "src/helper/functions";
 import { useQuasar } from "quasar";
 import { useUsuariosStore } from "stores/usuarios";
 import { useInventariosStore } from "stores/inventarios";
+import { useAuthStore } from "stores/auth";
 import { storeToRefs } from "pinia";
 import lodash from "lodash";
 
 const inventariosStore = useInventariosStore();
 const { usuariosInventario } = storeToRefs(inventariosStore);
+const { setUsuarioEmitenteRel, setUsuarioNaoEmitenteRel } = inventariosStore;
 const usuariosStore = useUsuariosStore();
 const { usuarios } = storeToRefs(usuariosStore);
+const authStore = useAuthStore();
+const { usuario } = storeToRefs(authStore);
 const $q = useQuasar();
 const route = useRoute();
 const idInventario = ref(null);
@@ -183,8 +187,19 @@ function mostrarDialog(
   });
 }
 
-const setUsuarioPermissoes = (user) => {
-  console.log(user);
+const isUsuarioLogadoAdminInventario = computed(() => {
+  return usuariosInventario.value
+    .filter((usuario) => usuario.admin)
+    .map((usuarioAdmin) => usuarioAdmin.id)
+    .includes(usuario.value.id);
+});
+
+const setUsuarioPermissoes = async (user) => {
+  if (!user.emitenteRel) {
+    await setUsuarioNaoEmitenteRel(idInventario.value, user.id);
+  } else {
+    await setUsuarioEmitenteRel(idInventario.value, user.id);
+  }
 };
 
 const usuariosSemVinculo = computed(() => {
@@ -335,7 +350,7 @@ async function deletarUsuario() {
             color="white"
             text-color="black"
             icon="fa-solid fa-bars"
-            @click="setUsuarioPermissoes(props.row)"
+            :disabled="!isUsuarioLogadoAdminInventario"
           >
             <q-menu>
               <div class="row no-wrap q-pa-md">
@@ -343,10 +358,10 @@ async function deletarUsuario() {
                   <div class="text-h6">Permissões</div>
                   <q-separator spaced />
                   <q-toggle
-                    v-model="props.row.presidente"
+                    v-model="props.row.emitenteRel"
                     label="Emitir relatórios"
+                    @click="setUsuarioPermissoes(props.row)"
                   />
-                  <!-- <q-toggle v-model="bluetooth" label="Bluetooth" /> -->
                 </div>
               </div>
             </q-menu>
