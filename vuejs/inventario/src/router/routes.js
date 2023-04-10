@@ -60,6 +60,18 @@ const routes = [
     ]
   },
   {
+    path: "/config",
+    component: () => import("layouts/MainLayout.vue"),
+    meta: { restrito: true },
+    children: [
+      {
+        path: "",
+        component: () =>
+          import("pages/ConfigGeralDispositivo.vue"),
+      }
+    ]
+  },
+  {
     path: "/etiquetas",
     component: () => import("layouts/MainLayout.vue"),
     meta: { restrito: true },

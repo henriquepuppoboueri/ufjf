@@ -174,8 +174,10 @@ const isModoEdicao = ref(false);
 const idInventario = ref(null);
 
 const desabilitaSalvar = computed(() => {
-  if (patrimonio.value.length !== 6) return true;
-  if (identificador.value.length !== 5) return true;
+  // if (!patrimonio.value) return true;
+  // if (!identificador.value) return true;
+  // if (patrimonio.value.length !== 6) return true;
+  // if (identificador.value.length !== 5) return true;
   if (!setor.value) return true;
   if (!dependencia.value) return true;
 

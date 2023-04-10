@@ -127,6 +127,13 @@
 
               <q-item-section>Imprimir etiquetas</q-item-section>
             </q-item>
+            <q-item dense clickable v-ripple to="/config">
+              <q-item-section avatar>
+                <q-icon text-color="white" name="fa-solid fa-gear" />
+              </q-item-section>
+
+              <q-item-section>Configurações (por dispositivo)</q-item-section>
+            </q-item>
           </q-expansion-item>
 
           <!-- <q-expansion-item

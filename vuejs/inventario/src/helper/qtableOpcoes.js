@@ -1,4 +1,4 @@
 export const paginacaoOpcoes = {
-  rowsPerPage: 7,
+  rowsPerPage: localStorage.getItem("itensPorPagina") || 10,
   sortBy: "id",
 };

@@ -15,6 +15,7 @@
         :filter-method="filtroAvancado"
         :selected-rows-label="registroPortugues"
         :pagination="paginacaoOpcoes"
+        :rows-per-page-options="[5, 10, 20, 50, 100, 0]"
         :bordered="false"
         loading-label="Carregando"
         no-data-label="Não foram encontrados dados."
@@ -157,6 +158,8 @@ import { storeToRefs } from "pinia";
 import { useQuasar, Notify } from "quasar";
 import { useItensColetadosStore } from "src/stores/itensColetados";
 import { exportTable } from "src/helper/functions";
+
+const testePag = (newPagination) => {};
 
 const $q = useQuasar();
 const setoresStore = useSetoresStore();
