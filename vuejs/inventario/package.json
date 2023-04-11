@@ -23,7 +23,8 @@
     "vue-chartjs": "^4.1.1",
     "vue-qrious": "^3.0.0",
     "vue-router": "^4.0.0",
-    "vue3-google-oauth2": "^1.0.6"
+    "vue3-google-oauth2": "^1.0.6",
+    "vue3-qr-reader": "^1.0.0"
   },
   "devDependencies": {
     "@quasar/app-vite": "^1.0.0",

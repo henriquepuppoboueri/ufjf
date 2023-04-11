@@ -1,4 +1,13 @@
 <template>
+  <div v-if="mostrarCamera">
+    <!-- <p class="error">{{ error }}</p> -->
+
+    <!-- <p class="decode-result">
+      Last result: <b>{{ result }}</b>
+    </p> -->
+
+    <qr-stream @decode="onDecode"></qr-stream>
+  </div>
   <q-form @submit.prevent="onSubmit">
     <section class="col q-ma-sm q-gutter-y-sm">
       <div class="row q-gutter-x-sm justify-between no-wrap">
@@ -26,8 +35,14 @@
           label="Buscar"
           type="button"
           @click="buscarItemPorPatrimonio"
-          :disable="patrimonio.length < 6"
           v-if="!isModoEdicao"
+        />
+        <q-btn
+          class="btn_camera"
+          :color="mostrarCamera ? 'red' : 'green'"
+          icon="fa-solid fa-camera"
+          type="button"
+          @click="mostrarCamera = !mostrarCamera"
         />
       </div>
 
@@ -141,7 +156,9 @@ import { usePlaquetaStore } from "src/stores/plaqueta";
 import { useAuthStore } from "src/stores/auth";
 import { isNumber, notStartWith } from "src/helper/formValidation";
 import { Notify } from "quasar";
+import { QrStream } from "vue3-qr-reader";
 
+const mostrarCamera = ref(false);
 const patrimonioBuscado = false;
 const router = useRouter();
 const authStore = useAuthStore();
@@ -284,10 +301,42 @@ async function onSubmit() {
     router.go(-1);
   }
 }
+
+async function onDecode(data) {
+  if (!!data) {
+    patrimonio.value = await data;
+    await buscarItemPorPatrimonio();
+    mostrarCamera.value = false;
+  }
+}
+
+async function onInit(promise) {
+  try {
+    const { capabilities } = await promise;
+
+    // successfully initialized
+  } catch (error) {
+    if (error.name === "NotAllowedError") {
+      // user denied camera access permisson
+    } else if (error.name === "NotFoundError") {
+      // no suitable camera device installed
+    } else if (error.name === "NotSupportedError") {
+      // page is not served over HTTPS (or localhost)
+    } else if (error.name === "NotReadableError") {
+      // maybe camera is already in use
+    } else if (error.name === "OverconstrainedError") {
+      // did you requested the front camera although there is none?
+    } else if (error.name === "StreamApiNotSupportedError") {
+      // browser seems to be lacking features
+    }
+  } finally {
+    // hide loading indicator
+  }
+}
 </script>
 
 <style lang="sass">
 
-.q-btn
+.q-btn:first
   min-width: 5rem
 </style>

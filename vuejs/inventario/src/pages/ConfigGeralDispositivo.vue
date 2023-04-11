@@ -14,7 +14,6 @@ const saveConfig = () => {
 
 onMounted(() => {
   config.value.itensPorPagina = paginacaoOpcoes.rowsPerPage;
-  console.log("mounted");
 });
 </script>
 
