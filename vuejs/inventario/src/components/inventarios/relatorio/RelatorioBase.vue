@@ -26,6 +26,8 @@ const itensSelecionados = ref([]);
 const filtro = ref("");
 const nomeRelatorio = ref("");
 const relatoriosStore = useRelatoriosStore();
+const { relatorio, carregando, erro } = storeToRefs(relatoriosStore);
+
 const colunasItens = [
   {
     name: "patrimonio",
@@ -174,7 +176,6 @@ watch(
     nomeRelatorio.value = query.relatorio;
   }
 );
-const { relatorio, carregando, erro } = storeToRefs(relatoriosStore);
 
 const qtItensSelec = computed(() => {
   return itensSelecionados.value.length;

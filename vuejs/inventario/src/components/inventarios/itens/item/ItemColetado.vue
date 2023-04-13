@@ -157,7 +157,10 @@ import { useAuthStore } from "src/stores/auth";
 import { isNumber, notStartWith } from "src/helper/formValidation";
 import { Notify } from "quasar";
 import { QrStream } from "vue3-qr-reader";
+import { useQuasar } from "quasar";
+import { getCurrentInstance } from "vue";
 
+const $q = useQuasar();
 const mostrarCamera = ref(false);
 const patrimonioBuscado = false;
 const router = useRouter();
@@ -293,12 +296,29 @@ async function onSubmit() {
       router.go(-1);
     } catch (error) {}
   } else {
-    // if (Object.hasOwnProperty(itemImportado.value.id))
     item.idItem = !!itemImportado.value ? itemImportado.value.id : 0;
     item.usuario = usuario.value.id;
     // }
-    await itensColetadosStore.addItemColetado(item);
-    router.go(-1);
+    const response = await itensColetadosStore.addItemColetado(item);
+    if (response && response.status === 200) {
+      $q.dialog({
+        title: `Item cadastrado`,
+        message: `Deseja cadastrar um novo item?`,
+        ok: { type: "button", label: "Confirmar", color: "green" },
+        cancel: { type: "button", label: "Cancelar", color: "primary" },
+      })
+        .onOk(() => {
+          limparItemColetado();
+        })
+        .onCancel(() => {
+          router.go(-1);
+        });
+    } else if (response && response.status === 400) {
+      Notify.create({
+        color: "red",
+        message: `${response.data}`,
+      });
+    }
   }
 }
 
@@ -333,6 +353,18 @@ async function onInit(promise) {
     // hide loading indicator
   }
 }
+
+const limparItemColetado = () => {
+  patrimonio.value = null;
+  identificador.value = null;
+  itemDescricao.value = null;
+  setor.value = null;
+  dependencia.value = null;
+  itemLocalizacao.value = null;
+  situacao.value = null;
+  estadoPlaqueta.value = null;
+  itemObservacao.value = null;
+};
 </script>
 
 <style lang="sass">

@@ -6,7 +6,7 @@ import QrEtiqueta from "src/components/utils/QrEtiqueta.vue";
 const route = useRoute();
 const prefix = route.query.prefix;
 const firstSequence = +route.query.start;
-const pages = route.query.pages;
+const qtEtiquetas = +route.query.qtEtiquetas;
 const ano = route.query.ano;
 const containerPaddingTop = route.query.containerPaddingTop;
 const containerMarginLeft = route.query.containerMarginLeft;
@@ -14,16 +14,16 @@ const containerWidth = route.query.containerWidth;
 const imgHeight = route.query.imgHeight;
 const nrCasasSequencia = route.query.nrCasasSequencia;
 
-const amountOfLabels = computed(() => {
-  return pages * 60;
-});
+// const amountOfLabels = computed(() => {
+//   return qtEtiquetas * 60;
+// });
 </script>
 
 <template>
   <div class="container">
     <div
       class="etiqueta"
-      v-for="(label, index) in amountOfLabels"
+      v-for="(label, index) in qtEtiquetas"
       :key="index"
       :style="{
         marginLeft: containerMarginLeft + 'px',

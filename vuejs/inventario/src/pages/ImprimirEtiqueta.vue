@@ -9,7 +9,7 @@ const router = useRouter();
 const prefix = ref("");
 const nrCasasSequencia = ref(7);
 const start = ref();
-const pages = ref();
+const qtEtiquetas = ref();
 const ano = ref();
 const containerPaddingTop = ref("49");
 const containerMarginLeft = ref("0");
@@ -35,7 +35,7 @@ function onGerarEtiquetas() {
     query: {
       prefix: prefix.value,
       start: start.value,
-      pages: pages.value,
+      qtEtiquetas: qtEtiquetas.value,
       ano: ano.value,
       containerPaddingTop: containerPaddingTop.value,
       containerMarginLeft: containerMarginLeft.value,
@@ -66,7 +66,11 @@ function onGerarEtiquetas() {
           reverse-fill-mask
         />
         <q-input v-model="ano" type="text" label="Unidade - Ano" />
-        <q-input v-model="pages" type="text" label="Nº de páginas" />
+        <q-input
+          v-model="qtEtiquetas"
+          type="text"
+          label="Quantidade de etiquetas"
+        />
       </q-card-section>
       <q-card-section>
         <q-expansion-item
