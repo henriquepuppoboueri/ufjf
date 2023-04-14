@@ -49,6 +49,7 @@ export const useDependenciasStore = defineStore({
         this.carregando = true
         const response = await api.get(`v1/restrito/dependencia/${idDependencia}`)
         this.dependencia = await response.data;
+        return await response.data
       } catch (error) {
         this.error = error;
       } finally {

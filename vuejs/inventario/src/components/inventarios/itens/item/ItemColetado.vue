@@ -1,11 +1,5 @@
 <template>
   <div v-if="mostrarCamera">
-    <!-- <p class="error">{{ error }}</p> -->
-
-    <!-- <p class="decode-result">
-      Last result: <b>{{ result }}</b>
-    </p> -->
-
     <qr-stream @decode="onDecode"></qr-stream>
   </div>
   <q-form @submit.prevent="onSubmit">
@@ -13,23 +7,12 @@
       <div class="row q-gutter-x-sm justify-between no-wrap">
         <q-input
           outlined
-          v-model="patrimonio"
+          v-model="itemColetado.patrimonio"
           label="Patrimônio"
           dense
           class="fit"
         >
         </q-input>
-        <!-- <q-input
-          outlined
-          v-model="patrimonio"
-          label="Patrimônio"
-          dense
-          class="fit"
-          maxlength="6"
-          :rules="[(val) => exactLength(val, 6, 'Patrimônio')]"
-          :rules="[(val) => isNumber(val, 'Identificador')]"
-        >
-        </q-input> -->
         <q-btn
           color="blue"
           label="Buscar"
@@ -47,8 +30,9 @@
       </div>
 
       <q-input
+        v-if="itemColetado"
         outlined
-        v-model="identificador"
+        v-model="itemColetado.identificador"
         label="Identificador"
         dense
         :rules="[
@@ -57,66 +41,52 @@
         ]"
       >
       </q-input>
-      <!-- <q-input
-        outlined
-        v-model="identificador"
-        label="Identificador"
-        dense
-        maxlength="5"
-        :rules="[(val) => exactLength(val, 5, 'Identificador')]"
-      /> -->
       <q-editor
-        v-model="itemDescricao"
+        v-model="itemColetado.descricao"
         min-height="5rem"
         placeholder="Descrição"
         dense
       />
       <q-select
         outlined
-        v-model="setor"
+        v-model="itemColetado.setor"
         :options="setoresDependencias"
         :option-label="(item) => item.nome"
-        :option-value="(item) => item.nome"
         label="Setor"
         dense
       />
       <q-select
         outlined
-        v-model="dependencia"
+        v-model="itemColetado.dependencia"
         :options="dependencias"
         :option-label="(item) => item.nome"
-        :option-value="(item) => item.nome"
         label="Dependência"
         dense
       />
-      <!-- <q-input outlined v-model="empenho" label="Empenho" dense /> -->
       <q-editor
-        v-model="itemLocalizacao"
+        v-model="itemColetado.localizacao"
         min-height="2rem"
         placeholder="Localização"
         dense
       />
       <q-select
         outlined
-        v-model="situacao"
+        v-model="itemColetado.situacao_"
         :options="situacoes"
         :option-label="(item) => item.nome"
-        :option-value="(item) => item.nome"
         label="Situação"
         dense
       />
       <q-select
         outlined
-        v-model="estadoPlaqueta"
+        v-model="itemColetado.estadoPlaqueta"
         :options="estadosPlaquetas"
         :option-label="(item) => item.nome"
-        :option-value="(item) => item.nome"
         label="Estado da plaqueta"
         dense
       />
-      <!-- <q-input outlined v-model="nomeFornecedor" label="Fornecedor" dense /> -->
       <q-editor
-        v-model="itemObservacao"
+        v-model="itemColetado.observacao"
         min-height="5rem"
         placeholder="Observação"
         dense
@@ -124,7 +94,7 @@
       <q-input
         outlined
         disabled
-        v-model="itemUsuario"
+        v-model="itemColetado.usuario"
         label="Usuário"
         dense
         disable
@@ -141,10 +111,11 @@
       <q-btn dense color="primary" label="Cancelar" @click="router.go(-1)" />
     </section>
   </q-form>
+  <div>{{ itemColetado }}</div>
 </template>
 
 <script setup>
-import { ref, onMounted, watch, computed } from "vue";
+import { ref, onMounted, onBeforeMount, watch, computed, reactive } from "vue";
 import { useItensColetadosStore } from "src/stores/itensColetados";
 import { useSetoresStore } from "src/stores/setores";
 import { useItensImportadosStore } from "src/stores/itensImportados";
@@ -158,11 +129,9 @@ import { isNumber, notStartWith } from "src/helper/formValidation";
 import { Notify } from "quasar";
 import { QrStream } from "vue3-qr-reader";
 import { useQuasar } from "quasar";
-import { getCurrentInstance } from "vue";
 
 const $q = useQuasar();
 const mostrarCamera = ref(false);
-const patrimonioBuscado = false;
 const router = useRouter();
 const authStore = useAuthStore();
 const plaquetaStore = usePlaquetaStore();
@@ -172,46 +141,41 @@ const route = useRoute();
 const setoresStore = useSetoresStore();
 const itensColetadosStore = useItensColetadosStore();
 const itensImportadosStore = useItensImportadosStore();
-const identificador = ref("");
-const itemDescricao = ref("");
-const dependenciaAtual = ref("");
-const setorAtual = ref("");
-const empenho = ref("");
-const nomeFornecedor = ref("");
-const itemLocalizacao = ref("");
-const itemObservacao = ref("");
-const patrimonio = ref([]);
+
 const { dependencias, dependencia } = storeToRefs(dependenciasStore);
 const { setoresDependencias, setor } = storeToRefs(setoresStore);
 const { situacoes, situacao } = storeToRefs(situacaoStore);
 const { estadoPlaqueta, estadosPlaquetas } = storeToRefs(plaquetaStore);
 const { itemImportado } = storeToRefs(itensImportadosStore);
 const { buscarItemImportadoPorPatrimonio } = itensImportadosStore;
-const { itemColetado } = storeToRefs(itensColetadosStore);
+const { itemColetado, itemNominal } = storeToRefs(itensColetadosStore);
 const { usuario } = storeToRefs(authStore);
-const itemUsuario = ref("");
 const isModoEdicao = ref(false);
 const idInventario = ref(null);
 
 const desabilitaSalvar = computed(() => {
-  // if (!patrimonio.value) return true;
-  // if (!identificador.value) return true;
-  // if (patrimonio.value.length !== 6) return true;
-  // if (identificador.value.length !== 5) return true;
-  if (!setor.value) return true;
-  if (!dependencia.value) return true;
-
-  return false;
+  return 0;
 });
 
-watch(setor, (nv, ov) => {
-  if (nv) {
-    dependenciasStore.buscarDependencias(nv.id);
-    dependenciasStore.dependencia = null;
+watch(itemNominal, async (newV, oldV) => {
+  // console.log(await newV);
+});
+
+watch(
+  () => itemColetado.value.setor,
+  async (nv, ov) => {
+    if (nv) {
+      // if (nv && ov !== null) {
+      await dependenciasStore.buscarDependencias(nv.id);
+      if (nv && typeof ov !== "undefined") {
+        dependenciasStore.dependencia = null;
+        itemColetado.value.dependencia = null;
+      }
+    }
   }
-});
+);
 
-onMounted(async () => {
+onBeforeMount(async () => {
   const idItem = +route.params.idItem;
   idInventario.value = +route.params.idInventario;
   isModoEdicao.value = !!idItem;
@@ -222,71 +186,44 @@ onMounted(async () => {
 
   if (isModoEdicao.value) await montaFormEditar(idItem);
   if (!isModoEdicao.value) {
-    dependencia.value = null;
-    setor.value = null;
-    estadoPlaqueta.value = null;
-    situacao.value = null;
-    itemUsuario.value = usuario.value.login;
+    // itemColetadoObj.idDependencia = null;
+    // itemColetadoObj.idSetor = null;
+    // itemColetadoObj.idEstadoPlaqueta = null;
+    // itemColetadoObj.idSituacao = null;
+    // itemColetadoObj.usuario = usuario.value.login;
   }
 });
 
 async function montaFormEditar(idItem) {
   await itensColetadosStore.buscarItemColetado(idItem);
   await setoresStore.buscarSetor(itemColetado.value.idSetor);
-  await dependenciasStore.buscarDependencia(itemColetado.value.idDependencia);
   await dependenciasStore.buscarDependencias(itemColetado.value.idSetor);
+  await dependenciasStore.buscarDependencia(itemColetado.value.idDependencia);
   await situacaoStore.buscarSituacao(itemColetado.value.situacao);
   await plaquetaStore.buscarEstadoPlaqueta(itemColetado.value.idEstadoPlaqueta);
-
-  patrimonio.value = itemColetado.value.patrimonio;
-  identificador.value = itemColetado.value.identificador;
-  itemDescricao.value = itemColetado.value.descricao;
-  empenho.value = itemColetado.value.empenho;
-
-  setorAtual.value = setor.value;
-  nomeFornecedor.value = itemColetado.value.fornecedor;
-  itemUsuario.value = itemColetado.value.usuario;
-  situacao.value = extraiSituacao(itemColetado.value.situacao);
-  itemLocalizacao.value = itemColetado.value.localizacao;
-  itemObservacao.value = itemColetado.value.observacao;
 }
 
 async function buscarItemPorPatrimonio() {
-  await buscarItemImportadoPorPatrimonio(patrimonio.value, idInventario.value);
+  await buscarItemImportadoPorPatrimonio(
+    itemColetado.value.patrimonio,
+    idInventario.value
+  );
   if (itemImportado.value) {
-    itemDescricao.value = itemImportado.value.descricao;
-    setor.value = itemImportado.value.setor;
+    itemColetado.value.descricao = itemImportado.value.descricao;
+    itemColetado.value.setor = itemImportado.value.setor;
     await dependenciasStore.buscarDependencias(itemImportado.value.setor.id);
-    dependencia.value = itemImportado.value.dependencia;
+    itemColetado.value.dependencia = itemImportado.value.dependencia;
   } else {
     Notify.create({
       color: "red",
       message: `Patrimônio não encontrado!`,
     });
-    // identificador.value = null;
-    // itemDescricao.value = null;
-    // setor.value = null;
-    // dependencia.value = null;
   }
 }
-
-function extraiSituacao(idSituacao) {
-  return situacoes.value.find((situ) => situ.id === idSituacao);
-}
-
 async function onSubmit() {
   const item = {
-    descricao: itemDescricao.value,
-    idSetor: setor.value.id,
-    idDependencia: dependencia.value.id,
-    idEstadoPlaqueta: estadoPlaqueta.value.id,
+    ...itemColetado,
     idInventario: idInventario.value,
-    identificador: +identificador.value,
-    fornecedor: nomeFornecedor.value,
-    localizacao: itemLocalizacao.value,
-    observacao: itemObservacao.value,
-    patrimonio: patrimonio.value,
-    idSituacao: situacao.value.id,
   };
   if (isModoEdicao.value) {
     try {
@@ -330,40 +267,16 @@ async function onDecode(data) {
   }
 }
 
-async function onInit(promise) {
-  try {
-    const { capabilities } = await promise;
-
-    // successfully initialized
-  } catch (error) {
-    if (error.name === "NotAllowedError") {
-      // user denied camera access permisson
-    } else if (error.name === "NotFoundError") {
-      // no suitable camera device installed
-    } else if (error.name === "NotSupportedError") {
-      // page is not served over HTTPS (or localhost)
-    } else if (error.name === "NotReadableError") {
-      // maybe camera is already in use
-    } else if (error.name === "OverconstrainedError") {
-      // did you requested the front camera although there is none?
-    } else if (error.name === "StreamApiNotSupportedError") {
-      // browser seems to be lacking features
-    }
-  } finally {
-    // hide loading indicator
-  }
-}
-
 const limparItemColetado = () => {
-  patrimonio.value = null;
-  identificador.value = null;
-  itemDescricao.value = null;
+  itemColetadoObj.patrimonio = null;
+  itemColetadoObj.identificador = null;
+  itemColetadoObj.descricao = null;
   setor.value = null;
   dependencia.value = null;
-  itemLocalizacao.value = null;
-  situacao.value = null;
-  estadoPlaqueta.value = null;
-  itemObservacao.value = null;
+  itemColetadoObj.localizacao = null;
+  itemColetadoObj.idSituacao = null;
+  itemColetadoObj.idEstadoPlaqueta = null;
+  itemColetadoObj.observacao = null;
 };
 </script>
 

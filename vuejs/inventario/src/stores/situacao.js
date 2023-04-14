@@ -34,6 +34,7 @@ export const useSituacaoStore = defineStore({
         const response = await api.get(`v1/restrito/situacao/${idSituacao}`)
         if (response) {
           this.situacao = await response.data
+          return await response.data
         }
       } catch (error) {
         this.erro = error

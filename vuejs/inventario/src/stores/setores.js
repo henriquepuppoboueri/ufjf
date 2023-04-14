@@ -65,9 +65,10 @@ export const useSetoresStore = defineStore({
       try {
         this.carregando = true
         const response = await api.get(`v1/restrito/setor/${idSetor}`)
-        this.setor = await response.data;
+        this.setor = await response.data
+        return await response.data
       } catch (error) {
-        this.error = error;
+        this.error = error
       } finally {
         this.carregando = false
       }

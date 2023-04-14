@@ -23,11 +23,11 @@ export const usePlaquetaStore = defineStore({
         this.carregando = false
       }
     },
-    buscarEstadoPlaqueta(idEstadoPlaqueta) {
+    async buscarEstadoPlaqueta(idEstadoPlaqueta) {
       if (this.estadosPlaquetas.length > 0) {
-        const estado = this.estadosPlaquetas.find(estado => estado.id === idEstadoPlaqueta)
-        this.estadoPlaqueta = estado
-        return estado
+        const estado = await this.estadosPlaquetas.find(estado => estado.id === idEstadoPlaqueta)
+        this.estadoPlaqueta = await estado
+        return await estado
       }
     }
   }

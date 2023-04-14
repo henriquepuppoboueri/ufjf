@@ -3,10 +3,13 @@ import { api } from 'boot/axios';
 import { useSetoresStore } from 'src/stores/setores'
 import { useSituacaoStore } from './situacao';
 import { usePlaquetaStore } from './plaqueta';
+import { useDependenciasStore } from './dependencias';
 
 const setoresStore = useSetoresStore()
+const dependenciasStore = useDependenciasStore();
 const situacaoStore = useSituacaoStore()
 const plaquetaStore = usePlaquetaStore()
+
 situacaoStore.buscarSituacoes()
 plaquetaStore.buscarEstadosPlaquetas()
 
@@ -14,14 +17,32 @@ export const useItensColetadosStore = defineStore({
   id: 'itensColetados',
   state: () => ({
     itensColetados: [],
-    itemColetado: null,
+    itemColetado: {
+      patrimonio: '', identificador: '', descricao: '',
+      setor: null, dependencia: null, localizacao: "",
+      situacao: '', estadoPlaqueta: null, observacao: '', usuario: ''
+    },
     carregando: false,
     erro: null,
   }),
   getters: {
+    async itemNominal(state) {
+      try {
+        state.carregando = true
+        if (state.itemColetado) {
+          const setor = await setoresStore.buscarSetor(state.itemColetado.idSetor)
+          const dependencia = await dependenciasStore.buscarDependencia(state.itemColetado.idDependencia)
+          const situacao_ = await situacaoStore.buscarSituacao(state.itemColetado.situacao)
+          const estadoPlaqueta = await plaquetaStore.buscarEstadoPlaqueta(state.itemColetado.idEstadoPlaqueta)
+          return { ...state.itemColetado, setor, dependencia, situacao_, estadoPlaqueta }
+        }
+      } catch (error) {
+        state.erro = error
+      }
+    },
     itensNominais(state) {
       try {
-        state.carregando = true;
+        state.carregando = true
 
         if (state.itensColetados.length > 0) {
           const itensLista = state.itensColetados.map(item => {
@@ -84,8 +105,6 @@ export const useItensColetadosStore = defineStore({
         const response = await api.delete(`v1/restrito/coleta/${idItem}`)
         const itemIndex = this.itensColetados.findIndex(item => item.id === idItem)
         this.itensColetados.splice(itemIndex, 1)
-        // const filtrados = this.itensColetados.filter(item => item.id !== idItem)
-        // this.itensColetados = filtrados
         return response;
       } catch (error) {
         this.error = error;
@@ -112,6 +131,13 @@ export const useItensColetadosStore = defineStore({
         this.carregando = true
         const response = await api.get(`v1/restrito/coleta/${idItem}`)
         this.itemColetado = await response.data
+
+        const setor = await setoresStore.buscarSetor(this.itemColetado.idSetor)
+        const dependencia = await dependenciasStore.buscarDependencia(this.itemColetado.idDependencia)
+        const situacao_ = await situacaoStore.buscarSituacao(this.itemColetado.situacao)
+        const estadoPlaqueta = await plaquetaStore.buscarEstadoPlaqueta(this.itemColetado.idEstadoPlaqueta)
+        this.itemColetado = { ...this.itemColetado, setor, dependencia, situacao_, estadoPlaqueta }
+        return this.itemColetado
       } catch (error) {
         this.error = error;
       } finally {
