@@ -8,13 +8,13 @@ const { pad } = format;
 const router = useRouter();
 const prefix = ref("");
 const nrCasasSequencia = ref(7);
-const start = ref();
-const qtEtiquetas = ref();
-const ano = ref();
-const containerPaddingTop = ref("49");
-const containerMarginLeft = ref("0");
-const containerWidth = ref("136");
-const imgHeight = ref("42");
+const start = ref(1);
+const qtEtiquetas = ref(10);
+const ano = ref(new Date().getFullYear());
+const etiquetaLargura = ref(38.2);
+const etiquetaAltura = ref(21.2);
+const etiquetaMargemY = ref(0);
+const etiquetaMargemX = ref(0);
 
 const nrCasasZeros = computed(() => {
   return geraStringConcat("0");
@@ -37,11 +37,11 @@ function onGerarEtiquetas() {
       start: start.value,
       qtEtiquetas: qtEtiquetas.value,
       ano: ano.value,
-      containerPaddingTop: containerPaddingTop.value,
-      containerMarginLeft: containerMarginLeft.value,
-      containerWidth: containerWidth.value,
-      imgHeight: imgHeight.value,
       nrCasasSequencia: nrCasasSequencia.value,
+      etiquetaLargura: etiquetaLargura.value,
+      etiquetaAltura: etiquetaAltura.value,
+      etiquetaMargemY: etiquetaMargemY.value,
+      etiquetaMargemX: etiquetaMargemX.value,
     },
   });
 }
@@ -83,9 +83,10 @@ function onGerarEtiquetas() {
           <q-card>
             <q-card-section>
               <q-input
-                v-model="containerPaddingTop"
-                type="text"
-                label="Padding Top (padrão: 49px)"
+                v-model="etiquetaLargura"
+                type="number"
+                label="Altura da etiqueta (mm)"
+                step="0.1"
               />
               <!-- <q-input
                 v-model="containerPaddingLeft"
@@ -93,19 +94,22 @@ function onGerarEtiquetas() {
                 label="Padding Left (padrão: 0px)"
               /> -->
               <q-input
-                v-model="containerWidth"
-                type="text"
-                label="Width (padrão: 136px)"
+                v-model="etiquetaAltura"
+                type="number"
+                label="Largura da etiqueta (mm)"
+                step="0.1"
               />
               <q-input
-                v-model="containerMarginLeft"
-                type="text"
-                label="Margin Left (padrão: 0px)"
+                v-model="etiquetaMargemX"
+                type="number"
+                label="Distância no eixo horizontal (mm)"
+                step="0.1"
               />
               <q-input
-                v-model="imgHeight"
-                type="text"
-                label="Image Height (padrão: 42px)"
+                v-model="etiquetaMargemY"
+                type="number"
+                label="Distância no eixo vertical (mm)"
+                step="0.1"
               />
             </q-card-section>
           </q-card>

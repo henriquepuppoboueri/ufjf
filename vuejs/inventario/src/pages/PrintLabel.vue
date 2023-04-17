@@ -8,10 +8,10 @@ const prefix = route.query.prefix;
 const firstSequence = +route.query.start;
 const qtEtiquetas = +route.query.qtEtiquetas;
 const ano = route.query.ano;
-const containerPaddingTop = route.query.containerPaddingTop;
-const containerMarginLeft = route.query.containerMarginLeft;
-const containerWidth = route.query.containerWidth;
-const imgHeight = route.query.imgHeight;
+const etiquetaLargura = route.query.etiquetaLargura;
+const etiquetaAltura = route.query.etiquetaAltura;
+const etiquetaMargemY = route.query.etiquetaMargemY;
+const etiquetaMargemX = route.query.etiquetaMargemX;
 const nrCasasSequencia = route.query.nrCasasSequencia;
 
 // const amountOfLabels = computed(() => {
@@ -20,14 +20,12 @@ const nrCasasSequencia = route.query.nrCasasSequencia;
 </script>
 
 <template>
-  <div class="container">
+  <div class="container row justify-center">
     <div
       class="etiqueta"
       v-for="(label, index) in qtEtiquetas"
       :key="index"
-      :style="{
-        marginLeft: containerMarginLeft + 'px',
-      }"
+      :style="{ height: `${etiquetaAltura}mm` }"
     >
       <qr-etiqueta
         :label-text="{
@@ -36,10 +34,10 @@ const nrCasasSequencia = route.query.nrCasasSequencia;
           ano,
         }"
         :page-options="{
-          containerPaddingTop,
-          containerWidth,
-          containerMarginLeft,
-          imgHeight,
+          etiquetaLargura,
+          etiquetaAltura,
+          etiquetaMargemY,
+          etiquetaMargemX,
           nrCasasSequencia,
         }"
       ></qr-etiqueta>
@@ -48,13 +46,6 @@ const nrCasasSequencia = route.query.nrCasasSequencia;
 </template>
 
 <style lang="sass">
-.container
-  // padding-left: 15px
-  // padding-top: 15px
-  // margin: 0 auto
-
 .etiqueta
-  display: inline
-  // height: 90px
-  // height: 10px
+  // height: 80.12px
 </style>

@@ -17,20 +17,28 @@ const fullLabel = computed(() => {
   <div
     class="label-container text-bold row inline flex-center"
     :style="{
-      width: pageOptions.containerWidth + 'px',
-      paddingTop: pageOptions.containerPaddingTop + 'px',
-      marginLeft: pageOptions.containerMarginLeft + 'px',
+      width: pageOptions.etiquetaLargura + 'mm',
+      paddingTop: pageOptions.containerPaddingTop + 'mm',
+      marginLeft: pageOptions.etiquetaMargemX + 'mm',
+      marginRight: pageOptions.etiquetaMargemX + 'mm',
+      marginTop: pageOptions.etiquetaMargemY + 'mm',
+      marginBottom: pageOptions.etiquetaMargemY + 'mm',
+      // border: '1px solid',
+      // borderRadius: '10px',
     }"
   >
     <vue-qrious
       :value="`${fullLabel}`"
       level="M"
-      :size="+pageOptions.imgHeight * 1.5"
-      :style="{ height: pageOptions.imgHeight + 'px' }"
+      :style="{
+        height: pageOptions.etiquetaAltura + 'mm',
+      }"
     ></vue-qrious>
     <span
       class="label-description text-center text-uppercase text-subtitle3"
-      :style="{ maxHeight: pageOptions.imgHeight + 'px' }"
+      :style="{
+        maxHeight: pageOptions.etiquetaAltura + 'mm',
+      }"
     >
       {{ fullLabel }}
       <br />
