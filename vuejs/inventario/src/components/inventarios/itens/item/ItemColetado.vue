@@ -58,7 +58,7 @@
       <q-select
         outlined
         v-model="itemColetado.dependencia"
-        :options="dependencias"
+        :options="itemColetado.setor.dependencias"
         :option-label="(item) => item.nome"
         label="Dependência"
         dense
@@ -111,7 +111,7 @@
       <q-btn dense color="primary" label="Cancelar" @click="router.go(-1)" />
     </section>
   </q-form>
-  <div>{{ itemColetado }}</div>
+  <div>{{ itemColetado.dependencia }}</div>
 </template>
 
 <script setup>
@@ -161,19 +161,18 @@ watch(itemNominal, async (newV, oldV) => {
   // console.log(await newV);
 });
 
-watch(
-  () => itemColetado.value.setor,
-  async (nv, ov) => {
-    if (nv) {
-      // if (nv && ov !== null) {
-      await dependenciasStore.buscarDependencias(nv.id);
-      if (nv && typeof ov !== "undefined") {
-        dependenciasStore.dependencia = null;
-        itemColetado.value.dependencia = null;
-      }
-    }
-  }
-);
+// watch(
+//   () => itemColetado.value.setor,
+//   async (nv, ov) => {
+//     if (nv && nv.hasOwnProperty("id")) {
+//       await dependenciasStore.buscarDependencias(nv.id);
+//       if (ov.hasOwnProperty("id") && !!ov.id && ov.id !== nv.id) {
+//         dependenciasStore.dependencia = null;
+//         itemColetado.value.dependencia = null;
+//       }
+//     }
+//   }
+// );
 
 onBeforeMount(async () => {
   const idItem = +route.params.idItem;
@@ -185,13 +184,6 @@ onBeforeMount(async () => {
   await setoresStore.buscarSetoresDependencias(idInventario.value);
 
   if (isModoEdicao.value) await montaFormEditar(idItem);
-  if (!isModoEdicao.value) {
-    // itemColetadoObj.idDependencia = null;
-    // itemColetadoObj.idSetor = null;
-    // itemColetadoObj.idEstadoPlaqueta = null;
-    // itemColetadoObj.idSituacao = null;
-    // itemColetadoObj.usuario = usuario.value.login;
-  }
 });
 
 async function montaFormEditar(idItem) {
@@ -211,7 +203,6 @@ async function buscarItemPorPatrimonio() {
   if (itemImportado.value) {
     itemColetado.value.descricao = itemImportado.value.descricao;
     itemColetado.value.setor = itemImportado.value.setor;
-    await dependenciasStore.buscarDependencias(itemImportado.value.setor.id);
     itemColetado.value.dependencia = itemImportado.value.dependencia;
   } else {
     Notify.create({
@@ -222,9 +213,19 @@ async function buscarItemPorPatrimonio() {
 }
 async function onSubmit() {
   const item = {
-    ...itemColetado,
+    ...itemColetado.value,
     idInventario: idInventario.value,
+    idSetor: itemColetado.value.setor.id,
+    idDependencia: itemColetado.value.dependencia.id,
+    idEstadoPlaqueta: itemColetado.value.estadoPlaqueta.id,
+    situacao: itemColetado.value.situacao_.id,
+    identificador: +itemColetado.value.identificador,
   };
+  delete item.dependencia;
+  delete item.setor;
+  delete item.estadoPlaqueta;
+  delete item.situacao_;
+
   if (isModoEdicao.value) {
     try {
       item.id = itemColetado.value.id;
@@ -245,10 +246,12 @@ async function onSubmit() {
         cancel: { type: "button", label: "Cancelar", color: "primary" },
       })
         .onOk(() => {
-          limparItemColetado();
+          limparItemColetado(itemColetado);
         })
         .onCancel(() => {
-          router.go(-1);
+          router.replace({
+            path: `/inventario/v/${idInventario.value}/itens/coletados`,
+          });
         });
     } else if (response && response.status === 400) {
       Notify.create({
@@ -267,16 +270,16 @@ async function onDecode(data) {
   }
 }
 
-const limparItemColetado = () => {
-  itemColetadoObj.patrimonio = null;
-  itemColetadoObj.identificador = null;
-  itemColetadoObj.descricao = null;
-  setor.value = null;
-  dependencia.value = null;
-  itemColetadoObj.localizacao = null;
-  itemColetadoObj.idSituacao = null;
-  itemColetadoObj.idEstadoPlaqueta = null;
-  itemColetadoObj.observacao = null;
+const limparItemColetado = (itemColetadoObj) => {
+  itemColetadoObj.value.patrimonio = null;
+  itemColetadoObj.value.identificador = null;
+  itemColetadoObj.value.descricao = null;
+  itemColetadoObj.value.localizacao = null;
+  itemColetadoObj.value.situacao = null;
+  itemColetadoObj.value.estadoPlaqueta = null;
+  itemColetadoObj.value.setor = null;
+  itemColetadoObj.value.dependencia = null;
+  itemColetadoObj.value.observacao = null;
 };
 </script>
 

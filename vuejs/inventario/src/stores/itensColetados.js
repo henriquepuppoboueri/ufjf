@@ -19,7 +19,8 @@ export const useItensColetadosStore = defineStore({
     itensColetados: [],
     itemColetado: {
       patrimonio: '', identificador: '', descricao: '',
-      setor: null, dependencia: null, localizacao: "",
+      setor: { id: null, nome: null, dependencias: [] },
+      dependencia: null, localizacao: "",
       situacao: '', estadoPlaqueta: null, observacao: '', usuario: ''
     },
     carregando: false,
