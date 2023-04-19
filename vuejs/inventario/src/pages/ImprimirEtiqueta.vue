@@ -15,6 +15,7 @@ const etiquetaLargura = ref(38.2);
 const etiquetaAltura = ref(21.2);
 const etiquetaMargemY = ref(0);
 const etiquetaMargemX = ref(0);
+const mostrarBorda = ref(0);
 
 const nrCasasZeros = computed(() => {
   return geraStringConcat("0");
@@ -42,6 +43,7 @@ function onGerarEtiquetas() {
       etiquetaAltura: etiquetaAltura.value,
       etiquetaMargemY: etiquetaMargemY.value,
       etiquetaMargemX: etiquetaMargemX.value,
+      mostrarBorda: mostrarBorda.value,
     },
   });
 }
@@ -110,6 +112,15 @@ function onGerarEtiquetas() {
                 type="number"
                 label="Distância no eixo vertical (mm)"
                 step="0.1"
+              />
+              <q-toggle
+                v-model="mostrarBorda"
+                :true-value="1"
+                :false-value="0"
+                :indeterminate-value="0"
+                label="Mostrar borda"
+                color="primary"
+                left-label
               />
             </q-card-section>
           </q-card>

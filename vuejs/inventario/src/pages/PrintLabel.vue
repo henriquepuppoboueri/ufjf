@@ -8,11 +8,13 @@ const prefix = route.query.prefix;
 const firstSequence = +route.query.start;
 const qtEtiquetas = +route.query.qtEtiquetas;
 const ano = route.query.ano;
-const etiquetaLargura = route.query.etiquetaLargura;
 const etiquetaAltura = route.query.etiquetaAltura;
 const etiquetaMargemY = route.query.etiquetaMargemY;
 const etiquetaMargemX = route.query.etiquetaMargemX;
-const nrCasasSequencia = route.query.nrCasasSequencia;
+// const etiquetaLargura = route.query.etiquetaLargura;
+// const nrCasasSequencia = route.query.nrCasasSequencia;
+const mostrarBorda = route.query.mostrarBorda;
+console.log(route.query);
 
 // const amountOfLabels = computed(() => {
 //   return qtEtiquetas * 60;
@@ -22,10 +24,18 @@ const nrCasasSequencia = route.query.nrCasasSequencia;
 <template>
   <div class="container row justify-center">
     <div
-      class="etiqueta"
+      class="etiqueta flex"
       v-for="(label, index) in qtEtiquetas"
       :key="index"
-      :style="{ height: `${etiquetaAltura}mm` }"
+      :style="{
+        minHeight: `${etiquetaAltura}mm`,
+        border: mostrarBorda === '1' ? 'solid 0.1mm black' : 'none',
+        borderRadius: '2mm',
+        marginLeft: etiquetaMargemX + 'mm',
+        marginRight: etiquetaMargemX + 'mm',
+        marginTop: etiquetaMargemY + 'mm',
+        marginBottom: etiquetaMargemY + 'mm',
+      }"
     >
       <qr-etiqueta
         :label-text="{
@@ -34,11 +44,13 @@ const nrCasasSequencia = route.query.nrCasasSequencia;
           ano,
         }"
         :page-options="{
-          etiquetaLargura,
-          etiquetaAltura,
-          etiquetaMargemY,
-          etiquetaMargemX,
-          nrCasasSequencia,
+          ...route.query,
+          // etiquetaLargura,
+          // etiquetaAltura,
+          // etiquetaMargemY,
+          // etiquetaMargemX,
+          // nrCasasSequencia,
+          // mostrarBorda,
         }"
       ></qr-etiqueta>
     </div>
@@ -48,4 +60,7 @@ const nrCasasSequencia = route.query.nrCasasSequencia;
 <style lang="sass">
 .etiqueta
   // height: 80.12px
+
+.q-gutter-y-md .etiqueta
+  // margin-top: 16px
 </style>

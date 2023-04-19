@@ -11,35 +11,32 @@ const fullLabel = computed(() => {
   );
   return `${props.labelText.prefix}${paddedSequence}`;
 });
+// const mostrarBorda = computed(() =>
+//   pageOptions.mostrarBorda === "1" ? true : false
+// );
+
+// const maxHeight = computed(() => {
+//   return mostrarBorda;
+// });
 </script>
 
 <template>
   <div
-    class="label-container text-bold row inline flex-center"
+    class="label-container text-bold row inline flex flex-center"
     :style="{
+      maxHeight: pageOptions.etiquetaAltura + 'mm',
       width: pageOptions.etiquetaLargura + 'mm',
       paddingTop: pageOptions.containerPaddingTop + 'mm',
-      marginLeft: pageOptions.etiquetaMargemX + 'mm',
-      marginRight: pageOptions.etiquetaMargemX + 'mm',
-      marginTop: pageOptions.etiquetaMargemY + 'mm',
-      marginBottom: pageOptions.etiquetaMargemY + 'mm',
-      // border: '1px solid',
-      // borderRadius: '10px',
     }"
   >
     <vue-qrious
       :value="`${fullLabel}`"
       level="M"
       :style="{
-        height: pageOptions.etiquetaAltura + 'mm',
+        height: pageOptions.etiquetaAltura * 0.9 + 'mm',
       }"
     ></vue-qrious>
-    <span
-      class="label-description text-center text-uppercase text-subtitle3"
-      :style="{
-        maxHeight: pageOptions.etiquetaAltura + 'mm',
-      }"
-    >
+    <span class="label-description text-center text-uppercase text-subtitle3">
       {{ fullLabel }}
       <br />
       {{ props.labelText.ano }}
