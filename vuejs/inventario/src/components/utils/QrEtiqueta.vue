@@ -11,13 +11,6 @@ const fullLabel = computed(() => {
   );
   return `${props.labelText.prefix}${paddedSequence}`;
 });
-// const mostrarBorda = computed(() =>
-//   pageOptions.mostrarBorda === "1" ? true : false
-// );
-
-// const maxHeight = computed(() => {
-//   return mostrarBorda;
-// });
 </script>
 
 <template>
@@ -33,7 +26,7 @@ const fullLabel = computed(() => {
       :value="`${fullLabel}`"
       level="M"
       :style="{
-        height: pageOptions.etiquetaAltura * 0.9 + 'mm',
+        height: pageOptions.etiquetaAltura * 0.8 + 'mm',
       }"
     ></vue-qrious>
     <span class="label-description text-center text-uppercase text-subtitle3">
@@ -45,19 +38,6 @@ const fullLabel = computed(() => {
 </template>
 
 <style lang="sass">
-.label-container
-  // margin-right: 25px
-  // margin-bottom: 40px
-  // height: 85px
-  // width: 136px
-  // padding-top:49px
-
-  img
-    // height: 42px
-
-.row
-  // min-width: 150px
-
 
 .label-description
   display: inline-block
@@ -68,5 +48,4 @@ const fullLabel = computed(() => {
   writing-mode: vertical-lr
   text-orientation: upright
   word-wrap: break-word
-  // max-height: 42px
 </style>

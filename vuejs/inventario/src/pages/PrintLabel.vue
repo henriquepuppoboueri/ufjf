@@ -1,6 +1,6 @@
 <script setup>
-import { computed } from "vue";
 import { useRoute } from "vue-router";
+
 import QrEtiqueta from "src/components/utils/QrEtiqueta.vue";
 
 const route = useRoute();
@@ -14,11 +14,6 @@ const etiquetaMargemX = route.query.etiquetaMargemX;
 // const etiquetaLargura = route.query.etiquetaLargura;
 // const nrCasasSequencia = route.query.nrCasasSequencia;
 const mostrarBorda = route.query.mostrarBorda;
-console.log(route.query);
-
-// const amountOfLabels = computed(() => {
-//   return qtEtiquetas * 60;
-// });
 </script>
 
 <template>
@@ -45,16 +40,12 @@ console.log(route.query);
         }"
         :page-options="{
           ...route.query,
-          // etiquetaLargura,
-          // etiquetaAltura,
-          // etiquetaMargemY,
-          // etiquetaMargemX,
-          // nrCasasSequencia,
-          // mostrarBorda,
         }"
       ></qr-etiqueta>
     </div>
   </div>
+  <!-- <div :style="{ breakBefore: 'page' }">1st</div>
+  <div :style="{ breakBefore: 'page' }">2nd</div> -->
 </template>
 
 <style lang="sass">
