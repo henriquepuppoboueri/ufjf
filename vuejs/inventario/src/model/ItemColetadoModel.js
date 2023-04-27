@@ -1,7 +1,1 @@
-export class ItemColetadoModel {
-  constructor(idItem) {
-    this.idItem = idItem;
-  }
-
-
-}
+export default ItemColetadoModel = { id: 0, idItem: 0 };

@@ -4,7 +4,10 @@
   </div>
   <q-form @submit.prevent="onSubmit">
     <section class="col q-ma-sm q-gutter-y-sm">
-      <div class="row q-gutter-x-sm justify-between no-wrap">
+      <div
+        class="row q-gutter-x-sm justify-between no-wrap"
+        v-if="itemColetado"
+      >
         <q-input
           outlined
           v-model="itemColetado.patrimonio"
@@ -30,7 +33,6 @@
       </div>
 
       <q-input
-        v-if="itemColetado"
         outlined
         v-model="itemColetado.identificador"
         label="Identificador"
@@ -56,9 +58,10 @@
         dense
       />
       <q-select
+        v-if="itemColetado.setor"
         outlined
         v-model="itemColetado.dependencia"
-        :options="itemColetado.setor.dependencias"
+        :options="dependencias"
         :option-label="(item) => item.nome"
         label="Dependência"
         dense
@@ -111,70 +114,53 @@
       <q-btn dense color="primary" label="Cancelar" @click="router.go(-1)" />
     </section>
   </q-form>
-  <div>{{ itemColetado.dependencia }}</div>
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeMount, watch, computed, reactive } from "vue";
+import { ref, onUnmounted, computed, onMounted } from "vue";
 import { useItensColetadosStore } from "src/stores/itensColetados";
 import { useSetoresStore } from "src/stores/setores";
 import { useItensImportadosStore } from "src/stores/itensImportados";
 import { useRoute, useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 import { useSituacaoStore } from "src/stores/situacao";
-import { useDependenciasStore } from "src/stores/dependencias";
 import { usePlaquetaStore } from "src/stores/plaqueta";
 import { useAuthStore } from "src/stores/auth";
 import { isNumber, notStartWith } from "src/helper/formValidation";
 import { Notify } from "quasar";
 import { QrStream } from "vue3-qr-reader";
 import { useQuasar } from "quasar";
+import { watch } from "vue";
 
 const $q = useQuasar();
 const mostrarCamera = ref(false);
 const router = useRouter();
+// stores
 const authStore = useAuthStore();
 const plaquetaStore = usePlaquetaStore();
-const dependenciasStore = useDependenciasStore();
 const situacaoStore = useSituacaoStore();
-const route = useRoute();
 const setoresStore = useSetoresStore();
 const itensColetadosStore = useItensColetadosStore();
 const itensImportadosStore = useItensImportadosStore();
 
-const { dependencias, dependencia } = storeToRefs(dependenciasStore);
-const { setoresDependencias, setor } = storeToRefs(setoresStore);
-const { situacoes, situacao } = storeToRefs(situacaoStore);
-const { estadoPlaqueta, estadosPlaquetas } = storeToRefs(plaquetaStore);
+const route = useRoute();
+
+const { setoresDependencias } = storeToRefs(setoresStore);
+const { situacoes } = storeToRefs(situacaoStore);
+const { estadosPlaquetas } = storeToRefs(plaquetaStore);
 const { itemImportado } = storeToRefs(itensImportadosStore);
 const { buscarItemImportadoPorPatrimonio } = itensImportadosStore;
 const { itemColetado, itemNominal } = storeToRefs(itensColetadosStore);
+const { limparItemColetado } = itensColetadosStore;
 const { usuario } = storeToRefs(authStore);
 const isModoEdicao = ref(false);
 const idInventario = ref(null);
-
+const dependencias = ref([]);
 const desabilitaSalvar = computed(() => {
   return 0;
 });
 
-watch(itemNominal, async (newV, oldV) => {
-  // console.log(await newV);
-});
-
-// watch(
-//   () => itemColetado.value.setor,
-//   async (nv, ov) => {
-//     if (nv && nv.hasOwnProperty("id")) {
-//       await dependenciasStore.buscarDependencias(nv.id);
-//       if (ov.hasOwnProperty("id") && !!ov.id && ov.id !== nv.id) {
-//         dependenciasStore.dependencia = null;
-//         itemColetado.value.dependencia = null;
-//       }
-//     }
-//   }
-// );
-
-onBeforeMount(async () => {
+onMounted(async () => {
   const idItem = +route.params.idItem;
   idInventario.value = +route.params.idInventario;
   isModoEdicao.value = !!idItem;
@@ -184,13 +170,32 @@ onBeforeMount(async () => {
   await setoresStore.buscarSetoresDependencias(idInventario.value);
 
   if (isModoEdicao.value) await montaFormEditar(idItem);
+  else {
+    // limparItemColetado();
+  }
 });
+
+onUnmounted(() => {
+  limparItemColetado();
+});
+
+watch(
+  () => itemColetado.value.setor,
+  (newV, oldV) => {
+    if (!isModoEdicao.value) itemColetado.value.dependencia = null;
+    if (newV) {
+      const deps = setoresDependencias.value.filter(
+        (setor) => setor.id === newV.id
+      )[0];
+      if (deps) {
+        dependencias.value = deps["dependencias"];
+      }
+    }
+  }
+);
 
 async function montaFormEditar(idItem) {
   await itensColetadosStore.buscarItemColetado(idItem);
-  await setoresStore.buscarSetor(itemColetado.value.idSetor);
-  await dependenciasStore.buscarDependencias(itemColetado.value.idSetor);
-  await dependenciasStore.buscarDependencia(itemColetado.value.idDependencia);
   await situacaoStore.buscarSituacao(itemColetado.value.situacao);
   await plaquetaStore.buscarEstadoPlaqueta(itemColetado.value.idEstadoPlaqueta);
 }
@@ -218,13 +223,15 @@ async function onSubmit() {
     idSetor: itemColetado.value.setor.id,
     idDependencia: itemColetado.value.dependencia.id,
     idEstadoPlaqueta: itemColetado.value.estadoPlaqueta.id,
-    situacao: itemColetado.value.situacao_.id,
-    identificador: +itemColetado.value.identificador,
+    idSituacao: itemColetado.value.situacao_.id,
+    identificador: itemColetado.value.identificador,
   };
+  item.usuario = usuario.value.id;
   delete item.dependencia;
   delete item.setor;
   delete item.estadoPlaqueta;
   delete item.situacao_;
+  delete item.situacao;
 
   if (isModoEdicao.value) {
     try {
@@ -269,18 +276,6 @@ async function onDecode(data) {
     mostrarCamera.value = false;
   }
 }
-
-const limparItemColetado = (itemColetadoObj) => {
-  itemColetadoObj.value.patrimonio = null;
-  itemColetadoObj.value.identificador = null;
-  itemColetadoObj.value.descricao = null;
-  itemColetadoObj.value.localizacao = null;
-  itemColetadoObj.value.situacao = null;
-  itemColetadoObj.value.estadoPlaqueta = null;
-  itemColetadoObj.value.setor = null;
-  itemColetadoObj.value.dependencia = null;
-  itemColetadoObj.value.observacao = null;
-};
 </script>
 
 <style lang="sass">

@@ -46,7 +46,7 @@ export const useItensColetadosStore = defineStore({
         state.carregando = true
 
         if (state.itensColetados.length > 0) {
-          const itensLista = state.itensColetados.map(item => {
+          const itensLista = state.itensColetados.map((item) => {
             const situacao = situacaoStore.buscarSituacaoPorId(item.situacao).nome
             const estadoPlaqueta = plaquetaStore.buscarEstadoPlaqueta(item.idEstadoPlaqueta).nome
             const setor = setoresStore.buscarSetorPorId(item.idSetor)
@@ -59,6 +59,14 @@ export const useItensColetadosStore = defineStore({
               if (dependencia) dependenciaNome = dependencia.nome
             }
             state.carregando = false;
+            // const itemCorrigido = {
+            //   ...item,
+            //   setor: setor.nome,
+            //   dependencia: dependenciaNome,
+            //   situacao,
+            //   estadoPlaqueta
+            // }
+            // console.log(itemCorrigido);
             return {
               ...item,
               setor: setor.nome,
@@ -145,5 +153,13 @@ export const useItensColetadosStore = defineStore({
         this.carregando = false
       }
     },
+    limparItemColetado() {
+      this.itemColetado = {
+        patrimonio: '', identificador: '', descricao: '',
+        setor: { id: null, nome: null, dependencias: [] },
+        dependencia: null, localizacao: "",
+        situacao: '', estadoPlaqueta: null, observacao: '', usuario: ''
+      }
+    }
   }
 });
