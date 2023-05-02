@@ -29,6 +29,7 @@
           icon="fa-solid fa-camera"
           type="button"
           @click="mostrarCamera = !mostrarCamera"
+          v-if="!isModoEdicao"
         />
       </div>
 
@@ -111,7 +112,12 @@
         type="submit"
         :disabled="desabilitaSalvar"
       />
-      <q-btn dense color="primary" label="Cancelar" @click="router.go(-1)" />
+      <q-btn
+        dense
+        color="primary"
+        label="Cancelar"
+        @click="router.replace(routeUrl)"
+      />
     </section>
   </q-form>
 </template>
@@ -150,12 +156,16 @@ const { situacoes } = storeToRefs(situacaoStore);
 const { estadosPlaquetas } = storeToRefs(plaquetaStore);
 const { itemImportado } = storeToRefs(itensImportadosStore);
 const { buscarItemImportadoPorPatrimonio } = itensImportadosStore;
-const { itemColetado, itemNominal } = storeToRefs(itensColetadosStore);
+const { itemColetado, itemNominal, erro } = storeToRefs(itensColetadosStore);
 const { limparItemColetado } = itensColetadosStore;
 const { usuario } = storeToRefs(authStore);
 const isModoEdicao = ref(false);
 const idInventario = ref(null);
 const dependencias = ref([]);
+const pularWatch = ref(false);
+const routeUrl = computed(
+  () => `/inventario/v/${idInventario.value}/itens/coletados`
+);
 const desabilitaSalvar = computed(() => {
   return 0;
 });
@@ -182,7 +192,8 @@ onUnmounted(() => {
 watch(
   () => itemColetado.value.setor,
   (newV, oldV) => {
-    if (!isModoEdicao.value) itemColetado.value.dependencia = null;
+    if (!isModoEdicao.value && !pularWatch.value)
+      itemColetado.value.dependencia = null;
     if (newV) {
       const deps = setoresDependencias.value.filter(
         (setor) => setor.id === newV.id
@@ -206,6 +217,7 @@ async function buscarItemPorPatrimonio() {
     idInventario.value
   );
   if (itemImportado.value) {
+    pularWatch.value = true;
     itemColetado.value.descricao = itemImportado.value.descricao;
     itemColetado.value.setor = itemImportado.value.setor;
     itemColetado.value.dependencia = itemImportado.value.dependencia;
@@ -237,12 +249,25 @@ async function onSubmit() {
     try {
       item.id = itemColetado.value.id;
       item.idItem = itemColetado.value.item;
-      await itensColetadosStore.editItemColetado(item.id, item);
-      router.go(-1);
-    } catch (error) {}
+      const response = await itensColetadosStore.editItemColetado(
+        item.id,
+        item
+      );
+      if (erro.value) {
+        $q.notify({ message: erro.value, color: "red", icon: "warning" });
+      } else {
+        router.replace({
+          path: routeUrl,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
   } else {
     item.idItem = !!itemImportado.value ? itemImportado.value.id : 0;
     item.usuario = usuario.value.id;
+
+    console.log(item);
     // }
     const response = await itensColetadosStore.addItemColetado(item);
     if (response && response.status === 200) {
@@ -257,7 +282,7 @@ async function onSubmit() {
         })
         .onCancel(() => {
           router.replace({
-            path: `/inventario/v/${idInventario.value}/itens/coletados`,
+            path: routeUrl,
           });
         });
     } else if (response && response.status === 400) {

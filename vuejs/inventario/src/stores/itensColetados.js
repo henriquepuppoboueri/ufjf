@@ -90,7 +90,7 @@ export const useItensColetadosStore = defineStore({
         const response = await api.post(`v1/restrito/coleta`, item)
         return response;
       } catch (error) {
-        this.error = error;
+        this.erro = error;
       } finally {
         this.carregando = false
       }
@@ -102,7 +102,7 @@ export const useItensColetadosStore = defineStore({
         const response = await api.put(`v1/restrito/coleta/${idItem}`, item)
         return response;
       } catch (error) {
-        this.error = error;
+        this.erro = error.response.data || null;
       } finally {
         this.carregando = false
       }
@@ -116,7 +116,7 @@ export const useItensColetadosStore = defineStore({
         this.itensColetados.splice(itemIndex, 1)
         return response;
       } catch (error) {
-        this.error = error;
+        this.erro = error;
       } finally {
         this.carregando = false
       }
@@ -129,7 +129,7 @@ export const useItensColetadosStore = defineStore({
         if (response.data.length > 0)
           this.itensColetados = await response.data
       } catch (error) {
-        this.error = error;
+        this.erro = error;
       } finally {
         this.carregando = false;
       }
@@ -148,7 +148,7 @@ export const useItensColetadosStore = defineStore({
         this.itemColetado = { ...this.itemColetado, setor, dependencia, situacao_, estadoPlaqueta }
         return this.itemColetado
       } catch (error) {
-        this.error = error;
+        this.erro = error;
       } finally {
         this.carregando = false
       }

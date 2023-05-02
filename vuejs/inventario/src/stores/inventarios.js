@@ -11,6 +11,7 @@ export const useInventariosStore = defineStore({
     erro: null,
     inventario: null
   }),
+  persist: true,
   getters: {
     // filtrarInventarios(state) {
 
