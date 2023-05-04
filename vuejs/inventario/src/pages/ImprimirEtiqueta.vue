@@ -9,8 +9,10 @@ const router = useRouter();
 const prefix = ref("");
 const nrCasasSequencia = ref(7);
 const start = ref(1);
-const qtEtiquetas = ref(10);
+const qtEtiquetas = ref(100);
+const etiquetasPorPagina = ref(10);
 const ano = ref(new Date().getFullYear());
+const paginaMargemTop = ref(10);
 const etiquetaLargura = ref(38.2);
 const etiquetaAltura = ref(21.2);
 const etiquetaMargemY = ref(0);
@@ -36,13 +38,15 @@ function onGerarEtiquetas() {
     query: {
       prefix: prefix.value,
       start: start.value,
-      qtEtiquetas: qtEtiquetas.value,
       ano: ano.value,
+      qtEtiquetas: qtEtiquetas.value,
+      etiquetasPorPagina: etiquetasPorPagina.value,
       nrCasasSequencia: nrCasasSequencia.value,
       etiquetaLargura: etiquetaLargura.value,
       etiquetaAltura: etiquetaAltura.value,
       etiquetaMargemY: etiquetaMargemY.value,
       etiquetaMargemX: etiquetaMargemX.value,
+      paginaMargemTop: paginaMargemTop.value,
       mostrarBorda: mostrarBorda.value,
     },
   });
@@ -69,6 +73,11 @@ function onGerarEtiquetas() {
         />
         <q-input v-model="ano" type="text" label="Unidade - Ano" />
         <q-input
+          v-model="etiquetasPorPagina"
+          type="text"
+          label="Etiquetas por página"
+        />
+        <q-input
           v-model="qtEtiquetas"
           type="text"
           label="Quantidade de etiquetas"
@@ -88,6 +97,12 @@ function onGerarEtiquetas() {
                 v-model="etiquetaLargura"
                 type="number"
                 label="Altura da etiqueta (mm)"
+                step="0.1"
+              />
+              <q-input
+                v-model="paginaMargemTop"
+                type="number"
+                label="Margem top (mm)"
                 step="0.1"
               />
               <!-- <q-input
