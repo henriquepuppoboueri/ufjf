@@ -1,86 +1,3 @@
-<template>
-  <q-dialog v-model="mostrarDialog">
-    <q-card class="q-pa-sm">
-      <q-card-section class="text-h6 text-center text-bold">
-        Confirmação de exclusão
-      </q-card-section>
-      <q-card-section>
-        <p class="text-center text-subtitle">
-          Tem certeza de que desejar excluir o inventário selecionado?
-        </p>
-      </q-card-section>
-      <q-card-actions class="flex-center q-gutter-md">
-        <q-btn dense color="red" label="Não" @click="mostrarDialog = false" />
-        <q-btn dense color="green" label="Sim" @click="excluirInventario" />
-      </q-card-actions>
-    </q-card>
-  </q-dialog>
-  <q-card square>
-    <q-card-section>
-      <q-table
-        flat
-        :loading="carregando"
-        title="Inventários"
-        :rows="inventarios"
-        :columns="colunas"
-        row-key="id"
-        selection="single"
-        :wrap-cells="true"
-        v-model:selected="inventarioSelecionado"
-        :bordered="false"
-        :selected-rows-label="registroPortugues"
-        :pagination="paginacaoOpcoes"
-        loading-label="Carregando"
-        no-data-label="Não foram encontrados dados."
-        rows-per-page-label="Registros por página:"
-      />
-    </q-card-section>
-    <q-card-actions>
-      <q-btn
-        v-if="!isEditavel"
-        dense
-        :disabled="isEditavel"
-        color="orange"
-        class="text-white"
-        label="Visualizar"
-        @click="verInventario"
-      />
-      <q-btn
-        v-if="!isEditavel"
-        dense
-        :disabled="isEditavel"
-        color="blue"
-        label="Editar"
-        @click="editarInventario"
-      />
-      <q-btn
-        v-if="!isEditavel"
-        dense
-        :disabled="isEditavel"
-        color="primary"
-        label="Excluir"
-        @click="mostrarDialog = true"
-      />
-      <q-btn
-        v-if="isEditavel"
-        dense
-        :disabled="!isEditavel"
-        color="green"
-        label="Novo"
-        @click="novoInventario"
-      />
-      <q-btn
-        v-if="!isEditavel"
-        dense
-        :disabled="isEditavel"
-        color="green"
-        :label="statusInventarioBtn"
-        @click="mudarSituacaoInventario"
-      />
-    </q-card-actions>
-  </q-card>
-</template>
-
 <script setup>
 import { onMounted, ref, computed } from "vue";
 import { useRouter } from "vue-router";
@@ -206,6 +123,89 @@ async function mudarSituacaoInventario() {
   }
 }
 </script>
+
+<template>
+  <q-dialog v-model="mostrarDialog">
+    <q-card class="q-pa-sm">
+      <q-card-section class="text-h6 text-center text-bold">
+        Confirmação de exclusão
+      </q-card-section>
+      <q-card-section>
+        <p class="text-center text-subtitle">
+          Tem certeza de que desejar excluir o inventário selecionado?
+        </p>
+      </q-card-section>
+      <q-card-actions class="flex-center q-gutter-md">
+        <q-btn dense color="red" label="Não" @click="mostrarDialog = false" />
+        <q-btn dense color="green" label="Sim" @click="excluirInventario" />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+  <q-card square>
+    <q-card-section>
+      <q-table
+        flat
+        :loading="carregando"
+        title="Inventários"
+        :rows="inventarios"
+        :columns="colunas"
+        row-key="id"
+        selection="single"
+        :wrap-cells="true"
+        v-model:selected="inventarioSelecionado"
+        :bordered="false"
+        :selected-rows-label="registroPortugues"
+        :pagination="paginacaoOpcoes"
+        loading-label="Carregando"
+        no-data-label="Não foram encontrados dados."
+        rows-per-page-label="Registros por página:"
+      />
+    </q-card-section>
+    <q-card-actions>
+      <q-btn
+        v-if="!isEditavel"
+        dense
+        :disabled="isEditavel"
+        color="orange"
+        class="text-white"
+        label="Visualizar"
+        @click="verInventario"
+      />
+      <q-btn
+        v-if="!isEditavel"
+        dense
+        :disabled="isEditavel"
+        color="blue"
+        label="Editar"
+        @click="editarInventario"
+      />
+      <q-btn
+        v-if="!isEditavel"
+        dense
+        :disabled="isEditavel"
+        color="primary"
+        label="Excluir"
+        @click="mostrarDialog = true"
+      />
+      <q-btn
+        v-if="isEditavel"
+        dense
+        :disabled="!isEditavel"
+        color="green"
+        label="Novo"
+        @click="novoInventario"
+      />
+      <q-btn
+        v-if="!isEditavel"
+        dense
+        :disabled="isEditavel"
+        color="green"
+        :label="statusInventarioBtn"
+        @click="mudarSituacaoInventario"
+      />
+    </q-card-actions>
+  </q-card>
+</template>
 
 <style lang="sass">
 

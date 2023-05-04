@@ -22,6 +22,9 @@
         <q-list class="rounded-borders">
           <q-item>
             <q-item-section class="col-grow">
+              <q-tooltip>
+                {{ usuario.versaoAPI }}
+              </q-tooltip>
               <q-item-label>{{
                 usuario ? usuario.nome : "Visitante"
               }}</q-item-label>

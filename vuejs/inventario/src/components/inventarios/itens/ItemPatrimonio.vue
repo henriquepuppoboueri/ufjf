@@ -1,0 +1,104 @@
+<template>
+  <q-dialog ref="dialogRef" @hide="onDialogHide" :persistent="true">
+    <q-card class="q-dialog-plugin">
+      <div class="row q-gutter-x-sm justify-between no-wrap">
+        <q-input
+          outlined
+          label="Patrimônio"
+          dense
+          class="fit"
+          v-model="patrimonio"
+        />
+        <q-btn
+          color="blue"
+          label="Buscar"
+          type="button"
+          :disabled="!patrimonio"
+          @click="buscarItemPatrimonio"
+        />
+      </div>
+      <q-card-actions>
+        <q-btn
+          dense
+          color="green"
+          label="Vincular"
+          :disabled="!itemImportado || !itemImportado.patrimonio"
+          @click="onOKClick"
+        />
+        <q-btn dense color="red" label="Cancelar" @click="onCancelClick" />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+  {{ erro }}
+</template>
+
+<script setup>
+import { ref } from "vue";
+import { useDialogPluginComponent, Notify } from "quasar";
+import { useItensImportadosStore } from "src/stores/itensImportados";
+import { storeToRefs } from "pinia";
+import { useItensColetadosStore } from "src/stores/itensColetados";
+
+const props = defineProps({
+  idInventario: String,
+  idItemColetado: String,
+  // ...your custom props
+});
+
+defineEmits([
+  // REQUIRED; need to specify some events that your
+  // component will emit through useDialogPluginComponent()
+  ...useDialogPluginComponent.emits,
+]);
+
+const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
+  useDialogPluginComponent();
+
+const itensImportadosStore = useItensImportadosStore();
+const { itemImportado } = storeToRefs(itensImportadosStore);
+const { buscarItemImportadoPorPatrimonio } = itensImportadosStore;
+
+const itensColetadosStore = useItensColetadosStore();
+const { erro } = storeToRefs(itensColetadosStore);
+const { vincularItemPatrimonio } = itensColetadosStore;
+
+const patrimonio = ref("");
+
+async function buscarItemPatrimonio() {
+  await buscarItemImportadoPorPatrimonio(patrimonio.value, props.idInventario);
+  if (itemImportado.value) {
+    Notify.create({
+      color: "green",
+      message: `Patrimônio encontrado!`,
+    });
+  } else
+    Notify.create({
+      color: "red",
+      message: `Patrimônio não encontrado!`,
+    });
+}
+
+async function onOKClick() {
+  await vincularItemPatrimonio(props.idItemColetado, itemImportado.value.id);
+  if (erro)
+    Notify.create({
+      color: "red",
+      message: `${erro.value.response.data}`,
+    });
+  // on OK, it is REQUIRED to
+  // call onDialogOK (with optional payload)
+
+  return;
+  onDialogOK();
+  // or with payload: onDialogOK({ ... })
+  // ...and it will also hide the dialog automatically
+}
+
+function onCancelClick() {
+  itensImportadosStore.$reset();
+
+  onDialogCancel();
+}
+</script>
+
+<style scoped></style>

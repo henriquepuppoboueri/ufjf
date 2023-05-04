@@ -84,13 +84,26 @@ export const useItensColetadosStore = defineStore({
     }
   },
   actions: {
+    async vincularItemPatrimonio(idColeta, idItem) {
+      try {
+        this.erro = null
+        this.carregando = true
+        const response = await api.patch(`v1/restrito/coleta/vincular/${idColeta}&${idItem}`)
+        return response
+      } catch (error) {
+        this.erro = error
+      } finally {
+        this.carregando = false
+      }
+    },
+
     async addItemColetado(item) {
       try {
         this.carregando = true
         const response = await api.post(`v1/restrito/coleta`, item)
-        return response;
+        return response
       } catch (error) {
-        this.erro = error;
+        this.erro = error
       } finally {
         this.carregando = false
       }

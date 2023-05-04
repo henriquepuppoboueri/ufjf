@@ -11,6 +11,7 @@ import { useInventariosStore } from "src/stores/inventarios";
 import { useItensColetadosStore } from "src/stores/itensColetados";
 import { exportTable } from "src/helper/functions";
 import { useAuthStore } from "src/stores/auth";
+import ItemPatrimonio from "./ItemPatrimonio.vue";
 
 const $q = useQuasar();
 const authStore = useAuthStore();
@@ -32,7 +33,6 @@ const { itensColetados, carregando, itensNominais } =
   storeToRefs(itensColetadosStore);
 
 const itensSelecionados = ref([]);
-const itensSelecionadosArray = ref([]);
 
 const filtro = ref("");
 const router = useRouter();
@@ -227,6 +227,25 @@ function delItens() {
   }
 }
 
+function vincularPatrimonio() {
+  $q.dialog({
+    component: ItemPatrimonio,
+    componentProps: {
+      idInventario: idInventario.value,
+      idItemColetado: String(itensSelecionados.value[0].id),
+    },
+  }); /*
+    .onOk(() => {
+      console.log("OK");
+    })
+    .onCancel(() => {
+      console.log("Cancel");
+    })
+    .onDismiss(() => {
+      console.log("Called on OK or Cancel");
+    });*/
+}
+
 async function renderPage() {
   itensColetados.value = [];
   itensSelecionados.value = [];
@@ -389,6 +408,17 @@ async function renderPage() {
         color="green"
         label="Exportar"
         @click="exportTable(colunasItens, itensNominais, 'itens-coletados')"
+      />
+      <q-btn
+        v-if="
+          !carregando &&
+          qtItensSelec === 1 &&
+          itensSelecionados[0].patrimonio === ''
+        "
+        @click="vincularPatrimonio"
+        dense
+        color="purple"
+        label="Vincular patrimônio"
       />
     </q-card-actions>
   </q-card>
