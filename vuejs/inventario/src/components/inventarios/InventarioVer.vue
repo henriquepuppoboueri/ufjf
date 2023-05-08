@@ -183,7 +183,7 @@ const usuarioPodeVerInventario = async () => {
 watch(
   () => route.path,
   (to, from) => {
-    if (to !== "/inventario") {
+    if (to.includes("/inventario/v")) {
       usuarioPodeVerInventario();
     }
   }
