@@ -234,7 +234,7 @@ function vincularPatrimonio() {
       idInventario: idInventario.value,
       idItemColetado: String(itensSelecionados.value[0].id),
     },
-  }); /*
+  })
     .onOk(() => {
       console.log("OK");
     })
@@ -243,7 +243,7 @@ function vincularPatrimonio() {
     })
     .onDismiss(() => {
       console.log("Called on OK or Cancel");
-    });*/
+    });
 }
 
 async function renderPage() {

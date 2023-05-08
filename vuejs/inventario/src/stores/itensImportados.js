@@ -9,6 +9,7 @@ export const useItensImportadosStore = defineStore({
   state: () => ({
     itensImportados: [],
     itemImportado: {
+      id: 0,
       patrimonio: '', identificador: '', descricao: '',
       setor: { id: null, nome: null, dependencias: [] },
       dependencia: null, localizacao: "",

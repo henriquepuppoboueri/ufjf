@@ -50,6 +50,7 @@ onMounted(async () => {
   const idItem = +route.params.idItem;
   idInventario.value = +route.params.idInventario;
   isModoEdicao.value = !!idItem;
+  itemColetado.value.idItem = 0;
 
   await situacaoStore.buscarSituacoes();
   await plaquetaStore.buscarEstadosPlaquetas();
@@ -153,7 +154,6 @@ async function onSubmit() {
     item.idItem = !!itemImportado.value ? itemImportado.value.id : 0;
     item.usuario = usuario.value.id;
 
-    // }
     const response = await itensColetadosStore.addItemColetado(item);
     if (response && response.status === 200) {
       $q.dialog({

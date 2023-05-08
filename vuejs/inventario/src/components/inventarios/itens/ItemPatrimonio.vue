@@ -8,6 +8,7 @@
           dense
           class="fit"
           v-model="patrimonio"
+          type="number"
         />
         <q-btn
           color="blue"
@@ -33,7 +34,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref, onUnmounted, watch } from "vue";
 import { useDialogPluginComponent, Notify } from "quasar";
 import { useItensImportadosStore } from "src/stores/itensImportados";
 import { storeToRefs } from "pinia";
@@ -78,24 +79,43 @@ async function buscarItemPatrimonio() {
     });
 }
 
+watch(patrimonio, (_) => {
+  itensImportadosStore.$reset();
+});
+
+onMounted(() => {
+  itensImportadosStore.$reset();
+});
+
+onUnmounted(() => {
+  itensImportadosStore.$reset();
+});
 async function onOKClick() {
   await vincularItemPatrimonio(props.idItemColetado, itemImportado.value.id);
-  if (erro)
+  if (erro.value) {
+    console.log(erro);
     Notify.create({
       color: "red",
       message: `${erro.value.response.data}`,
     });
-  // on OK, it is REQUIRED to
-  // call onDialogOK (with optional payload)
+  } else {
+    console.log("Não deu erro");
+    Notify.create({
+      color: "green",
+      message: `Patrimônio vinculado!`,
+    });
 
-  return;
-  onDialogOK();
-  // or with payload: onDialogOK({ ... })
-  // ...and it will also hide the dialog automatically
+    // on OK, it is REQUIRED to
+    // call onDialogOK (with optional payload)
+
+    onDialogOK();
+    // or with payload: onDialogOK({ ... })
+    // ...and it will also hide the dialog automatically
+  }
 }
 
 function onCancelClick() {
-  itensImportadosStore.$reset();
+  // itensImportadosStore.$reset();
 
   onDialogCancel();
 }
