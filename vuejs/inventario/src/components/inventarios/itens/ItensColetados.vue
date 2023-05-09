@@ -34,7 +34,7 @@ const { itensColetados, carregando, itensNominais } =
 
 const itensSelecionados = ref([]);
 
-const filtro = ref("");
+const filter = ref("");
 const router = useRouter();
 const route = useRoute();
 const colunasItens = reactive([
@@ -165,6 +165,49 @@ onMounted(() => {
   renderPage();
 });
 
+const pagination = ref({
+  descending: false,
+  page: 1,
+  rowsPerPage: 1,
+  rowsNumber: 1,
+  sortBy: "id",
+});
+
+const fetchData = async (
+  page = 1,
+  sortBy = "id",
+  sortDirection = "asc",
+  filter = "",
+  rowsPerPage = 1
+) => {
+  try {
+    await itensColetadosStore.buscarItensColetadosPaginados(
+      idInventario.value,
+      sortDirection === "asc",
+      sortBy,
+      page,
+      rowsPerPage
+    );
+
+    pagination.value.page = pagination.value.currentPage + 1;
+    pagination.value.sortBy = sortBy || "id";
+    pagination.value.descending = sortDirection === "desc";
+    pagination.value.rowsPerPage = rowsPerPage;
+    pagination.value.rowsNumber = pagination.value.totalElements;
+  } finally {
+  }
+};
+
+const onRequest = (props) => {
+  fetchData(
+    props.pagination.page,
+    props.pagination.sortBy,
+    props.pagination.descending ? "desc" : "asc",
+    props.filter,
+    props.pagination.rowsPerPage
+  );
+};
+
 watch(
   () => route.path,
   (to, from) => {
@@ -254,12 +297,21 @@ async function renderPage() {
 
   try {
     await setoresStore.buscarSetoresDependencias(idInventario.value);
-    await itensColetadosStore.buscarItensColetados(idInventario.value);
+    // await itensColetadosStore.buscarItensColetadosPaginados(
+    //   idInventario.value,
+    //   !pagination.value.descending,
+    //   pagination.value.sortBy,
+    //   pagination.value.page,
+    //   pagination.value.rowsPerPage
+    // );
   } catch (error) {}
 }
+
+fetchData();
 </script>
 
 <template>
+  {{ pagination }}
   <q-card square>
     <q-card-section>
       <q-table
@@ -272,15 +324,17 @@ async function renderPage() {
         separator="cell"
         selection="multiple"
         :wrap-cells="true"
-        :filter="filtro"
         :filter-method="filtroAvancado"
         :selected-rows-label="registroPortugues"
-        :pagination="paginacaoOpcoes"
+        :pagination="pagination"
         :rows-per-page-options="[5, 10, 20, 50, 100, 0]"
         :bordered="false"
         loading-label="Carregando"
         no-data-label="Não foram encontrados dados."
         rows-per-page-label="Registros por página:"
+        v-model:pagination="pagination"
+        :filter="filter"
+        @request="onRequest"
       >
         <!-- header -->
         <template v-slot:header="props">
@@ -327,7 +381,7 @@ async function renderPage() {
               dense
               filled
               debounce="300"
-              v-model="filtro"
+              v-model="filter"
               placeholder="Filtrar"
               clearable
             >
