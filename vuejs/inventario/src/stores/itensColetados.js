@@ -16,6 +16,7 @@ plaquetaStore.buscarEstadosPlaquetas()
 export const useItensColetadosStore = defineStore({
   id: 'itensColetados',
   state: () => ({
+    paginacaoMeta: null,
     itensColetados: [],
     itemColetado: {
       id: 0,
@@ -69,7 +70,6 @@ export const useItensColetadosStore = defineStore({
               estadoPlaqueta
             }
           })
-          console.log('returning itensLista');
           return itensLista
         }
       } catch (error) {
@@ -143,12 +143,13 @@ export const useItensColetadosStore = defineStore({
       }
     },
 
-    async buscarItensColetadosPaginados(idInventario, ascendente = true, campoOrderBy = 'id', paginaAtual = 1, tamanho = 1) {
+    async buscarItensColetadosPaginados(idInventario, ascendente = true, campoOrderBy = 'id', paginaAtual = 0, tamanho = 10) {
       try {
         this.carregando = true
         const response = await api.get(`v1/restrito/coleta/inventario/page/${idInventario}`, { params: { ascendente, campoOrderBy, paginaAtual, tamanho } })
         if (response.data && response.data.content.length > 0)
           this.itensColetados = await response.data.content
+        this.paginacaoMeta = await { ...response.data, content: null }
       } catch (error) {
         this.erro = error;
       } finally {

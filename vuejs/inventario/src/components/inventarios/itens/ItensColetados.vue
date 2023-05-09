@@ -29,7 +29,7 @@ const isAdminInventario = usuariosInventario.value
 const setoresStore = useSetoresStore();
 
 const itensColetadosStore = useItensColetadosStore();
-const { itensColetados, carregando, itensNominais } =
+const { itensColetados, carregando, itensNominais, paginacaoMeta } =
   storeToRefs(itensColetadosStore);
 
 const itensSelecionados = ref([]);
@@ -167,44 +167,43 @@ onMounted(() => {
 
 const pagination = ref({
   descending: false,
-  page: 1,
-  rowsPerPage: 1,
-  rowsNumber: 1,
+  page: 0,
+  rowsPerPage: 10,
+  rowsNumber: 0,
   sortBy: "id",
 });
 
 const fetchData = async (
-  page = 1,
-  sortBy = "id",
-  sortDirection = "asc",
-  filter = "",
-  rowsPerPage = 1
+  ascendente = true,
+  campoOrderBy = "id",
+  paginaAtual = 0,
+  tamanho = paginacaoOpcoes.rowsPerPage
 ) => {
   try {
     await itensColetadosStore.buscarItensColetadosPaginados(
       idInventario.value,
-      sortDirection === "asc",
-      sortBy,
-      page,
-      rowsPerPage
+      ascendente,
+      campoOrderBy,
+      paginaAtual,
+      tamanho
     );
 
-    pagination.value.page = pagination.value.currentPage + 1;
-    pagination.value.sortBy = sortBy || "id";
-    pagination.value.descending = sortDirection === "desc";
-    pagination.value.rowsPerPage = rowsPerPage;
-    pagination.value.rowsNumber = pagination.value.totalElements;
+    pagination.value.page = paginacaoMeta.value.number + 1;
+    pagination.value.sortBy = campoOrderBy;
+    pagination.value.descending = !ascendente;
+    pagination.value.rowsPerPage = tamanho;
+    pagination.value.rowsNumber = paginacaoMeta.value.totalElements;
   } finally {
   }
 };
 
-const onRequest = (props) => {
-  fetchData(
-    props.pagination.page,
+const onRequest = async (props) => {
+  await fetchData(
+    props.pagination.descending,
     props.pagination.sortBy,
-    props.pagination.descending ? "desc" : "asc",
-    props.filter,
-    props.pagination.rowsPerPage
+    props.pagination.page - 1,
+    props.pagination.rowsPerPage,
+    props.filter
   );
 };
 
@@ -297,13 +296,6 @@ async function renderPage() {
 
   try {
     await setoresStore.buscarSetoresDependencias(idInventario.value);
-    // await itensColetadosStore.buscarItensColetadosPaginados(
-    //   idInventario.value,
-    //   !pagination.value.descending,
-    //   pagination.value.sortBy,
-    //   pagination.value.page,
-    //   pagination.value.rowsPerPage
-    // );
   } catch (error) {}
 }
 
@@ -311,7 +303,6 @@ fetchData();
 </script>
 
 <template>
-  {{ pagination }}
   <q-card square>
     <q-card-section>
       <q-table
