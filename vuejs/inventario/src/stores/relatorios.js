@@ -90,9 +90,10 @@ export const useRelatoriosStore = defineStore({
     async estatisticasPorSemana(idInventario) {
       try {
         this.carregando = true
-        const response = await api.get(`v1/restrito/inventario/usuario/qtdecoletasemana/${idInventario}`)
-        const data = await response.data
+        const { data } = await api.get(`v1/restrito/inventario/usuario/qtdecoletasemana/${idInventario}`)
+        // const data = await response.data
         this.relatorio = await data
+        console.log(data);
         this.carregando = false
       } catch (error) {
         this.erro = error
