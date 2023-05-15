@@ -10,9 +10,22 @@ export const useEstatisticasStore = defineStore({
     ultimaBusca: null,
   }),
   getters: {
+    usuariosComColeta: (state) => {
+      return (dataSource) => {
+        const usuComColeta = dataSource.coleta.map((usuColeta) => {
+          return {
+            idUsuario: usuColeta.usuario.id,
+            totais: usuColeta.coleta.map(coletaSemana => coletaSemana.qtde).reduce((a, b) => a + b)
+          }
+        }).filter(usuColeta => usuColeta.totais > 0).map(usuario => usuario.idUsuario)
+        return { ...dataSource, coleta: dataSource.coleta.filter(usuColeta => usuComColeta.includes(usuColeta.usuario.id)) }
+
+      }
+    },
     diasComColeta: (state) => {
       const totaisDiarios = {}
       const diasComColeta = []
+
       state.dados.coleta.forEach((usuarioColetaDiaria) => {
         usuarioColetaDiaria.coleta.forEach(coletaDia => {
           totaisDiarios[coletaDia.data] = coletaDia.qtde + (totaisDiarios[coletaDia.data] || 0)
@@ -32,19 +45,14 @@ export const useEstatisticasStore = defineStore({
           }
         })
       }
-      console.log(response);
       return response
     },
-    usuariosComColeta: (state) => {
-      const usuariosComColeta = state.dados.coleta.map((usuColeta) => {
-        return {
-          idUsuario: usuColeta.usuario.id,
-          totais: usuColeta.coleta.map(coletaSemana => coletaSemana.qtde).reduce((a, b) => a + b)
-        }
-      }).filter(usuColeta => usuColeta.totais > 0).map(usuario => usuario.idUsuario)
-
-      return { ...state.dados, coleta: state.dados.coleta.filter(usuColeta => usuariosComColeta.includes(usuColeta.usuario.id)) }
+    usuariosComColetaDia: (state) => {
+      return state.usuariosComColeta(state.diasComColeta)
     },
+    usuariosComColetaSemana: (state) => {
+      return state.usuariosComColeta(state.dados)
+    }
   },
   actions: {
     async buscarTotaisSetores(idInventario) {
@@ -69,21 +77,15 @@ export const useEstatisticasStore = defineStore({
         this.erro = error
       }
     },
-
     async buscarResumoSemana(idInventario, esconderSemColeta = false) {
       try {
+
         this.carregando = true
         const { data } = await api.get(`v1/restrito/resumo/obtemResumoPorSemana/${idInventario}`)
+        this.dados = await data
         if (esconderSemColeta) {
-
-          const usuariosComColeta = await data.coleta.map((usuColeta) => {
-            return {
-              idUsuario: usuColeta.usuario.id,
-              totais: usuColeta.coleta.map(coletaSemana => coletaSemana.qtde).reduce((a, b) => a + b)
-            };
-          }).filter(usuColeta => usuColeta.totais > 0).map(usuario => usuario.idUsuario)
-
-          this.dados = await { ...data, coleta: data.coleta.filter(usuColeta => usuariosComColeta.includes(usuColeta.usuario.id)) }
+          this.dados = this.usuariosComColetaSemana
+          console.log(this);
         } else
           this.dados = await data
 
@@ -107,8 +109,7 @@ export const useEstatisticasStore = defineStore({
     async buscarResumoUsuarios(idInventario) {
       try {
         this.carregando = true
-        const response = await api.get(`v1/restrito/resumo/obtemResumoPorUsuario/${idInventario}`)
-        const data = await response.data
+        const { data } = await api.get(`v1/restrito/resumo/obtemResumoPorUsuario/${idInventario}`)
         this.dados = await data
         this.carregando = false
         this.ultimaBusca = { recalcular: this.recalcularResumoUsuarios.bind(this, idInventario) }
@@ -120,6 +121,7 @@ export const useEstatisticasStore = defineStore({
       try {
         this.carregando = true
         await api.get(`v1/restrito/resumo/geraResumoPorUsuario/${idInventario}`)
+        console.log('recalcularResumoUsuarios');
         await this.buscarResumoUsuarios(idInventario);
         this.carregando = false
       } catch (error) {
@@ -132,21 +134,11 @@ export const useEstatisticasStore = defineStore({
         this.carregando = true
         const { data } = await api.get(`v1/restrito/resumo/obtemResumoPorDia/${idInventario}`)
         this.dados = await data
+        this.ultimaBusca = { recalcular: this.recalcularResumoDia.bind(this, idInventario) }
         this.carregando = false
-        this.ultimaBusca = { recalcular: this.recalcularResumoSemana.bind(this, idInventario) }
       } catch (error) {
         this.erro = error
       }
-      // try {
-      //   this.carregando = true
-      //   const response = await api.get(`v1/restrito/resumo/obtemResumoPorDia/${idInventario}`)
-      //   const data = await response.data
-      //   this.dados = await data
-      //   this.carregando = false
-      //   this.ultimaBusca = { recalcular: this.recalcularResumoDia.bind(this, idInventario) }
-      // } catch (error) {
-      //   this.erro = error
-      // }
     },
     async recalcularResumoDia(idInventario) {
       try {

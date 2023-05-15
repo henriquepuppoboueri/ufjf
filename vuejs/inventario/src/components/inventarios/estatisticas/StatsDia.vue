@@ -29,7 +29,7 @@ ChartJS.register(
 );
 
 const estatisticasStore = useEstatisticasStore();
-const { carregando, dados, usuariosComColeta, diasComColeta } =
+const { carregando, dados, usuariosComColetaDia, diasComColeta } =
   storeToRefs(estatisticasStore);
 const { buscarResumoDia } = estatisticasStore;
 const labels = [];
@@ -38,19 +38,13 @@ const chartData = reactive({
   labels: labels,
   datasets: [],
 });
-const esconderUsuariosSemColeta = ref(false);
-const esconderDiasSemColeta = ref(false);
+const esconderUsuariosDiasSemColeta = ref(false);
 const route = useRoute();
 const temDados = ref(false);
 
-watch(esconderUsuariosSemColeta, async (newV, old) => {
+watch(esconderUsuariosDiasSemColeta, async (newV, old) => {
   await buscarResumoDia(+route.params.idInventario);
-  montarGrafico(false, newV);
-});
-
-watch(esconderDiasSemColeta, async (newV, old) => {
-  await buscarResumoDia(+route.params.idInventario);
-  montarGrafico(newV, false);
+  montarGrafico(newV);
 });
 
 onMounted(async () => {
@@ -68,15 +62,11 @@ onMounted(async () => {
   }
 });
 
-async function montarGrafico(
-  esconderDiasSemColeta = false,
-  esconderUsuariosSemColeta = false
-) {
+async function montarGrafico(esconderUsuariosDiasSemColeta = false) {
   labels.splice(0, labels.length);
   let dadosRelatorio = ref(null);
 
-  if (esconderUsuariosSemColeta) dadosRelatorio = usuariosComColeta;
-  else if (esconderDiasSemColeta) dadosRelatorio = diasComColeta;
+  if (esconderUsuariosDiasSemColeta) dadosRelatorio = usuariosComColetaDia;
   else dadosRelatorio = dados;
 
   chartData.datasets = await dadosRelatorio.value.coleta.map((row) => ({
@@ -97,16 +87,11 @@ async function montarGrafico(
 
 <template>
   <div class="col q-gutter-y-md" v-if="temDados">
-    <Line :width="400" :height="300" :chart-data="chartData"></Line>
+    <Line :width="400" :height="150" :chart-data="chartData"></Line>
   </div>
   <q-toggle
-    v-model="esconderUsuariosSemColeta"
+    v-model="esconderUsuariosDiasSemColeta"
     color="green"
-    label="Esconder usuários sem coleta"
-  />
-  <q-toggle
-    v-model="esconderDiasSemColeta"
-    color="green"
-    label="Esconder dias sem coleta"
+    label="Ocultar usuários e dias sem coleta"
   />
 </template>

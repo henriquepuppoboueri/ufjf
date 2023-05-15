@@ -2,7 +2,7 @@
 import { useEstatisticasStore } from "stores/estatisticas";
 import { onMounted, reactive, ref, watch } from "vue";
 import { useRoute } from "vue-router";
-import { Bar, Line } from "vue-chartjs";
+import { Line } from "vue-chartjs";
 import {
   Chart as ChartJS,
   Title,
@@ -31,7 +31,6 @@ const estatisticasStore = useEstatisticasStore();
 const { carregando, dados } = storeToRefs(estatisticasStore);
 const { buscarResumoSemana } = estatisticasStore;
 const labels = [];
-// const chartWidth = { type: Number, default: 400 };
 const chartData = reactive({
   labels: labels,
   datasets: [],
@@ -64,7 +63,6 @@ onMounted(async () => {
   if ("idInventario" in route.params) {
     const id = +route.params.idInventario;
     await buscarResumoSemana(id);
-    // await montarGrafico();
     temDados.value = !!dados.value.coleta.length;
     if (temDados.value)
       if (dados.value.coleta.length > 0) {
@@ -79,7 +77,6 @@ onMounted(async () => {
 <template>
   <div class="col q-gutter-y-md" v-if="temDados">
     <Line :width="width" :height="height" :chart-data="chartData" />
-    <!-- <q-btn color="green" icon="add" @click="height = height + 10" /> -->
     <q-toggle
       v-model="esconderSemColeta"
       color="green"

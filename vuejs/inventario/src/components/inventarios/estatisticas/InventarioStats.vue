@@ -22,11 +22,6 @@
       </div>
     </div>
     <router-view></router-view>
-    <!-- <q-separator></q-separator>
-    <span class="text-overline" v-if="dados"
-      >Data dos dados: {{ dados.data }} - solicitado por:
-      {{ dados.solicitadoPor }}
-    </span> -->
   </div>
 </template>
 
