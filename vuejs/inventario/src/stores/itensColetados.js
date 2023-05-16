@@ -19,6 +19,7 @@ export const useItensColetadosStore = defineStore({
   state: () => ({
     paginacaoMeta: null,
     itensColetados: [],
+    itensColetadosTodos: [],
     itemColetado: {
       id: 0,
       idItem: 0,
@@ -28,6 +29,7 @@ export const useItensColetadosStore = defineStore({
       situacao: '', estadoPlaqueta: null, observacao: '', usuario: ''
     },
     carregando: false,
+    carregandoTodos: false,
     erro: null,
   }),
   getters: {
@@ -47,10 +49,10 @@ export const useItensColetadosStore = defineStore({
     },
     itensNominais(state) {
       try {
-        state.carregando = true
+        state.carregandoTodos = true
 
-        if (state.itensColetados.length > 0) {
-          const itensLista = state.itensColetados.map((item) => {
+        if (state.itensColetadosTodos.length > 0) {
+          const itensLista = state.itensColetadosTodos.map((item) => {
             const situacao = situacaoStore.buscarSituacaoPorId(item.situacao.id).nome
             const estadoPlaqueta = plaquetaStore.buscarEstadoPlaqueta(item.estadoPlaqueta.id).nome
             const setor = setoresStore.buscarSetorPorId(item.setor.id)
@@ -62,7 +64,7 @@ export const useItensColetadosStore = defineStore({
               const dependencia = setor.dependencias.find((dep) => dep.id === item.dependencia.id)
               if (dependencia) dependenciaNome = dependencia.nome
             }
-            state.carregando = false;
+            state.carregandoTodos = false;
             return {
               ...item,
               setor: setor.nome,
@@ -133,14 +135,15 @@ export const useItensColetadosStore = defineStore({
 
     async buscarItensColetados(idInventario) {
       try {
-        this.carregando = true
+        this.carregandoTodos = true
         const response = await api.get(`v1/restrito/item/coleta/${idInventario}`)
         if (response.data.length > 0)
-          this.itensColetados = await response.data
+          this.itensColetadosTodos = await response.data
+        console.log(this.itensColetadosTodos);
       } catch (error) {
         this.erro = error;
       } finally {
-        this.carregando = false;
+        this.carregandoTodos = false;
       }
     },
 

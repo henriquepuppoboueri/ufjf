@@ -13,10 +13,25 @@ import { exportTable } from "src/helper/functions";
 import { useAuthStore } from "src/stores/auth";
 import ItemPatrimonio from "./ItemPatrimonio.vue";
 import filtroItensColetadosModel from "src/model/FiltroItensColetadosModel";
+import { usePlaquetaStore } from "src/stores/plaqueta";
+import { useSituacaoStore } from "src/stores/situacao";
+import { useUsuariosStore } from "src/stores/usuarios";
 
 const $q = useQuasar();
 const authStore = useAuthStore();
 const { usuario } = storeToRefs(authStore);
+
+const usuariosStore = useUsuariosStore();
+const { usuarios } = storeToRefs(usuariosStore);
+const { buscarUsuarios } = usuariosStore;
+
+const situacaoStore = useSituacaoStore();
+const { situacoes } = storeToRefs(situacaoStore);
+const { buscarSituacoes } = situacaoStore;
+
+const plaquetaStore = usePlaquetaStore();
+const { estadosPlaquetas } = storeToRefs(plaquetaStore);
+const { buscarEstadosPlaquetas } = plaquetaStore;
 
 const inventariosStore = useInventariosStore();
 const { usuariosInventario } = storeToRefs(inventariosStore);
@@ -28,10 +43,25 @@ const isAdminInventario = usuariosInventario.value
   .includes(usuario.value.id);
 
 const setoresStore = useSetoresStore();
+const { setoresDependencias } = storeToRefs(setoresStore);
+const { buscarSetoresDependencias } = setoresStore;
+const dependencias = computed(() => {
+  if (filter.setor) {
+    return filter.setor.dependencias;
+  }
+  return [];
+});
 
 const itensColetadosStore = useItensColetadosStore();
-const { itensColetados, carregando, itensNominais, paginacaoMeta } =
-  storeToRefs(itensColetadosStore);
+const {
+  itensColetados,
+  itensColetadosTodos,
+  carregando,
+  carregandoTodos,
+  itensNominais,
+  paginacaoMeta,
+} = storeToRefs(itensColetadosStore);
+const { buscarItensColetados } = itensColetadosStore;
 
 const itensSelecionados = ref([]);
 
@@ -45,6 +75,7 @@ const colunasItens = reactive([
     label: "PATRIMÔNIO",
     field: "patrimonio",
     sortable: true,
+    component: { name: "input" },
   },
   {
     name: "descricao",
@@ -52,20 +83,33 @@ const colunasItens = reactive([
     label: "DESCRIÇÃO",
     field: "descricao",
     sortable: true,
+    component: { name: "input" },
   },
   {
     name: "setor",
     align: "left",
     label: "SETOR",
-    field: "setor",
+    field: (item) => item.setor.nome,
     sortable: true,
+    component: {
+      name: "select",
+      idField: "id",
+      labelField: "nome",
+      dataSource: setoresDependencias,
+    },
   },
   {
     name: "dependencia",
     align: "left",
     label: "DEPENDÊNCIA",
-    field: "dependencia",
+    field: (item) => item.dependencia.nome,
     sortable: true,
+    component: {
+      name: "select",
+      idField: "id",
+      labelField: "nome",
+      dataSource: dependencias,
+    },
   },
   {
     name: "localizacao",
@@ -73,20 +117,33 @@ const colunasItens = reactive([
     label: "LOCALIZAÇÃO",
     field: "localizacao",
     sortable: true,
+    component: { name: "input" },
   },
   {
     name: "situacao",
     align: "left",
     label: "SITUAÇÃO",
-    field: "situacao",
+    field: (item) => item.situacao.nome,
     sortable: true,
+    component: {
+      name: "select",
+      idField: "id",
+      labelField: "nome",
+      dataSource: situacoes,
+    },
   },
   {
     name: "estadoPlaqueta",
     align: "left",
     label: "ESTADO DA PLAQUETA",
-    field: "estadoPlaqueta",
+    field: (item) => item.estadoPlaqueta.nome,
     sortable: true,
+    component: {
+      name: "select",
+      idField: "id",
+      labelField: "nome",
+      dataSource: estadosPlaquetas,
+    },
   },
   {
     name: "usuario",
@@ -94,6 +151,12 @@ const colunasItens = reactive([
     label: "USUÁRIO",
     field: "usuario",
     sortable: true,
+    component: {
+      name: "select",
+      idField: "id",
+      labelField: "login",
+      dataSource: usuario,
+    },
   },
 ]);
 const colunasFiltro = ref([]);
@@ -137,7 +200,6 @@ const colunasMostrar = ref([
 const idInventario = ref(route.params.idInventario || false);
 
 function filtroAvancado(row, terms, cols, getCellValue) {
-  console.log("filtro ativo");
   if (!terms) return row;
 
   if (colunasFiltro.value.hasOwnProperty("field")) {
@@ -164,6 +226,10 @@ const qtItensSelec = computed(() => {
 
 onMounted(() => {
   buscarUsuariosInventario(idInventario.value);
+  buscarSetoresDependencias(idInventario.value);
+  buscarEstadosPlaquetas();
+  buscarUsuarios();
+
   renderPage();
 });
 
@@ -202,6 +268,7 @@ const fetchData = async ({
   tamanho = paginacaoOpcoes.rowsPerPage,
 } = {}) => {
   try {
+    itensColetados.value = [];
     await itensColetadosStore.buscarItensColetadosPaginados(
       idInventario.value,
       {
@@ -232,7 +299,6 @@ const fetchData = async ({
 };
 
 const onRequest = async (props) => {
-  console.log(props);
   await fetchData({
     ...props.pagination,
     campoOrderBy: props.pagination.sortBy,
@@ -242,6 +308,13 @@ const onRequest = async (props) => {
     numPatrimonio: props.filter.patrimonio,
     descricao: props.filter.descricao,
     localizacao: props.filter.localizacao,
+    idSetor: props.filter.setor ? props.filter.setor.id : 0,
+    idDependencia: props.filter.dependencia ? props.filter.dependencia.id : 0,
+    idPlaqueta: props.filter.estadoPlaqueta
+      ? props.filter.estadoPlaqueta.id
+      : 0,
+    idSituacao: props.filter.situacao ? props.filter.situacao.id : 0,
+    idUsuario: props.filter.usuario ? props.filter.usuario.id : 0,
   });
 };
 
@@ -251,6 +324,12 @@ watch(
     renderPage();
   }
 );
+
+function gerarCSV() {
+  // await buscarItensColetados(idInventario.value);
+  // console.log("carregado");
+  exportTable(colunasItens, itensColetados, "itens-coletados");
+}
 
 function clearFilter() {
   Object.keys(filter).forEach((key) => delete filter[key]);
@@ -351,7 +430,7 @@ fetchData();
         flat
         :loading="carregando"
         title="Itens coletados"
-        :rows="itensNominais"
+        :rows="itensColetados"
         :columns="colunasItens"
         row-key="id"
         separator="cell"
@@ -412,8 +491,9 @@ fetchData();
             </q-select>
             <div class="col" v-for="col in colunasFiltro" :key="col.name">
               <q-input
-                borderless
                 dense
+                v-if="col.component.name === 'input'"
+                borderless
                 filled
                 debounce="300"
                 v-model="filter[col.name]"
@@ -426,6 +506,16 @@ fetchData();
                   <q-icon name="search" />
                 </template>
               </q-input>
+              <q-select
+                dense
+                v-if="col.component.name === 'select'"
+                v-model="filter[col.name]"
+                :option-value="col.component.idField"
+                :options="col.component.dataSource"
+                :option-label="col.component.labelField"
+                :label="col.label"
+                filled
+              />
             </div>
           </div>
         </template>
@@ -459,7 +549,7 @@ fetchData();
         </template>
       </q-table>
     </q-card-section>
-    <q-card-actions>
+    <q-card-actions class="q-gutter-sm">
       <q-btn
         v-if="qtItensSelec && qtItensSelec === 1"
         dense
@@ -499,8 +589,10 @@ fetchData();
         dense
         color="green"
         label="Exportar"
-        @click="exportTable(colunasItens, itensNominais, 'itens-coletados')"
+        :disabled="carregandoTodos"
+        @click="exportTable(colunasItens, itensColetados, 'itens-coletados')"
       />
+
       <q-btn
         v-if="
           !carregando &&

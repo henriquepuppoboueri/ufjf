@@ -81,9 +81,9 @@ export const useUsuariosStore = defineStore({
     async buscarUsuarios() {
       try {
         this.carregando = true
-        const response = await api.get(`v1/restrito/usuarios`)
-        if (response)
-          this.usuarios = await response.data;
+        const { data } = await api.get(`v1/restrito/usuarios`)
+        if (data)
+          this.usuarios = await data;
       } catch (error) {
         this.error = error
       } finally {
