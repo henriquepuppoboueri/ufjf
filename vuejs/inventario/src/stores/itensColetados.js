@@ -4,6 +4,7 @@ import { useSetoresStore } from 'src/stores/setores'
 import { useSituacaoStore } from './situacao';
 import { usePlaquetaStore } from './plaqueta';
 import { useDependenciasStore } from './dependencias';
+import filtroItensColetadosModel from 'src/model/FiltroItensColetadosModel';
 
 const setoresStore = useSetoresStore()
 const dependenciasStore = useDependenciasStore();
@@ -143,10 +144,11 @@ export const useItensColetadosStore = defineStore({
       }
     },
 
-    async buscarItensColetadosPaginados(idInventario, ascendente = true, campoOrderBy = 'id', paginaAtual = 0, tamanho = 10) {
+    // async buscarItensColetadosPaginados(idInventario, FiltroItensColetadosModel) {
+    async buscarItensColetadosPaginados(idInventario, filtroItensColetados = filtroItensColetadosModel) {
       try {
         this.carregando = true
-        const response = await api.get(`v1/restrito/coleta/inventario/page/${idInventario}`, { params: { ascendente, campoOrderBy, paginaAtual, tamanho } })
+        const response = await api.get(`v1/restrito/coleta/inventario/page/${idInventario}`, { params: filtroItensColetados })
         if (response.data && response.data.content.length > 0)
           this.itensColetados = await response.data.content
         this.paginacaoMeta = await { ...response.data, content: null }

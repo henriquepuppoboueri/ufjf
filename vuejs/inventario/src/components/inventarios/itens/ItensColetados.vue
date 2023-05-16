@@ -12,6 +12,7 @@ import { useItensColetadosStore } from "src/stores/itensColetados";
 import { exportTable } from "src/helper/functions";
 import { useAuthStore } from "src/stores/auth";
 import ItemPatrimonio from "./ItemPatrimonio.vue";
+import filtroItensColetadosModel from "src/model/FiltroItensColetadosModel";
 
 const $q = useQuasar();
 const authStore = useAuthStore();
@@ -34,7 +35,7 @@ const { itensColetados, carregando, itensNominais, paginacaoMeta } =
 
 const itensSelecionados = ref([]);
 
-const filter = ref("");
+const filter = reactive({});
 const router = useRouter();
 const route = useRoute();
 const colunasItens = reactive([
@@ -136,6 +137,7 @@ const colunasMostrar = ref([
 const idInventario = ref(route.params.idInventario || false);
 
 function filtroAvancado(row, terms, cols, getCellValue) {
+  console.log("filtro ativo");
   if (!terms) return row;
 
   if (colunasFiltro.value.hasOwnProperty("field")) {
@@ -167,30 +169,62 @@ onMounted(() => {
 
 const pagination = ref({
   descending: false,
+  sortBy: "id",
+  descricao: "",
+  idDependencia: 0,
+  idPlaqueta: 0,
+  idSetor: 0,
+  idSituacao: 0,
+  idTipoColeta: 0,
+  idUsuario: 0,
+  localizacao: "",
+  numIdentificador: "",
+  numPatrimonio: "",
   page: 0,
   rowsPerPage: 10,
   rowsNumber: 0,
-  sortBy: "id",
 });
 
-const fetchData = async (
+const fetchData = async ({
   ascendente = true,
   campoOrderBy = "id",
+  descricao = "",
+  idDependencia = 0,
+  idPlaqueta = 0,
+  idSetor = 0,
+  idSituacao = 0,
+  idTipoColeta = 0,
+  idUsuario = 0,
+  localizacao = "",
+  numIdentificador = "",
+  numPatrimonio = "",
   paginaAtual = 0,
-  tamanho = paginacaoOpcoes.rowsPerPage
-) => {
+  tamanho = paginacaoOpcoes.rowsPerPage,
+} = {}) => {
   try {
     await itensColetadosStore.buscarItensColetadosPaginados(
       idInventario.value,
-      ascendente,
-      campoOrderBy,
-      paginaAtual,
-      tamanho
+      {
+        ascendente,
+        campoOrderBy,
+        descricao,
+        idDependencia,
+        idPlaqueta,
+        idSetor,
+        idSituacao,
+        idTipoColeta,
+        idUsuario,
+        localizacao,
+        numIdentificador,
+        numPatrimonio,
+        paginaAtual,
+        tamanho,
+      }
     );
 
     pagination.value.page = paginacaoMeta.value.number + 1;
     pagination.value.sortBy = campoOrderBy;
-    pagination.value.descending = !ascendente;
+    pagination.value.descending = ascendente;
     pagination.value.rowsPerPage = tamanho;
     pagination.value.rowsNumber = paginacaoMeta.value.totalElements;
   } finally {
@@ -198,13 +232,17 @@ const fetchData = async (
 };
 
 const onRequest = async (props) => {
-  await fetchData(
-    props.pagination.descending,
-    props.pagination.sortBy,
-    props.pagination.page - 1,
-    props.pagination.rowsPerPage,
-    props.filter
-  );
+  console.log(props);
+  await fetchData({
+    ...props.pagination,
+    campoOrderBy: props.pagination.sortBy,
+    ascendente: props.pagination.descending,
+    paginaAtual: props.pagination.page - 1,
+    tamanho: props.pagination.rowsPerPage,
+    numPatrimonio: props.filter.patrimonio,
+    descricao: props.filter.descricao,
+    localizacao: props.filter.localizacao,
+  });
 };
 
 watch(
@@ -213,6 +251,10 @@ watch(
     renderPage();
   }
 );
+
+function clearFilter() {
+  Object.keys(filter).forEach((key) => delete filter[key]);
+}
 
 function editItem() {
   if (itensSelecionados.value.length === 1) {
@@ -339,17 +381,18 @@ fetchData();
 
         <!-- pesquisa -->
         <template v-slot:top-right>
-          <div class="row q-gutter-sm">
+          <div class="row q-gutter-sm fit full-width">
             <q-select
+              class="fit"
               dense
               filled
               v-model="colunasFiltro"
               :options="colunasItens"
+              multiple
               stack-label
               label="Filtrar por coluna"
-              single
               clearable
-              @clear="() => (colunasFiltro = [])"
+              @clear="clearFilter"
             >
               <template
                 v-slot:option="{ itemProps, opt, selected, toggleOption }"
@@ -367,19 +410,23 @@ fetchData();
                 </q-item>
               </template>
             </q-select>
-            <q-input
-              borderless
-              dense
-              filled
-              debounce="300"
-              v-model="filter"
-              placeholder="Filtrar"
-              clearable
-            >
-              <template v-slot:append>
-                <q-icon name="search" />
-              </template>
-            </q-input>
+            <div class="col" v-for="col in colunasFiltro" :key="col.name">
+              <q-input
+                borderless
+                dense
+                filled
+                debounce="300"
+                v-model="filter[col.name]"
+                :placeholder="`Filtrar por ${col.label}`"
+                clearable
+                :label="col.label"
+                @clear="() => (filter[col.name] = '')"
+              >
+                <template v-slot:append>
+                  <q-icon name="search" />
+                </template>
+              </q-input>
+            </div>
           </div>
         </template>
 

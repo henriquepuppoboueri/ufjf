@@ -80,7 +80,7 @@ onMounted(async () => {
     <q-toggle
       v-model="esconderSemColeta"
       color="green"
-      label="Esconder usuários sem coleta"
+      label="Ocultar usuários sem coleta"
     />
   </div>
 </template>
