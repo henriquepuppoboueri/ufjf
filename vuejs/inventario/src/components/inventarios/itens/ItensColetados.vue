@@ -155,7 +155,7 @@ const colunasItens = reactive([
       name: "select",
       idField: "id",
       labelField: "login",
-      dataSource: usuario,
+      dataSource: usuarios,
     },
   },
 ]);
