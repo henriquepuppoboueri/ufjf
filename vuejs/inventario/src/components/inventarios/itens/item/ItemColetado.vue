@@ -10,7 +10,7 @@ import { usePlaquetaStore } from "src/stores/plaqueta";
 import { useAuthStore } from "src/stores/auth";
 import { isNumber, notStartWith } from "src/helper/formValidation";
 import { Notify, useQuasar } from "quasar";
-import { QrStream } from "vue3-qr-reader";
+import { StreamBarcodeReader } from "vue-barcode-reader";
 
 const $q = useQuasar();
 const mostrarCamera = ref("");
@@ -198,7 +198,8 @@ async function onDecode(data) {
 
 <template>
   <div v-if="mostrarCamera">
-    <qr-stream @decode="onDecode"></qr-stream>
+    <!-- <qr-stream @decode="onDecode"></qr-stream> -->
+    <StreamBarcodeReader @decode="onDecode"></StreamBarcodeReader>
   </div>
   <q-form @submit.prevent="onSubmit">
     <section class="col q-ma-sm q-gutter-y-sm" v-if="itemColetado">
@@ -328,6 +329,13 @@ async function onDecode(data) {
   </q-form>
 </template>
 <style lang="sass">
+
+.scanner-container div
+  display: flex
+  justify-content: center
+
+.overlay-element
+  height: 100% !important
 
 .q-btn:first
   min-width: 5rem
