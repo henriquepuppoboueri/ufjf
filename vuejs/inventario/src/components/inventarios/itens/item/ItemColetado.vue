@@ -186,10 +186,10 @@ async function onSubmit() {
 async function onDecode(data) {
   if (!!data) {
     if (mostrarCamera.value === "patrimonio") {
-      patrimonio.value = await data;
+      itemColetado.value.patrimonio = await data;
       await buscarItemPorPatrimonio();
-    } else if (mostrarCamera.value === identificador) {
-      identificador.value = await data;
+    } else if (mostrarCamera.value === "identificador") {
+      itemColetado.value.identificador = await data;
     }
     mostrarCamera.value = "";
   }
