@@ -86,7 +86,6 @@ watch(
 );
 
 function onMostrarCamera(campo) {
-  console.log(mostrarCamera.value);
   mostrarCamera.value === ""
     ? (mostrarCamera.value = campo)
     : (mostrarCamera.value = "");
