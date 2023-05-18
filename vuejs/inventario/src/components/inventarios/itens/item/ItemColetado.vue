@@ -331,13 +331,13 @@ async function onDecode(data) {
 <style lang="sass">
 
 .camera-container
+  background-color: #c0c0c0
   // display: flex
   // justify-content: center
-  background-color: #c0c0c0
 
 .overlay-element
-//   height: 100% !important
   clip-path: polygon(0% 0%, 0% 0%, 0% 20%, 0% 20%, 100% 20%, 100% 80%, 0% 80%, 0% 100%, 100% 100%, 100% 0%) !important
+//   height: 100% !important
 
 .laser
   margin-left: 0% !important
