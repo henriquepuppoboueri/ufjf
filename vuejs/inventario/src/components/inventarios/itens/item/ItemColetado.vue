@@ -197,7 +197,7 @@ async function onDecode(data) {
 </script>
 
 <template>
-  <div v-if="mostrarCamera">
+  <div class="camera-container flex flex-center" v-if="mostrarCamera">
     <!-- <qr-stream @decode="onDecode"></qr-stream> -->
     <StreamBarcodeReader @decode="onDecode"></StreamBarcodeReader>
   </div>
@@ -330,12 +330,19 @@ async function onDecode(data) {
 </template>
 <style lang="sass">
 
-.scanner-container div
-  display: flex
-  justify-content: center
+.camera-container
+  // display: flex
+  // justify-content: center
+  background-color: #c0c0c0
 
 .overlay-element
-  height: 100% !important
+//   height: 100% !important
+  clip-path: polygon(0% 0%, 0% 0%, 0% 20%, 0% 20%, 100% 20%, 100% 80%, 0% 80%, 0% 100%, 100% 100%, 100% 0%) !important
+
+.laser
+  margin-left: 0% !important
+  width: 100% !important
+
 
 .q-btn:first
   min-width: 5rem
