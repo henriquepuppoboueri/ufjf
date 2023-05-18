@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onUnmounted, computed, onMounted } from "vue";
+import { ref, onUnmounted, computed, onMounted, watch } from "vue";
 import { useItensColetadosStore } from "src/stores/itensColetados";
 import { useSetoresStore } from "src/stores/setores";
 import { useItensImportadosStore } from "src/stores/itensImportados";
@@ -9,13 +9,11 @@ import { useSituacaoStore } from "src/stores/situacao";
 import { usePlaquetaStore } from "src/stores/plaqueta";
 import { useAuthStore } from "src/stores/auth";
 import { isNumber, notStartWith } from "src/helper/formValidation";
-import { Notify } from "quasar";
+import { Notify, useQuasar } from "quasar";
 import { QrStream } from "vue3-qr-reader";
-import { useQuasar } from "quasar";
-import { watch } from "vue";
 
 const $q = useQuasar();
-const mostrarCamera = ref(false);
+const mostrarCamera = ref("");
 const router = useRouter();
 // stores
 const authStore = useAuthStore();
@@ -86,6 +84,13 @@ watch(
     }
   }
 );
+
+function onMostrarCamera(campo) {
+  console.log(mostrarCamera.value);
+  mostrarCamera.value === ""
+    ? (mostrarCamera.value = campo)
+    : (mostrarCamera.value = "");
+}
 
 async function montaFormEditar(idItem) {
   await itensColetadosStore.buscarItemColetado(idItem);
@@ -181,9 +186,13 @@ async function onSubmit() {
 
 async function onDecode(data) {
   if (!!data) {
-    patrimonio.value = await data;
-    await buscarItemPorPatrimonio();
-    mostrarCamera.value = false;
+    if (mostrarCamera.value === "patrimonio") {
+      patrimonio.value = await data;
+      await buscarItemPorPatrimonio();
+    } else if (mostrarCamera.value === identificador) {
+      identificador.value = await data;
+    }
+    mostrarCamera.value = "";
   }
 }
 </script>
@@ -212,25 +221,36 @@ async function onDecode(data) {
         />
         <q-btn
           class="btn_camera"
-          :color="mostrarCamera ? 'red' : 'green'"
+          :color="mostrarCamera === 'patrimonio' ? 'red' : 'green'"
           icon="fa-solid fa-camera"
           type="button"
-          @click="mostrarCamera = !mostrarCamera"
+          @click="onMostrarCamera('patrimonio')"
           v-if="!isModoEdicao"
         />
       </div>
-
-      <q-input
-        outlined
-        v-model="itemColetado.identificador"
-        label="Identificador"
-        dense
-        :rules="[
-          (val) => isNumber(val, 'Identificador'),
-          (val) => notStartWith(val, '0', 'Identificador'),
-        ]"
-      >
-      </q-input>
+      <div class="row q-gutter-x-sm justify-between no-wrap">
+        <q-input
+          class="fit"
+          outlined
+          v-model="itemColetado.identificador"
+          label="Identificador"
+          dense
+          :rules="[
+            (val) => isNumber(val, 'Identificador'),
+            (val) => notStartWith(val, '0', 'Identificador'),
+          ]"
+        >
+        </q-input>
+        <q-btn
+          :style="{ maxHeight: '40px' }"
+          class="btn_camera"
+          :color="mostrarCamera === 'identificador' ? 'red' : 'green'"
+          icon="fa-solid fa-camera"
+          type="button"
+          @click="onMostrarCamera('identificador')"
+          v-if="!isModoEdicao"
+        />
+      </div>
       <q-editor
         v-model="itemColetado.descricao"
         min-height="5rem"
