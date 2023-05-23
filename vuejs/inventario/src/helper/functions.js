@@ -66,7 +66,7 @@ function wrapCsvValue(val, formatFn, row) {
   return `"${formatted}"`;
 }
 
-export function gerarCorAleatoria() {
+export function gerarCorAleatoria(nome) {
   return `rgb(${Math.floor(Math.random() * 256)}, ${Math.floor(
     Math.random() * 256
   )}, ${Math.floor(Math.random() * 256)})`;

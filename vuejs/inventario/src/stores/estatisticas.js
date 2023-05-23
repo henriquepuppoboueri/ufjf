@@ -19,8 +19,22 @@ export const useEstatisticasStore = defineStore({
           }
         }).filter(usuColeta => usuColeta.totais > 0).map(usuario => usuario.idUsuario)
         return { ...dataSource, coleta: dataSource.coleta.filter(usuColeta => usuComColeta.includes(usuColeta.usuario.id)) }
-
       }
+    },
+    coletasSemanaisAcumuladas(state) {
+      return state.dados.coleta.map(usuarioColeta => {
+        return {
+          ...usuarioColeta,
+          coleta: usuarioColeta.coleta.map((coletaMes, index) => {
+            return {
+              ...coletaMes,
+              qtde: usuarioColeta.coleta.slice(0, ++index).map(coleta => coleta.qtde).reduce((pv, cv) => {
+                return pv + cv
+              }),
+            }
+          })
+        }
+      })
     },
     diasComColeta: (state) => {
       const totaisDiarios = {}
@@ -85,7 +99,6 @@ export const useEstatisticasStore = defineStore({
         this.dados = await data
         if (esconderSemColeta) {
           this.dados = this.usuariosComColetaSemana
-          console.log(this);
         } else
           this.dados = await data
 

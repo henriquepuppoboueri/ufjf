@@ -103,22 +103,13 @@
           >
             <q-item-section>Coletas sem itens</q-item-section>
           </q-item>
-          <!-- <q-item clickable :to="{ name: 'bensSemItens' }" exact>
-            <q-item-section>Coletas sem itens (não-importados)</q-item-section>
-          </q-item> -->
-          <!-- <q-item clickable :to="{ name: 'etiqueta' }" exact>
-            <q-item-section>Imprimir etiquetas</q-item-section>
-          </q-item> -->
-          <!-- <q-item clickable :to="{ name: 'resumoGeral' }" exact>
-            <q-item-section>[Resumo geral]</q-item-section>
-          </q-item> -->
         </q-list>
       </q-btn-dropdown>
     </q-tabs>
     <div class="q-px-none">
       <router-view v-slot="{ Component, route }">
         <transition name="fade">
-          <div :key="route.path">
+          <div class="router-view-inventario" :key="route.path">
             <component :is="Component" />
           </div>
         </transition>

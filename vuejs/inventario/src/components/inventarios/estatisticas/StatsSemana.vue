@@ -15,7 +15,7 @@ import {
   LineElement,
 } from "chart.js";
 import { storeToRefs } from "pinia";
-import { gerarCorAleatoria } from "src/helper/functions";
+import ColorHash from "color-hash";
 
 ChartJS.register(
   Title,
@@ -28,7 +28,8 @@ ChartJS.register(
   LineElement
 );
 const estatisticasStore = useEstatisticasStore();
-const { carregando, dados } = storeToRefs(estatisticasStore);
+const { carregando, dados, coletasSemanaisAcumuladas } =
+  storeToRefs(estatisticasStore);
 const { buscarResumoSemana } = estatisticasStore;
 const labels = [];
 const chartData = reactive({
@@ -40,18 +41,27 @@ const height = ref(150);
 const route = useRoute();
 const temDados = ref(false);
 const esconderSemColeta = ref(false);
+const acumularPeriodos = ref(false);
 
 watch(esconderSemColeta, async (newV, old) => {
   await buscarResumoSemana(+route.params.idInventario, newV);
+  if (!newV) acumularPeriodos.value = false;
   montarGrafico();
 });
 
-async function montarGrafico(semColeta) {
+watch(acumularPeriodos, async (newV, old) => {
+  montarGrafico({ acumulado: newV });
+});
+
+async function montarGrafico({ semColeta, acumulado = false } = {}) {
   labels.splice(0, labels.length);
-  chartData.datasets = dados.value.coleta.map((row) => ({
+  const dataSource = acumulado
+    ? coletasSemanaisAcumuladas.value
+    : dados.value.coleta;
+  chartData.datasets = dataSource.map((row) => ({
     label: row.usuario.nome,
     data: row.coleta.map((semana) => semana.qtde),
-    borderColor: gerarCorAleatoria(),
+    borderColor: new ColorHash().hex(row.usuario.nome),
     tension: 0.3,
   }));
   for (let index = 0; index < dados.value.coleta[0].coleta.length; index++) {
@@ -81,6 +91,11 @@ onMounted(async () => {
       v-model="esconderSemColeta"
       color="green"
       label="Ocultar usuários sem coleta"
+    />
+    <q-toggle
+      v-model="acumularPeriodos"
+      color="green"
+      label="Acumular períodos"
     />
   </div>
 </template>

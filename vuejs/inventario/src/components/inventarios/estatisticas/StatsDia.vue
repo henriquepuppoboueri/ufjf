@@ -14,7 +14,7 @@ import {
   LineElement,
 } from "chart.js";
 import { storeToRefs } from "pinia";
-import { gerarCorAleatoria } from "src/helper/functions";
+import ColorHash from "color-hash";
 import { useEstatisticasStore } from "stores/estatisticas";
 
 ChartJS.register(
@@ -72,7 +72,7 @@ async function montarGrafico(esconderUsuariosDiasSemColeta = false) {
   chartData.datasets = await dadosRelatorio.value.coleta.map((row) => ({
     label: row.usuario.nome,
     data: row.coleta.map((semana) => semana.qtde),
-    borderColor: gerarCorAleatoria(),
+    borderColor: new ColorHash().hex(row.usuario.nome),
     tension: 0.3,
   }));
   for (

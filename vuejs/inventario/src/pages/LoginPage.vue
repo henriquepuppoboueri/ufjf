@@ -10,7 +10,7 @@ const senha = ref("");
 const router = useRouter();
 const authStore = useAuthStore();
 // const { usuario } = storeToRefs(authStore);
-const { logar } = useAuthStore();
+const { logar } = authStore;
 
 async function onLogar() {
   if (!usuarioForm.value || !senha.value) return;
@@ -50,14 +50,6 @@ async function onLogar() {
                 type="text"
                 label="Usuário"
               />
-              <!-- <q-input
-                outlined
-                clearable
-                v-model="email"
-                type="email"
-                label="E-mail"
-                suffix="@ufjf.br"
-              /> -->
               <q-input
                 outlined
                 clearable
@@ -77,9 +69,7 @@ async function onLogar() {
                 type="submit"
               />
             </q-card-actions>
-            <q-card-section class="text-center q-pa-none">
-              <!-- <p class="text-grey-6">Esqueceu a senha? Clique aqui</p> -->
-            </q-card-section>
+            <q-card-section class="text-center q-pa-none"> </q-card-section>
           </q-card>
         </q-form>
       </div>

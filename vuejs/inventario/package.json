@@ -14,6 +14,7 @@
     "@quasar/extras": "^1.0.0",
     "axios": "^0.27.2",
     "chart.js": "^3.9.1",
+    "color-hash": "^2.0.2",
     "lodash": "^4.17.21",
     "pinia": "^2.0.14",
     "pinia-plugin-persistedstate": "^1.6.3",

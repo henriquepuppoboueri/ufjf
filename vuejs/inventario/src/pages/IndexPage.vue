@@ -1,7 +1,7 @@
 <template>
   <q-page class="flex flex-center">
     <img
-      alt="Quasar logo"
+      alt="Logo da UFJF"
       src="~assets/brasao_ufjf.png"
       style="width: 200px; height: 200px"
     />
