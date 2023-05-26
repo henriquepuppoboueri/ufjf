@@ -7,36 +7,15 @@ export const useEstatisticasStore = defineStore({
     dados: null,
     carregando: false,
     erro: null,
+    opcoesFiltro: {
+      periodo: 'dia' || 'semana',
+      somenteComColetas: true,
+      acumular: true,
+    },
     ultimaBusca: null,
   }),
   getters: {
-    usuariosComColeta: (state) => {
-      return (dataSource) => {
-        const usuComColeta = dataSource.coleta.map((usuColeta) => {
-          return {
-            idUsuario: usuColeta.usuario.id,
-            totais: usuColeta.coleta.map(coletaSemana => coletaSemana.qtde).reduce((a, b) => a + b)
-          }
-        }).filter(usuColeta => usuColeta.totais > 0).map(usuario => usuario.idUsuario)
-        return { ...dataSource, coleta: dataSource.coleta.filter(usuColeta => usuComColeta.includes(usuColeta.usuario.id)) }
-      }
-    },
-    coletasSemanaisAcumuladas(state) {
-      return state.dados.coleta.map(usuarioColeta => {
-        return {
-          ...usuarioColeta,
-          coleta: usuarioColeta.coleta.map((coletaMes, index) => {
-            return {
-              ...coletaMes,
-              qtde: usuarioColeta.coleta.slice(0, ++index).map(coleta => coleta.qtde).reduce((pv, cv) => {
-                return pv + cv
-              }),
-            }
-          })
-        }
-      })
-    },
-    diasComColeta: (state) => {
+    listaDiasComColeta: (state) => {
       const totaisDiarios = {}
       const diasComColeta = []
 
@@ -49,23 +28,97 @@ export const useEstatisticasStore = defineStore({
         if (totaisDiarios[key] > 0)
           diasComColeta.push(key)
       }
-      const response = {
-        ...state.dados, coleta: state.dados.coleta.map(usuColeta => {
+      return diasComColeta
+    },
+    listaSemanasComColeta: (state) => {
+      const totaisSemanais = {}
+      const semanasComColeta = []
+
+      state.dados.coleta.forEach((usuarioColeta) => {
+        usuarioColeta.coleta.forEach(coletaSemana => {
+          const data = `${coletaSemana.semana}-${coletaSemana.ano}`
+          totaisSemanais[data] = coletaSemana.qtde + (totaisSemanais[data] || 0)
+        })
+      })
+      for (const key in totaisSemanais) {
+        if (totaisSemanais[key] > 0)
+          semanasComColeta.push(key)
+      }
+      return semanasComColeta
+    },
+    listaUsuariosComColeta: (state) => {
+      return state.dados.coleta.map((usuColeta) => {
+        return ({
+          idUsuario: usuColeta.usuario.id,
+          totais: usuColeta.coleta.map(coletaSemana => {
+            return coletaSemana.qtde
+          }).reduce((a, b) => {
+            return a + b
+          })
+        })
+      }).filter(usuColeta => {
+        return usuColeta.totais > 0
+      }).map(usuario => {
+        return usuario.idUsuario
+      })
+    },
+    usuariosComColetaPorPeriodo: (state) => (dataSource) => {
+      return {
+        ...dataSource, coleta: dataSource.coleta.filter(usuColeta => {
+          return usuComColeta.includes(usuColeta.usuario.id)
+        })
+      }
+    },
+    coletasSemanaisAcumuladas(state) {
+      return state.dados.coleta.map(usuarioColeta => ({
+        ...usuarioColeta,
+        coleta: usuarioColeta.coleta.map((coletaMes, index) => {
           return {
-            usuario: usuColeta.usuario,
-            coleta: usuColeta.coleta.filter(coletaDia => {
-              return diasComColeta.includes(coletaDia.data)
+            ...coletaMes,
+            qtde: usuarioColeta.coleta.slice(0, ++index).map(coleta => coleta.qtde).reduce((pv, cv) => {
+              return pv + cv
+            }),
+          }
+        })
+      }))
+    },
+    somenteColetasSemanaisAcumuladas(state) {
+      console.log(this.coletasSemanaisAcumuladas);
+      return this.coletasSemanaisAcumuladas;
+    },
+    somenteSemanasUsuariosComColeta: (state) => {
+      const filtered = state.dados.coleta.filter(usuarioColeta => {
+        return state.listaUsuariosComColeta.includes(usuarioColeta.usuario.id)
+      }).map(usuarioColeta => {
+        return {
+          ...usuarioColeta,
+          coleta: usuarioColeta.coleta.filter(_coleta => {
+            const data = `${_coleta.semana}-${_coleta.ano}`
+            return state.listaSemanasComColeta.includes(data)
+          })
+        }
+      })
+      return { coleta: filtered }
+    },
+    somenteDiasUsuariosComColeta: (state) => {
+      return {
+        coleta: state.dados.coleta.filter(usuarioColeta => {
+          return state.listaUsuariosComColeta.includes(usuarioColeta.usuario.id)
+        }).map(usuarioColeta => {
+          return {
+            ...usuarioColeta,
+            coleta: usuarioColeta.coleta.filter(_coleta => {
+              return state.listaDiasComColeta.includes(_coleta.data)
             })
           }
         })
       }
-      return response
     },
     usuariosComColetaDia: (state) => {
-      return state.usuariosComColeta(state.diasComColeta)
+      return state.usuariosComColetaPorPeriodo(state.diasComColeta)
     },
     usuariosComColetaSemana: (state) => {
-      return state.usuariosComColeta(state.dados)
+      return state.usuariosComColetaPorPeriodo(state.dados)
     }
   },
   actions: {
@@ -91,17 +144,12 @@ export const useEstatisticasStore = defineStore({
         this.erro = error
       }
     },
-    async buscarResumoSemana(idInventario, esconderSemColeta = false) {
+    async buscarResumoSemana(idInventario) {
       try {
 
         this.carregando = true
         const { data } = await api.get(`v1/restrito/resumo/obtemResumoPorSemana/${idInventario}`)
         this.dados = await data
-        if (esconderSemColeta) {
-          this.dados = this.usuariosComColetaSemana
-        } else
-          this.dados = await data
-
         this.carregando = false
         this.ultimaBusca = { recalcular: this.recalcularResumoSemana.bind(this, idInventario) }
       } catch (error) {
@@ -163,7 +211,5 @@ export const useEstatisticasStore = defineStore({
         this.erro = error
       }
     },
-
-
   }
 })

@@ -29,7 +29,7 @@ ChartJS.register(
 );
 
 const estatisticasStore = useEstatisticasStore();
-const { carregando, dados, usuariosComColetaDia, diasComColeta } =
+const { carregando, dados, somenteDiasUsuariosComColeta } =
   storeToRefs(estatisticasStore);
 const { buscarResumoDia } = estatisticasStore;
 const labels = [];
@@ -51,7 +51,6 @@ onMounted(async () => {
   if ("idInventario" in route.params) {
     const id = +route.params.idInventario;
     await buscarResumoDia(id);
-    // await montarGrafico();
     temDados.value = !!dados.value.coleta.length;
     if (temDados.value)
       if (dados.value.coleta.length > 0) {
@@ -62,14 +61,13 @@ onMounted(async () => {
   }
 });
 
-async function montarGrafico(esconderUsuariosDiasSemColeta = false) {
+async function montarGrafico() {
   labels.splice(0, labels.length);
   let dadosRelatorio = ref(null);
 
-  if (esconderUsuariosDiasSemColeta) dadosRelatorio = usuariosComColetaDia;
-  else dadosRelatorio = dados;
+  dadosRelatorio.value = somenteDiasUsuariosComColeta.value;
 
-  chartData.datasets = await dadosRelatorio.value.coleta.map((row) => ({
+  chartData.datasets = dadosRelatorio.value.coleta.map((row) => ({
     label: row.usuario.nome,
     data: row.coleta.map((semana) => semana.qtde),
     borderColor: new ColorHash().hex(row.usuario.nome),
@@ -87,11 +85,12 @@ async function montarGrafico(esconderUsuariosDiasSemColeta = false) {
 
 <template>
   <div class="col q-gutter-y-md" v-if="temDados">
-    <Line :width="400" :height="150" :chart-data="chartData"></Line>
+    <Line :width="400" :height="150" :data="chartData"></Line>
   </div>
-  <q-toggle
+  <!-- <q-toggle
     v-model="esconderUsuariosDiasSemColeta"
     color="green"
     label="Ocultar usuários e dias sem coleta"
   />
+  {{ chartData }} -->
 </template>

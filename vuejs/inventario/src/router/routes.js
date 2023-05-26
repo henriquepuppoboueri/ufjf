@@ -4,12 +4,13 @@ const routes = [
   },
   {
     path: "/usuario",
-    name: 'usuariosLista',
+    // name: 'usuariosLista',
     component: () => import("layouts/MainLayout.vue"),
     meta: { restrito: true },
     children: [
       {
         path: "",
+        name: 'usuariosLista',
         component: () => import("components/usuarios/UsuarioLista.vue"),
       },
       {
@@ -24,12 +25,13 @@ const routes = [
   },
   {
     path: "/senha",
-    name: 'senha',
+    // name: 'senha',
     component: () => import("layouts/MainLayout.vue"),
     meta: { restrito: true },
     children: [
       {
         path: "",
+        name: 'senha',
         component: () => import("components/usuarios/UsuarioSenha.vue"),
       },
     ],
@@ -42,10 +44,10 @@ const routes = [
   },
   {
     path: "/login",
-    name: 'Login',
+    // name: 'Login',
     meta: { restrito: false },
     component: () => import("layouts/LoginLayout.vue"),
-    children: [{ path: "", component: () => import("pages/LoginPage.vue") }],
+    children: [{ path: "/login", name: "Login", component: () => import("pages/LoginPage.vue") }],
   },
   {
     path: "/ferramentas",
@@ -85,12 +87,13 @@ const routes = [
   },
   {
     path: "/inventario",
-    name: 'inventario',
+    // name: 'inventario',
     component: () => import("layouts/MainLayout.vue"),
     meta: { restrito: true },
     children: [
       {
         path: "",
+        name: 'inventario',
         component: () =>
           import("components/inventarios/InventarioLista.vue"),
       },
@@ -105,11 +108,12 @@ const routes = [
       },
       {
         path: "v/:idInventario",
-        name: 'verInventario',
+        // name: 'verInventario',
         component: () => import("components/inventarios/InventarioVer.vue"),
         children: [
           {
             path: '',
+            name: 'verInventario',
             // component: () => import('components/inventarios/InventarioStats.vue'),
             redirect: { name: 'resumoSetores' }
           },
