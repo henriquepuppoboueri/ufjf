@@ -93,4 +93,7 @@ async function montarGrafico() {
     label="Ocultar usuários e dias sem coleta"
   />
   {{ chartData }} -->
+  <p class="text-italic text-grey-8 text-caption q-mt-md">
+    Dias e usuários sem coletas não são exibidos.
+  </p>
 </template>

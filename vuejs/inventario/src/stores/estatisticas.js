@@ -62,30 +62,30 @@ export const useEstatisticasStore = defineStore({
         return usuario.idUsuario
       })
     },
-    usuariosComColetaPorPeriodo: (state) => (dataSource) => {
-      return {
-        ...dataSource, coleta: dataSource.coleta.filter(usuColeta => {
-          return usuComColeta.includes(usuColeta.usuario.id)
-        })
-      }
-    },
-    coletasSemanaisAcumuladas(state) {
-      return state.dados.coleta.map(usuarioColeta => ({
-        ...usuarioColeta,
-        coleta: usuarioColeta.coleta.map((coletaMes, index) => {
-          return {
-            ...coletaMes,
-            qtde: usuarioColeta.coleta.slice(0, ++index).map(coleta => coleta.qtde).reduce((pv, cv) => {
-              return pv + cv
-            }),
-          }
-        })
-      }))
-    },
-    somenteColetasSemanaisAcumuladas(state) {
-      console.log(this.coletasSemanaisAcumuladas);
-      return this.coletasSemanaisAcumuladas;
-    },
+    // usuariosComColetaPorPeriodo: (state) => (dataSource) => {
+    //   return {
+    //     ...dataSource, coleta: dataSource.coleta.filter(usuColeta => {
+    //       return usuComColeta.includes(usuColeta.usuario.id)
+    //     })
+    //   }
+    // },
+    // coletasSemanaisAcumuladas(state) {
+    //   return state.dados.coleta.map(usuarioColeta => ({
+    //     ...usuarioColeta,
+    //     coleta: usuarioColeta.coleta.map((coletaMes, index) => {
+    //       return {
+    //         ...coletaMes,
+    //         qtde: usuarioColeta.coleta.slice(0, ++index).map(coleta => coleta.qtde).reduce((pv, cv) => {
+    //           return pv + cv
+    //         }),
+    //       }
+    //     })
+    //   }))
+    // },
+    // somenteColetasSemanaisAcumuladas(state) {
+    //   console.log(this.coletasSemanaisAcumuladas);
+    //   return this.coletasSemanaisAcumuladas;
+    // },
     somenteSemanasUsuariosComColeta: (state) => {
       const filtered = state.dados.coleta.filter(usuarioColeta => {
         return state.listaUsuariosComColeta.includes(usuarioColeta.usuario.id)
@@ -98,6 +98,20 @@ export const useEstatisticasStore = defineStore({
           })
         }
       })
+      return { coleta: filtered }
+    },
+    somenteSemanasUsuariosComColetasAcumuladas: (state) => {
+      const filtered = state.somenteSemanasUsuariosComColeta.coleta.map(usuarioColeta => ({
+        ...usuarioColeta,
+        coleta: usuarioColeta.coleta.map((coletaMes, index) => {
+          return {
+            ...coletaMes,
+            qtde: usuarioColeta.coleta.slice(0, ++index).map(coleta => coleta.qtde).reduce((pv, cv) => {
+              return pv + cv
+            }),
+          }
+        })
+      }))
       return { coleta: filtered }
     },
     somenteDiasUsuariosComColeta: (state) => {
@@ -114,12 +128,12 @@ export const useEstatisticasStore = defineStore({
         })
       }
     },
-    usuariosComColetaDia: (state) => {
-      return state.usuariosComColetaPorPeriodo(state.diasComColeta)
-    },
-    usuariosComColetaSemana: (state) => {
-      return state.usuariosComColetaPorPeriodo(state.dados)
-    }
+    // usuariosComColetaDia: (state) => {
+    //   return state.usuariosComColetaPorPeriodo(state.diasComColeta)
+    // },
+    // usuariosComColetaSemana: (state) => {
+    //   return state.usuariosComColetaPorPeriodo(state.dados)
+    // }
   },
   actions: {
     async buscarTotaisSetores(idInventario) {
