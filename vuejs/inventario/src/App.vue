@@ -7,7 +7,7 @@ import { onMounted } from "@vue/runtime-core";
 import { useAuthStore } from "src/stores/auth";
 
 onMounted(() => {
-  console.clear();
+  // console.clear();
   const authStore = useAuthStore();
   const { carregarToken } = authStore;
   carregarToken();

@@ -325,6 +325,7 @@ async function deletarUsuario() {
       </q-select>
       <q-btn
         :disable="!novoUsuario"
+        id="btnAddUsuario"
         outline
         icon="add"
         color="green"
@@ -404,6 +405,10 @@ async function deletarUsuario() {
 </template>
 
 <style lang="sass">
+
+.q-btn:before
+  border-radius: 4px
+
 .q-field--outlined
   border-color: red
 

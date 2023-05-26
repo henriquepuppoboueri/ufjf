@@ -180,3 +180,10 @@ function toggleLeftDrawer() {
 
 onMounted(() => {});
 </script>
+
+<style lang="sass">
+.q-expansion-item__container
+  padding-bottom: 5px
+// .q-separator
+//   margin-top: 10px
+</style>
