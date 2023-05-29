@@ -35,11 +35,6 @@ const {
   somenteSemanasUsuariosComColetasAcumuladas,
 } = storeToRefs(estatisticasStore);
 const { buscarResumoSemana } = estatisticasStore;
-const labels = [];
-const chartData = reactive({
-  labels: labels,
-  datasets: [],
-});
 const width = ref(400);
 const height = ref(150);
 const route = useRoute();
@@ -50,25 +45,23 @@ const chartDataSource = computed(() => {
     ? somenteSemanasUsuariosComColetasAcumuladas.value
     : somenteSemanasUsuariosComColeta.value;
 });
-const chart = ref(null);
 
-watchEffect(() => {
-  if (chart.value && chart.value.chart) {
-    console.log(chart.value.chart);
-  }
-});
-
-function montarGrafico({ semColeta, acumulado = false } = {}) {
-  labels.splice(0, labels.length);
-  chartData.datasets = chartDataSource.value.coleta.map((row) => ({
+function generateChart({ acumulado = false } = {}) {
+  const chart = {
+    labels: [],
+    datasets: [],
+  };
+  chart.labels.splice(0, chart.labels.length);
+  chart.datasets = chartDataSource.value.coleta.map((row) => ({
     label: row.usuario.nome,
     data: row.coleta.map((semana) => semana.qtde),
     borderColor: new ColorHash().hex(row.usuario.nome),
     tension: 0.3,
   }));
   chartDataSource.value.coleta[0].coleta.forEach((semana) => {
-    labels.push(`${semana.semana}-${semana.ano}`);
+    chart.labels.push(`${semana.semana}-${semana.ano}`);
   });
+  return chart;
 }
 
 onMounted(async () => {
@@ -78,7 +71,7 @@ onMounted(async () => {
     temDados.value = !!dados.value.coleta.length;
     if (temDados.value)
       if (dados.value.coleta.length > 0) {
-        montarGrafico();
+        generateChart();
       }
   } else {
     return;
@@ -88,12 +81,7 @@ onMounted(async () => {
 
 <template>
   <div class="col q-gutter-y-md" v-if="temDados">
-    <Line ref="chart" :width="width" :height="height" :data="chartData" />
-    <!-- <q-toggle
-      v-model="esconderSemColeta"
-      color="green"
-      label="Ocultar usuários sem coleta"
-    /> -->
+    <Line :width="width" :height="height" :data="generateChart()" />
     <q-toggle
       v-model="acumularPeriodos"
       color="green"
