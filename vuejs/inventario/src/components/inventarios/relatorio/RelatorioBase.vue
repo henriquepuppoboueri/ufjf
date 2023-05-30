@@ -85,6 +85,13 @@ const colunasItens = [
     field: "estadoPlaqueta",
     sortable: true,
   },
+  {
+    name: "qtde",
+    align: "left",
+    label: "QUANTIDADE",
+    field: "qtde",
+    sortable: true,
+  },
 ];
 
 const colunasVisiveis = ref([]);
@@ -160,6 +167,13 @@ const relatoriosOpcoes = ref([
       "dependenciaPrevista",
     ],
   },
+  {
+    nome: "repetidos",
+    titulo: "Coletas repetidas",
+    itemTipo: "itemColetado",
+    fn: relatoriosStore.coletasRepetidas,
+    colunasVisiveis: ["patrimonio", "qtde"],
+  },
 ]);
 
 const relatorioSelec = computed(() => {
@@ -171,9 +185,11 @@ const relatorioSelec = computed(() => {
 watch(
   () => route.query,
   (query) => {
-    // limparFiltro();
-    relatorio.value = [];
     nomeRelatorio.value = query.relatorio;
+    relatorio.value = [];
+    if (nomeRelatorio.value === "repetidos") {
+      filtrarSetorDep();
+    }
   }
 );
 
@@ -209,14 +225,16 @@ watch(setor, (nv, ov) => {
 onMounted(async () => {
   idInventario = route.params["idInventario"];
   nomeRelatorio.value = route.query["relatorio"];
-  await setoresStore.buscarSetoresDependencias(idInventario);
+  if (nomeRelatorio.value !== "repetidos") {
+    await setoresStore.buscarSetoresDependencias(idInventario);
+  } else filtrarSetorDep();
 });
 
 function verItem() {
   if (itensSelecionados.value.length === 1) {
     router.push({
       name: relatorioSelec.value.itemTipo,
-      params: { idItem: itensSelecionados.value[0] },
+      params: { idItem: itensSelecionados.value[0].id },
     });
   }
 }
@@ -249,7 +267,7 @@ function limparFiltro() {
 
 <template>
   <q-card bordered>
-    <q-card-section class="q-gutter-sm">
+    <q-card-section v-if="nomeRelatorio !== 'repetidos'" class="q-gutter-sm">
       <q-select
         outlined
         v-model="setor"
@@ -335,9 +353,10 @@ function limparFiltro() {
           <q-tr :props="props">
             <q-td>
               <q-checkbox
+                v-if="nomeRelatorio !== 'repetidos'"
                 left-label
                 v-model="itensSelecionados"
-                :val="props.row.id"
+                :val="props.row"
               />
             </q-td>
             <q-td
@@ -349,7 +368,7 @@ function limparFiltro() {
               <span v-html="diminuiTexto(col.value)"></span>
             </q-td>
           </q-tr>
-          <q-tr v-show="props.expand" :props="props">
+          <q-tr v-if="props.expand && props.row.descricao" :props="props">
             <q-td colspan="100%">
               <div class="text-left">
                 <span v-html="props.row.descricao"></span>

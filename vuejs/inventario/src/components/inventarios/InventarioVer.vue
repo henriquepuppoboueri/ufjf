@@ -103,6 +103,16 @@
           >
             <q-item-section>Coletas sem itens</q-item-section>
           </q-item>
+          <q-item
+            clickable
+            :to="{
+              name: 'relatorioBase',
+              query: { relatorio: 'repetidos' },
+            }"
+            exact
+          >
+            <q-item-section>Coletas repetidas</q-item-section>
+          </q-item>
         </q-list>
       </q-btn-dropdown>
     </q-tabs>

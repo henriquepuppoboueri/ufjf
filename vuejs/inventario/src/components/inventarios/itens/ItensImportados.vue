@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-v-text-v-html-on-component -->
 <script setup>
 import { ref, reactive, watch, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -248,7 +249,7 @@ async function renderPage() {
               >
                 <q-item v-bind="itemProps">
                   <q-item-section>
-                    <q-item-label v-html="opt.label" />
+                    <q-item-label> {{ opt.label }}</q-item-label>
                   </q-item-section>
                   <q-item-section side>
                     <q-toggle

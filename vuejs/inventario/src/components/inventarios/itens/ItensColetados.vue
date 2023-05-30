@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-v-text-v-html-on-component -->
 <script setup>
 import { ref, reactive, watch, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -158,6 +159,14 @@ const colunasItens = reactive([
       dataSource: usuarios,
     },
   },
+  {
+    name: "identificador",
+    align: "left",
+    label: "IDENTIFICADOR",
+    field: "identificador",
+    sortable: true,
+    component: { name: "input" },
+  },
 ]);
 const colunasFiltro = ref([]);
 const colunasMostrar = ref([
@@ -315,6 +324,7 @@ const onRequest = async (props) => {
       : 0,
     idSituacao: props.filter.situacao ? props.filter.situacao.id : 0,
     idUsuario: props.filter.usuario ? props.filter.usuario.id : 0,
+    numIdentificador: props.filter.identificador,
   });
 };
 
@@ -326,8 +336,6 @@ watch(
 );
 
 function gerarCSV() {
-  // await buscarItensColetados(idInventario.value);
-  // console.log("carregado");
   exportTable(colunasItens, itensColetados, "itens-coletados");
 }
 
@@ -478,7 +486,7 @@ fetchData();
               >
                 <q-item v-bind="itemProps">
                   <q-item-section>
-                    <q-item-label v-html="opt.label" />
+                    <q-item-label> {{ opt.label }}</q-item-label>
                   </q-item-section>
                   <q-item-section side>
                     <q-toggle

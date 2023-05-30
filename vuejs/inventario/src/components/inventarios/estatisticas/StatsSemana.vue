@@ -16,6 +16,7 @@ import {
 } from "chart.js";
 import { storeToRefs } from "pinia";
 import ColorHash from "color-hash";
+import { minLength } from "src/helper/formValidation";
 
 ChartJS.register(
   Title,
@@ -36,7 +37,7 @@ const {
 } = storeToRefs(estatisticasStore);
 const { buscarResumoSemana } = estatisticasStore;
 const width = ref(400);
-const height = ref(150);
+const height = ref();
 const route = useRoute();
 const temDados = ref(false);
 const acumularPeriodos = ref(false);
@@ -81,7 +82,7 @@ onMounted(async () => {
 
 <template>
   <div class="col q-gutter-y-md" v-if="temDados">
-    <Line :width="width" :height="height" :data="generateChart()" />
+    <Line :width="width" height="150" :data="generateChart()" />
     <q-toggle
       v-model="acumularPeriodos"
       color="green"
