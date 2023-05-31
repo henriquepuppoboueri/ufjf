@@ -47,7 +47,7 @@ export default route(function (/* { store, ssrContext } */) {
         }
         return config
       })
-      sessionStorage.setItem('lastUrl', JSON.stringify(to))
+      sessionStorage.setItem('lastUrl', JSON.stringify({ path: to.path, query: to.query }))
     }
     next()
   })

@@ -62,7 +62,7 @@ module.exports = configure(function (/* ctx */) {
       // rebuildCache: true, // rebuilds Vite/linter/etc cache on startup
 
       // publicPath: '/',
-      // publicPath: '/inventario',
+      publicPath: '/inventario',
       // publicPath: '/invint',
       // analyze: true,
       // env: { API_URL: 'http://10.1.2.90:9001/' },
