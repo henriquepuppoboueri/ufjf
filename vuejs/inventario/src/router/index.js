@@ -3,6 +3,7 @@ import { createRouter, createMemoryHistory, createWebHistory, createWebHashHisto
 import routes from './routes'
 import { useAuthStore } from 'src/stores/auth'
 import { api } from 'boot/axios'
+import { storeToRefs } from 'pinia'
 
 /*
  * If not building with SSR mode, you can
@@ -30,11 +31,14 @@ export default route(function (/* { store, ssrContext } */) {
 
   Router.beforeEach((to, from, next) => {
     // to and from are both route objects. must call `next`.
-    const authStore = useAuthStore();
+    // console.log(from.query.redirect, '=>', to.query.redirect)
 
-    if (to.meta.restrito && !authStore.usuario) {
-      next('/login')
-    } else {
+    if (to.meta.restrito) {
+      const authStore = useAuthStore();
+      const { isUsuarioLogado } = storeToRefs(authStore)
+      if (!isUsuarioLogado.value) {
+        next({ name: 'Login', replace: true, })
+      }
       api.interceptors.request.use(config => {
         const usuarioLogado = localStorage.getItem('usuarioLogado')
         if (usuarioLogado) {
@@ -43,9 +47,9 @@ export default route(function (/* { store, ssrContext } */) {
         }
         return config
       })
-      next()
+      sessionStorage.setItem('lastUrl', JSON.stringify(to))
     }
+    next()
   })
-
   return Router
 })

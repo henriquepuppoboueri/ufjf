@@ -16,6 +16,7 @@
     "chart.js": "^4.3.0",
     "color-hash": "^2.0.2",
     "lodash": "^4.17.21",
+    "moment": "^2.29.4",
     "pinia": "^2.0.14",
     "pinia-plugin-persistedstate": "^3.1.0",
     "quasar": "^2.6.0",

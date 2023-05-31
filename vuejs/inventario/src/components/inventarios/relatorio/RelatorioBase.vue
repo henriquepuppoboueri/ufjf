@@ -349,6 +349,12 @@ function limparFiltro() {
           </q-input>
         </template>
 
+        <template v-slot:loading>
+          <q-inner-loading :showing="carregando">
+            <q-spinner-gears size="50px" color="primary" />
+          </q-inner-loading>
+        </template>
+
         <template v-slot:body="props">
           <q-tr :props="props">
             <q-td>

@@ -1,6 +1,6 @@
 const routes = [
   {
-    path: "/", redirect: '/inventario',
+    path: "/", redirect: { name: 'inventario' },
   },
   {
     path: "/usuario",
@@ -15,6 +15,7 @@ const routes = [
       },
       {
         path: "novo",
+        name: 'novoUsuario',
         component: () => import("components/usuarios/UsuarioCad.vue"),
       },
       {
@@ -37,18 +38,23 @@ const routes = [
     ],
   },
   {
-    path: "/logout",
-    name: 'Logout',
-    meta: { restrito: true },
-    component: () => import("pages/LogoutPage.vue"),
-  },
-  {
-    path: "/login",
-    // name: 'Login',
-    meta: { restrito: false },
+    path: "/auth",
     component: () => import("layouts/LoginLayout.vue"),
-    children: [{ path: "/login", name: "Login", component: () => import("pages/LoginPage.vue") }],
+    meta: { restrito: false },
+    children: [
+      {
+        path: "logout",
+        name: 'Logout',
+        component: () => import("pages/auth/LogoutPage.vue"),
+      },
+      {
+        path: "login",
+        name: 'Login',
+        component: () => import("pages/auth/LoginPage.vue")
+      },
+    ],
   },
+
   {
     path: "/ferramentas",
     component: () => import("layouts/MainLayout.vue"),
@@ -193,41 +199,6 @@ const routes = [
                 name: 'relatorioBase',
                 component: () => import('components/inventarios/relatorio/RelatorioBase.vue'),
               },
-              // {
-              //   path: 'sem-patrimonio',
-              //   name: 'bensSemPatrimonio',
-              //   component: () => import('src/components/inventarios/relatorio/old/BensSemPatrimonio.vue'),
-              // },
-              // {
-              //   path: 'nao-coletados',
-              //   name: 'bensNaoColetados',
-              //   component: () => import('src/components/inventarios/relatorio/old/BensNaoColetados.vue'),
-              // },
-              // {
-              //   path: 'nao-coletados2',
-              //   name: 'bensNaoColetados2',
-              //   component: () => import('components/inventarios/relatorio/RelatorioBase.vue'),
-              // },
-              // {
-              //   path: 'plaquetas-problemas',
-              //   name: 'plaquetasComProblemas',
-              //   component: () => import('src/components/inventarios/relatorio/old/ProblemaNaPlaqueta.vue'),
-              // },
-              // {
-              //   path: 'bens-outras-unidades',
-              //   name: 'bensOutrasUnidades',
-              //   component: () => import('src/components/inventarios/relatorio/old/BensOutrasUnidades.vue'),
-              // },
-              // {
-              //   path: 'sem-itens',
-              //   name: 'bensSemItens',
-              //   component: () => import('src/components/inventarios/relatorio/old/BensSemItens.vue'),
-              // },
-              // {
-              //   path: 'resumo-geral',
-              //   name: 'resumoGeral',
-              //   component: () => import('src/components/inventarios/relatorio/old/ResumoInventario.vue'),
-              // },
               {
                 path: 'etiqueta',
                 name: 'etiqueta',

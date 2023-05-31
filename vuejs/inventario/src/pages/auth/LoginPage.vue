@@ -1,15 +1,16 @@
 <script setup>
-import { ref, watch } from "vue";
-import { useRouter } from "vue-router";
+import { ref } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import { useAuthStore } from "src/stores/auth";
 import { storeToRefs } from "pinia";
 import { Notify } from "quasar";
+import moment from "moment";
 
 const usuarioForm = ref("");
 const senha = ref("");
 const router = useRouter();
 const authStore = useAuthStore();
-// const { usuario } = storeToRefs(authStore);
+const { usuario } = storeToRefs(authStore);
 const { logar } = authStore;
 
 async function onLogar() {
@@ -19,10 +20,19 @@ async function onLogar() {
   try {
     await logar(data);
     if (authStore.isUsuarioLogado) {
-      router.push("/inventario");
+      const lastUrl = JSON.parse(sessionStorage.getItem("lastUrl"));
+      const lastUrlFull = lastUrl
+        ? { path: lastUrl.path, query: lastUrl.query }
+        : { name: "inventario" };
+      router.replace(lastUrlFull);
       Notify.create({
         color: "green",
-        message: `Bem vindo de volta!`,
+        message: `Bem vindo de volta, ${
+          usuario.value.nome
+        }! Sua sessão expira em ${moment(usuario.value.dataExt).format(
+          "DD/MM/YYYY HH:mm a."
+        )}`,
+        timeout: 5000,
       });
     }
   } catch (error) {

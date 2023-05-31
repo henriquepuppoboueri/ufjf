@@ -28,8 +28,12 @@
               <q-item-label>{{
                 usuario ? usuario.nome : "Visitante"
               }}</q-item-label>
-              <q-item-label caption>
+              <q-item-label caption class="text-blue">
                 {{ usuario ? usuario.email : "" }}
+              </q-item-label>
+              <q-item-label class="text-italic" caption>
+                Sessão expira em:
+                <p>{{ dataExpiraToken }}</p>
               </q-item-label>
               <q-item-label caption>
                 <q-btn
@@ -45,7 +49,9 @@
             </q-item-section>
             <q-item-section class="col-auto">
               <q-btn
-                :to="'/logout'"
+                :to="{
+                  name: 'Logout',
+                }"
                 size="md"
                 dense
                 icon="fa-solid fa-door-open"
@@ -100,7 +106,7 @@
               <q-item-section>Novo inventário</q-item-section>
             </q-item>
 
-            <q-item dense to="/inventario" exact clickable v-ripple>
+            <q-item dense :to="{ name: 'inventario' }" exact clickable v-ripple>
               <q-item-section avatar>
                 <q-icon text-color="white" name="fa-solid fa-book-open" />
               </q-item-section>
@@ -138,22 +144,6 @@
               <q-item-section>Configurações (por dispositivo)</q-item-section>
             </q-item>
           </q-expansion-item>
-
-          <!-- <q-expansion-item
-            expand-separator
-            icon="fa-solid fa-receipt"
-            label="Relatórios"
-            caption="Emissão de relatórios"
-            :content-inset-level="0.5"
-          >
-            <q-item dense clickable v-ripple to="/relatorios">
-              <q-item-section avatar>
-                <q-icon text-color="white" name="fa-solid fa-chart-line" />
-              </q-item-section>
-
-              <q-item-section>Relatório consolidado</q-item-section>
-            </q-item>
-          </q-expansion-item> -->
         </q-list>
       </div>
     </q-drawer>
@@ -167,12 +157,16 @@
 <script setup>
 import { storeToRefs } from "pinia";
 import { useAuthStore } from "src/stores/auth";
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
+import moment from "moment";
 
 const authStore = useAuthStore();
 const { carregando, erro } = storeToRefs(authStore);
 const usuario = authStore.usuario;
 const leftDrawerOpen = ref(false);
+const dataExpiraToken = computed(() => {
+  return moment(usuario.dataExt).format("MMMM Do YYYY, h:mm a");
+});
 
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;

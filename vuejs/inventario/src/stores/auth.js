@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { api } from 'boot/axios'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 export const useAuthStore = defineStore({
   id: 'auth',
@@ -21,11 +21,10 @@ export const useAuthStore = defineStore({
     async logar(credenciais) {
       this.carregando = true
       try {
-        const response = await api.post("login", credenciais)
-        if (response) {
-          localStorage.setItem("usuarioLogado", JSON.stringify(response.data))
-          const responseData = await response.data
-          this.usuario = responseData;
+        const { data } = await api.post("login", credenciais)
+        if (data) {
+          localStorage.setItem("usuarioLogado", JSON.stringify(data))
+          this.usuario = data;
         }
       } catch (error) {
         this.erro = error
@@ -40,9 +39,10 @@ export const useAuthStore = defineStore({
       if (usuarioStorage && this.verificarValidadeToken(usuarioStorage.dataExt)) {
         this.usuario = usuarioStorage
       } else {
+        const router = useRouter()
         localStorage.removeItem('usuarioLogado')
         this.usuario = null
-        useRouter().push('/login')
+        router.replace({ name: 'Login' })
       }
     },
 
@@ -51,17 +51,17 @@ export const useAuthStore = defineStore({
     },
 
     async deslogar() {
-      const router = useRouter()
       try {
+        const route = useRoute()
+        const router = useRouter()
         await api.post(`restrito/logout`)
+        await router.replace({ name: 'Login' })
       } catch (error) {
         throw new Error(error.message)
       } finally {
         localStorage.removeItem('usuarioLogado')
         this.usuario = null
-        router.push('/login')
       }
-
     },
 
     async trocarSenha(idUsuario, login, novaSenha) {
