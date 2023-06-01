@@ -1,3 +1,10 @@
+import InventarioLista from 'components/inventarios/InventarioLista.vue';
+import MainLayout from 'layouts/MainLayout.vue';
+import RelatorioPage from 'pages/RelatorioPage.vue';
+import { storeToRefs } from 'pinia';
+import RelatorioBase from 'src/components/inventarios/relatorio/RelatorioBase.vue'
+import { useUsuariosStore } from 'src/stores/usuarios';
+
 const routes = [
   {
     path: "/", redirect: { name: 'inventario' },
@@ -5,22 +12,22 @@ const routes = [
   {
     path: "/usuario",
     // name: 'usuariosLista',
-    component: () => import("layouts/MainLayout.vue"),
+    component: MainLayout,
     meta: { restrito: true },
     children: [
       {
         path: "",
         name: 'usuariosLista',
-        component: () => import("components/usuarios/UsuarioLista.vue"),
+        component: () => import("pages/usuario/Index.vue"),
       },
       {
         path: "novo",
         name: 'novoUsuario',
-        component: () => import("components/usuarios/UsuarioCad.vue"),
+        component: () => import("pages/usuario/Adicionar.vue"),
       },
       {
         path: ":id",
-        component: () => import("components/usuarios/UsuarioCad.vue"),
+        component: () => import("pages/usuario/[id].vue"),
       },
     ],
   },
@@ -57,14 +64,22 @@ const routes = [
 
   {
     path: "/ferramentas",
-    component: () => import("layouts/MainLayout.vue"),
+    component: MainLayout,
     meta: { restrito: true },
     children: [
       {
-        path: "",
+        path: "importar",
         component: () =>
-          import("pages/PatImport.vue"),
-      }
+          import("pages/ferramentas/PatImport.vue"),
+      },
+      {
+        path: "config",
+        component: () => import("pages/ferramentas/ConfigGeralDispositivo.vue"),
+      },
+      {
+        path: "etiquetas",
+        component: () => import("pages/ferramentas/ImprimirEtiqueta.vue"),
+      },
     ]
   },
   {
@@ -94,14 +109,13 @@ const routes = [
   {
     path: "/inventario",
     // name: 'inventario',
-    component: () => import("layouts/MainLayout.vue"),
+    component: MainLayout,
     meta: { restrito: true },
     children: [
       {
         path: "",
         name: 'inventario',
-        component: () =>
-          import("components/inventarios/InventarioLista.vue"),
+        component: InventarioLista,
       },
       {
         path: "novo",
@@ -109,13 +123,23 @@ const routes = [
       },
       {
         path: "lista",
-        component: () =>
-          import("components/inventarios/InventarioLista.vue"),
+        component: InventarioLista,
       },
       {
         path: "v/:idInventario",
         // name: 'verInventario',
         component: () => import("components/inventarios/InventarioVer.vue"),
+        beforeEnter: async (to, from, next) => {
+          const usuarioStore = useUsuariosStore();
+          const { usuarioInventarios, podeAcessarInventario } = storeToRefs(usuarioStore)
+          const inventarios = await usuarioInventarios.value
+          console.log(await podeAcessarInventario.value);
+          const existe = inventarios.map(inventarios => inventarios.idInventario).includes(+to.params.idInventario)
+          if (!existe) {
+            next({ name: 'inventario' })
+          } else
+            next()
+        },
         children: [
           {
             path: '',
@@ -192,17 +216,12 @@ const routes = [
           {
             path: 'relatorio',
             name: 'relatorioGeral',
-            component: () => import('pages/RelatorioPage.vue'),
+            component: RelatorioPage,
             children: [
               {
                 path: '',
                 name: 'relatorioBase',
-                component: () => import('components/inventarios/relatorio/RelatorioBase.vue'),
-              },
-              {
-                path: 'etiqueta',
-                name: 'etiqueta',
-                component: () => import('src/pages/ImprimirEtiqueta.vue'),
+                component: RelatorioBase,
               },
             ]
           },

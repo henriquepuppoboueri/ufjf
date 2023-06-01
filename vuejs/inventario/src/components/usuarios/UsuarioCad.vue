@@ -107,12 +107,14 @@ onMounted(async () => {
 async function onSubmit() {
   if (isModoEdicao.value) {
     try {
-      const response = await usuariosStore.editUsuario(
+      const { status } = await usuariosStore.editUsuario(
         id.value,
         usuarioTemp.value
       );
-      Notify.create({ color: "green", message: "Usuário atualizado!" });
-      router.push({ path: "/usuario" });
+      if (status === 200) {
+        Notify.create({ color: "green", message: "Usuário atualizado!" });
+        router.push({ path: "/usuario" });
+      }
     } catch (err) {
       Notify.create({ color: "red", message: `Erro: ${err}` });
     }
@@ -130,16 +132,4 @@ async function onSubmit() {
     }
   }
 }
-
-// temporário, até arrumar a API
-// watch(usuario, (nv) => {
-//   if (!isModoEdicao.value) {
-//     usuario.login = nv.email.split("@")[0];
-//     const nomeSeparado = nv.login.split(".").map((palavra) => {
-//       if (palavra && typeof palavra === "string")
-//         return `${palavra[0].toUpperCase()}${palavra.slice(1)}`;
-//     });
-//     usuario.nome = nomeSeparado.join(" ");
-//   }
-// });
 </script>

@@ -28,7 +28,7 @@ export const useAuthStore = defineStore({
         }
       } catch (error) {
         this.erro = error
-        throw new Error(error.message)
+        throw error
       } finally {
         this.carregando = false
       }

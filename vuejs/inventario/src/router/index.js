@@ -29,7 +29,7 @@ export default route(function (/* { store, ssrContext } */) {
     history: createHistory(process.env.VUE_ROUTER_BASE)
   })
 
-  Router.beforeEach((to, from, next) => {
+  Router.beforeEach((to, _from, next) => {
     // to and from are both route objects. must call `next`.
     // console.log(from.query.redirect, '=>', to.query.redirect)
 
@@ -38,6 +38,7 @@ export default route(function (/* { store, ssrContext } */) {
       const { isUsuarioLogado } = storeToRefs(authStore)
       if (!isUsuarioLogado.value) {
         next({ name: 'Login', replace: true, })
+        return
       }
       api.interceptors.request.use(config => {
         const usuarioLogado = localStorage.getItem('usuarioLogado')
@@ -47,9 +48,16 @@ export default route(function (/* { store, ssrContext } */) {
         }
         return config
       })
-      sessionStorage.setItem('lastUrl', JSON.stringify({ path: to.path, query: to.query }))
     }
     next()
+  })
+  Router.afterEach((to, _from, failure) => {
+    if (!failure) {
+      if (to.path.includes('auth')) {
+        return
+      }
+      sessionStorage.setItem('lastUrl', JSON.stringify({ path: to.path, query: to.query }))
+    }
   })
   return Router
 })

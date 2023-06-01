@@ -1,5 +1,5 @@
 <template>
-  <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
+  <q-drawer v-model="leftDrawer" show-if-above bordered>
     <div class="q-pa-sm" style="max-width: 350px">
       <q-list class="rounded-borders">
         <q-item>
@@ -101,21 +101,21 @@
           caption="Importação de arquivos"
           :content-inset-level="0.5"
         >
-          <q-item dense clickable v-ripple to="/ferramentas">
+          <q-item dense clickable v-ripple to="/ferramentas/importar">
             <q-item-section avatar>
               <q-icon text-color="white" name="fa-solid fa-upload" />
             </q-item-section>
 
             <q-item-section>Importar arquivo do SIGA</q-item-section>
           </q-item>
-          <q-item dense clickable v-ripple to="/etiquetas">
+          <q-item dense clickable v-ripple to="/ferramentas/etiquetas">
             <q-item-section avatar>
               <q-icon text-color="white" name="fa-solid fa-tag" />
             </q-item-section>
 
             <q-item-section>Imprimir etiquetas</q-item-section>
           </q-item>
-          <q-item dense clickable v-ripple to="/config">
+          <q-item dense clickable v-ripple to="/ferramentas/config">
             <q-item-section avatar>
               <q-icon text-color="white" name="fa-solid fa-gear" />
             </q-item-section>
@@ -129,15 +129,15 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { computed, inject } from "vue";
 import { useAuthStore } from "src/stores/auth";
 import moment from "moment";
 
 const { usuario } = useAuthStore();
-const leftDrawerOpen = ref(true);
 const dataExpiraToken = computed(() => {
   return moment(usuario.dataExt).format("MMMM Do YYYY, h:mm a");
 });
+const leftDrawer = inject("leftDrawer");
 </script>
 
 <style scoped></style>

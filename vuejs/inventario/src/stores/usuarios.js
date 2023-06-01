@@ -15,15 +15,19 @@ export const useUsuariosStore = defineStore({
     async usuarioInventarios(state) {
       try {
         state.carregando = true
-        const response = await api.get(`v1/restrito/usuarios/inventarios`)
-        return await response.data
+        const { data } = await api.get(`v1/restrito/usuarios/inventarios`)
+        return data
       } catch (error) {
-
+        this.erro = error
       } finally {
         state.carregando = false
       }
+    },
+    podeAcessarInventario(state) {
+      return this.usuarioInventarios
     }
   },
+
   actions: {
     async addUsuario(usuario) {
       try {
@@ -42,7 +46,7 @@ export const useUsuariosStore = defineStore({
       try {
         this.carregando = true
         const response = await api.put(`v1/restrito/usuarios/${idUsuario}`, usuario)
-        this.buscarUsuarios()
+        await this.buscarUsuarios()
         return response;
       } catch (error) {
         this.error = error

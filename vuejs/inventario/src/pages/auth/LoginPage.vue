@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { useRouter } from "vue-router";
 import { useAuthStore } from "src/stores/auth";
 import { storeToRefs } from "pinia";
 import { Notify } from "quasar";
@@ -36,10 +36,22 @@ async function onLogar() {
       });
     }
   } catch (error) {
+    let message = error.message;
+    if (error.response && error.response.status) {
+      switch (error.response.status) {
+        case 401:
+          message = "Usuário ou senha inválidos!";
+          break;
+        default:
+          message = "Erro desconhecido!";
+          break;
+      }
+    }
+
     Notify.create({
       icon: "report",
       color: "red",
-      message: `${error}`,
+      message,
     });
   }
 }

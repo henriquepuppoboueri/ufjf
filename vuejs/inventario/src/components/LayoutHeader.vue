@@ -17,8 +17,12 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-const leftDrawerOpen = ref(true);
+import { inject, ref } from "vue";
+const leftDrawer = inject("leftDrawer", ref(true));
+
+function toggleLeftDrawer() {
+  leftDrawer.value = !leftDrawer.value;
+}
 </script>
 
 <style scoped></style>

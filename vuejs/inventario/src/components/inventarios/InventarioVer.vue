@@ -1,3 +1,67 @@
+<script setup>
+import { ref, onMounted, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
+
+import { Notify } from "quasar";
+import { storeToRefs } from "pinia";
+
+import { useInventariosStore } from "stores/inventarios";
+import { useUsuariosStore } from "src/stores/usuarios";
+
+const inventariosStore = useInventariosStore();
+const { buscarInventario } = useInventariosStore();
+const { inventario } = storeToRefs(inventariosStore);
+
+const usuariosStore = useUsuariosStore();
+const { usuarioInventarios } = storeToRefs(usuariosStore);
+
+const tabSelecionada = ref("itens_coletados");
+const idInventario = ref(0);
+const route = useRoute();
+const router = useRouter();
+
+const nomeInventario = ref("");
+const usuInventarios = ref([]);
+
+onMounted(async () => {
+  if ("idInventario" in route.params) {
+    idInventario.value = +route.params.idInventario;
+
+    // await usuarioPodeVerInventario();
+
+    await buscarInventario(idInventario.value);
+    nomeInventario.value = inventario.value.nome;
+  }
+});
+
+const usuarioPodeVerInventario = async () => {
+  usuInventarios.value = await usuarioInventarios.value;
+
+  if (
+    !usuInventarios.value
+      .map((inventario) => inventario.idInventario)
+      .includes(idInventario.value)
+  ) {
+    Notify.create({
+      color: "red",
+      message: `Usuário não tem permissão ao inventário.`,
+    });
+    router.replace({
+      path: `/inventario`,
+    });
+  }
+};
+
+// watch(
+//   () => route.path,
+//   (to, from) => {
+//     if (to.includes("/inventario/v")) {
+//       usuarioPodeVerInventario();
+//     }
+//   }
+// );
+</script>
+
 <template>
   <div>
     <p class="text-h4 text-center q-mt-md">{{ nomeInventario }}</p>
@@ -127,69 +191,6 @@
     </div>
   </div>
 </template>
-
-<script setup>
-import { ref, onMounted, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
-
-import { Notify } from "quasar";
-import { storeToRefs } from "pinia";
-
-import { useInventariosStore } from "stores/inventarios";
-import { useUsuariosStore } from "src/stores/usuarios";
-
-const inventariosStore = useInventariosStore();
-const { buscarInventario, buscarUsuariosInventario } = useInventariosStore();
-const { inventario, usuariosInventario } = storeToRefs(inventariosStore);
-
-const usuariosStore = useUsuariosStore();
-const { usuarioInventarios } = storeToRefs(usuariosStore);
-
-const tabSelecionada = ref("itens_coletados");
-const idInventario = ref(0);
-const route = useRoute();
-const router = useRouter();
-
-const nomeInventario = ref("");
-const usuInventarios = ref([]);
-
-onMounted(async () => {
-  if ("idInventario" in route.params) {
-    await usuarioPodeVerInventario();
-
-    await buscarInventario(idInventario.value);
-    nomeInventario.value = inventario.value.nome;
-  }
-});
-
-const usuarioPodeVerInventario = async () => {
-  idInventario.value = +route.params.idInventario;
-  usuInventarios.value = await usuarioInventarios.value;
-
-  if (
-    !usuInventarios.value
-      .map((inventario) => inventario.idInventario)
-      .includes(idInventario.value)
-  ) {
-    Notify.create({
-      color: "red",
-      message: `Usuário não tem permissão ao inventário.`,
-    });
-    router.replace({
-      path: `/inventario`,
-    });
-  }
-};
-
-watch(
-  () => route.path,
-  (to, from) => {
-    if (to.includes("/inventario/v")) {
-      usuarioPodeVerInventario();
-    }
-  }
-);
-</script>
 
 <style>
 .q-btn:before {

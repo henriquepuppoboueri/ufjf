@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { format } from "quasar";
 
@@ -105,11 +105,6 @@ function onGerarEtiquetas() {
                 label="Margem top (mm)"
                 step="0.1"
               />
-              <!-- <q-input
-                v-model="containerPaddingLeft"
-                type="text"
-                label="Padding Left (padrão: 0px)"
-              /> -->
               <q-input
                 v-model="etiquetaAltura"
                 type="number"
