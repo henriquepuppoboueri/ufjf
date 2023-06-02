@@ -13,7 +13,9 @@ const mostrarDialog = ref(false);
 const inventariosStore = useInventariosStore();
 const usuariosStore = useUsuariosStore();
 const { inventarios, carregando } = storeToRefs(inventariosStore);
+const { buscarInventarios } = inventariosStore;
 const { usuarioInventarios } = storeToRefs(usuariosStore);
+const { buscarUsuarioInventarios } = usuariosStore;
 const $q = useQuasar();
 const inventarioSelecionado = ref([]);
 const router = useRouter();
@@ -89,7 +91,11 @@ const statusInventarioBtn = computed(() => {
 });
 
 onMounted(async () => {
-  await inventariosStore.buscarInventarios(await usuarioInventarios.value);
+  await usuariosStore.buscarUsuarioInventarios();
+  const usuarioInventariosId = usuarioInventarios.value.map(
+    (inventario) => inventario.idInventario
+  );
+  await buscarInventarios(usuarioInventariosId);
 });
 
 async function mudarSituacaoInventario() {

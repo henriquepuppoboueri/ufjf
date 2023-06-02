@@ -65,14 +65,10 @@ export const useInventariosStore = defineStore({
     },
 
     async buscarInventarios(usuarioInventarios) {
-      const inventariosResponse = await api.get(`v1/restrito/inventario`)
-      const data = await inventariosResponse.data
-      const idsInventariosUsuario = usuarioInventarios.map(usuarioInventario => usuarioInventario.idInventario)
+      const { data: inventarios } = await api.get(`v1/restrito/inventario`)
 
-      if (idsInventariosUsuario && data) {
-        const filtro = data.filter(inventario => {
-          return idsInventariosUsuario.includes(inventario.id)
-        })
+      if (usuarioInventarios && inventarios) {
+        const filtro = inventarios.filter(inventario => usuarioInventarios.includes(inventario.id))
         this.inventarios = filtro
       } else {
         this.inventarios = data
@@ -82,9 +78,9 @@ export const useInventariosStore = defineStore({
     async definirPresidente(idInventario, idUsuario) {
       try {
         this.carregando = true
-        const response = await api.get(`v1/restrito/inventario/usuario/presidente/${idInventario}&${idUsuario}`)
-        if (response)
-          this.usuario = await response.data;
+        const { data } = await api.get(`v1/restrito/inventario/usuario/presidente/${idInventario}&${idUsuario}`)
+        if (data)
+          this.usuario = data
       } catch (error) {
         this.error = error
       } finally {

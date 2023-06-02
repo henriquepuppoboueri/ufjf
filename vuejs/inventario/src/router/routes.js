@@ -1,9 +1,17 @@
 import InventarioLista from 'components/inventarios/InventarioLista.vue';
 import MainLayout from 'layouts/MainLayout.vue';
 import RelatorioPage from 'pages/RelatorioPage.vue';
-import { storeToRefs } from 'pinia';
 import RelatorioBase from 'src/components/inventarios/relatorio/RelatorioBase.vue'
 import { useUsuariosStore } from 'src/stores/usuarios';
+
+const checarAcessoInventario = async (to, from, next) => {
+  const { podeAcessarInventario } = useUsuariosStore()
+  if (!await podeAcessarInventario(to.params.idInventario)) {
+    next({ name: 'inventario', })
+  } else {
+    next()
+  }
+}
 
 const routes = [
   {
@@ -129,22 +137,11 @@ const routes = [
         path: "v/:idInventario",
         // name: 'verInventario',
         component: () => import("components/inventarios/InventarioVer.vue"),
-        beforeEnter: async (to, from, next) => {
-          const usuarioStore = useUsuariosStore();
-          const { usuarioInventarios, podeAcessarInventario } = storeToRefs(usuarioStore)
-          const inventarios = await usuarioInventarios.value
-          console.log(await podeAcessarInventario.value);
-          const existe = inventarios.map(inventarios => inventarios.idInventario).includes(+to.params.idInventario)
-          if (!existe) {
-            next({ name: 'inventario' })
-          } else
-            next()
-        },
+        beforeEnter: [checarAcessoInventario],
         children: [
           {
             path: '',
             name: 'verInventario',
-            // component: () => import('components/inventarios/InventarioStats.vue'),
             redirect: { name: 'resumoSetores' }
           },
           {
