@@ -305,9 +305,9 @@ async function deletarUsuario() {
     <q-separator spaced />
     <div class="row q-gutter-x-sm justify-between no-wrap">
       <q-select
+        v-model="novoUsuario"
         class="fit"
         outlined
-        v-model="novoUsuario"
         use-input
         hide-selected
         fill-input
@@ -317,15 +317,15 @@ async function deletarUsuario() {
         :option-label="(row) => row.nome"
         @filter="filterFn"
       >
-        <template v-slot:no-option>
+        <template #no-option>
           <q-item>
             <q-item-section class="text-grey"> Sem resultado. </q-item-section>
           </q-item>
         </template>
       </q-select>
       <q-btn
-        :disable="!novoUsuario"
         id="btnAddUsuario"
+        :disable="!novoUsuario"
         outline
         icon="add"
         color="green"
@@ -333,10 +333,10 @@ async function deletarUsuario() {
       />
     </div>
     <q-table
+      v-model:selected="usuariosSelecionados"
       flat
       bordered
       title="Usuários e permissões"
-      v-model:selected="usuariosSelecionados"
       :rows="usuariosInventario"
       :columns="colunasTblUsuarios"
       row-key="id"
@@ -345,7 +345,7 @@ async function deletarUsuario() {
       rows-per-page-label="Registros por página:"
       :selected-rows-label="registroPortugues"
     >
-      <template v-slot:body-cell-permissoes="props">
+      <template #body-cell-permissoes="props">
         <q-td :props="props">
           <q-btn
             color="white"
@@ -370,13 +370,13 @@ async function deletarUsuario() {
         </q-td>
       </template>
     </q-table>
-    <div class="row q-gutter-x-sm" v-if="usuariosSelecionados.length > 0">
+    <div v-if="usuariosSelecionados.length > 0" class="row q-gutter-x-sm">
       <q-btn
         v-if="usuariosSelecionados.length > 0"
         color="primary"
         label="Desvincular"
-        @click="deletarUsuario"
         :disable="!usuariosSelecionados.length > 0"
+        @click="deletarUsuario"
       />
       <q-btn
         v-if="usuariosSelecionados.length === 1"
@@ -386,8 +386,8 @@ async function deletarUsuario() {
             ? 'Revogar administrador'
             : 'Definir como administrador'
         }`"
-        @click="toggleAdminInventario"
         :disable="!usuariosSelecionados.length === 1"
+        @click="toggleAdminInventario"
       />
       <q-btn
         v-if="usuariosSelecionados.length === 1"
@@ -397,8 +397,8 @@ async function deletarUsuario() {
             ? 'Revogar presidência'
             : 'Definir como presidente'
         }`"
-        @click="togglePresidenteInventario"
         :disable="!usuariosSelecionados.length === 1"
+        @click="togglePresidenteInventario"
       />
     </div>
   </div>

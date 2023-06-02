@@ -81,7 +81,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="col q-gutter-y-md" v-if="temDados">
+  <div v-if="temDados" class="col q-gutter-y-md">
     <Line :width="width" height="150" :data="generateChart()" />
     <q-toggle
       v-model="acumularPeriodos"

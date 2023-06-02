@@ -1,18 +1,18 @@
 <template>
   <div class="q-pa-md">
-    <q-form @submit.prevent="onSubmit" class="q-gutter-md">
+    <q-form class="q-gutter-md" @submit.prevent="onSubmit">
       <p class="text-center text-h4">Alteração de senha</p>
       <!-- <q-separator /> -->
       <q-input
+        v-model="novaSenha"
         type="password"
         outlined
-        v-model="novaSenha"
         label="Inserir nova senha"
       />
       <q-input
+        v-model="novaSenhaConfirmacao"
         type="password"
         outlined
-        v-model="novaSenhaConfirmacao"
         label="Repetir nova senha"
       />
 

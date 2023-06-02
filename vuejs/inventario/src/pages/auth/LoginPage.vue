@@ -66,16 +66,16 @@ async function onLogar() {
             <q-card-section class="q-gutter-md">
               <p class="text-grey-6">Entre com suas credenciais</p>
               <q-input
+                v-model="usuarioForm"
                 outlined
                 clearable
-                v-model="usuarioForm"
                 type="text"
                 label="Usuário"
               />
               <q-input
+                v-model="senha"
                 outlined
                 clearable
-                v-model="senha"
                 type="password"
                 label="Senha"
               />

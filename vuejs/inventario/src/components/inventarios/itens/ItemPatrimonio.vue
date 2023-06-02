@@ -1,13 +1,13 @@
 <template>
-  <q-dialog ref="dialogRef" @hide="onDialogHide" :persistent="true">
+  <q-dialog ref="dialogRef" :persistent="true" @hide="onDialogHide">
     <q-card class="q-dialog-plugin">
       <div class="row q-gutter-x-sm justify-between no-wrap">
         <q-input
+          v-model="patrimonio"
           outlined
           label="Patrimônio"
           dense
           class="fit"
-          v-model="patrimonio"
           type="number"
         />
         <q-btn
@@ -41,8 +41,8 @@ import { storeToRefs } from "pinia";
 import { useItensColetadosStore } from "src/stores/itensColetados";
 
 const props = defineProps({
-  idInventario: String,
-  idItemColetado: String,
+  idInventario: { type: String, required: true },
+  idItemColetado: { type: String, required: true },
   // ...your custom props
 });
 

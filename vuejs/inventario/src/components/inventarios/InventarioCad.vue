@@ -1,13 +1,13 @@
 <template>
   <div class="q-pa-sm">
-    <q-form @submit.prevent="onSubmit" class="q-gutter-sm">
-      <q-input outlined v-model="inventario.nome" label="Nome do inventário" />
+    <q-form class="q-gutter-sm" @submit.prevent="onSubmit">
+      <q-input v-model="inventario.nome" outlined label="Nome do inventário" />
       <q-input
+        v-model="statusAtual.nome"
         standout
         outlined
         disable
         readonly
-        v-model="statusAtual.nome"
         label="Status do inventário"
       />
 

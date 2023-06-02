@@ -150,6 +150,7 @@ async function mudarSituacaoInventario() {
   <q-card square>
     <q-card-section>
       <q-table
+        v-model:selected="inventarioSelecionado"
         flat
         :loading="carregando"
         title="Inventários"
@@ -158,7 +159,6 @@ async function mudarSituacaoInventario() {
         row-key="id"
         selection="single"
         :wrap-cells="true"
-        v-model:selected="inventarioSelecionado"
         :bordered="false"
         :selected-rows-label="registroPortugues"
         :pagination="paginacaoOpcoes"

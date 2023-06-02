@@ -7,8 +7,6 @@ const dataExpiraToken = new Date(usuario.dataExt);
 const timer = useCountdownTimer(dataExpiraToken);
 </script>
 
-<style scoped></style>
-
 <template>
   <q-item>
     <q-item-section class="col-grow">
@@ -50,3 +48,5 @@ const timer = useCountdownTimer(dataExpiraToken);
     </q-item-section>
   </q-item>
 </template>
+
+<style scoped></style>

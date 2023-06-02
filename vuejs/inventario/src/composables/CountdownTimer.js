@@ -21,7 +21,6 @@ export function useCountdownTimer(_dataFutura) {
   });
 
   onUnmounted(() => {
-    console.log('onUnmounted');
     intervals.forEach((interval) => {
       clearInterval(interval);
     });

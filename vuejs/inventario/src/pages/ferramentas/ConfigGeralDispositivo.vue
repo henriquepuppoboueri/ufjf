@@ -22,9 +22,9 @@ onMounted(() => {
     <q-card class="my-card" flat>
       <q-card-section>
         <q-input
+          v-model="config.itensPorPagina"
           type="number"
           label="Registro por pág. nas tabelas"
-          v-model="config.itensPorPagina"
         />
       </q-card-section>
 
@@ -32,8 +32,8 @@ onMounted(() => {
         <q-btn
           color="primary"
           label="Gravar"
-          @click="saveConfig"
           :disabled="!config.itensPorPagina"
+          @click="saveConfig"
         />
       </q-card-section>
     </q-card>

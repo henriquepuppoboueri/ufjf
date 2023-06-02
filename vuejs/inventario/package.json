@@ -1,12 +1,13 @@
 {
-  "name": "teste",
+  "name": "UFJF - SGI",
   "version": "0.0.1",
-  "description": "A Quasar Project",
+  "description": "UFJF - SGI",
   "productName": "UFJF - SGI",
   "author": "henriquepuppoboueri <henrique.puppo@ufjf.br>",
   "private": true,
   "scripts": {
     "lint": "eslint --ext .js,.vue ./",
+    "lint:fix": "eslint --fix --ext .js,.jsx .",
     "format": "prettier --write \"**/*.{js,vue,html,md,json}\" --ignore-path .gitignore",
     "test": "echo \"No test specified\" && exit 0"
   },

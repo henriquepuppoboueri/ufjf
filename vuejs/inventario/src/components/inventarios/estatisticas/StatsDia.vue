@@ -84,7 +84,7 @@ async function montarGrafico() {
 </script>
 
 <template>
-  <div class="col q-gutter-y-md" v-if="temDados">
+  <div v-if="temDados" class="col q-gutter-y-md">
     <Line :width="400" :height="150" :data="chartData"></Line>
   </div>
   <!-- <q-toggle

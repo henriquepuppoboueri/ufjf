@@ -2,7 +2,7 @@
   <div class="q-pa-md">
     <!-- <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md"> -->
     <q-form class="q-gutter-md">
-      <q-input outlined v-model="name" label="Nome da unidade" />
+      <q-input v-model="name" outlined label="Nome da unidade" />
 
       <q-editor v-model="unidadeDescricao" min-height="5rem" />
       <q-btn
@@ -17,8 +17,8 @@
         <div class="row q-my-md items-stretch">
           <div class="col">
             <q-input
-              outlined
               v-model="novaDependencia"
+              outlined
               label="Adicionar dependência"
             >
             </q-input>
@@ -26,23 +26,23 @@
 
           <q-btn
             :disabled="novaDependencia.length === 0"
-            @click="addDependencia"
             class="q-ml-md"
             label="Adicionar"
             type="button"
             color="primary"
             :style="'height: 56px'"
+            @click="addDependencia"
           />
         </div>
 
         <q-table
+          v-model:selected="selected"
           title="Dependências"
           :rows="dependencias"
           :columns="colunas"
           row-key="name"
           :selected-rows-label="getSelectedString"
           selection="multiple"
-          v-model:selected="selected"
         />
       </div>
       <div>

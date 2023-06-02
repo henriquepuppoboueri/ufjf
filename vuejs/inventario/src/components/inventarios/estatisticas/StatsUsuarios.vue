@@ -62,7 +62,7 @@ function addDelMostrarUsuario(idUsuario) {
 </script>
 
 <template>
-  <div class="col q-gutter-y-md" v-if="temDados">
+  <div v-if="temDados" class="col q-gutter-y-md">
     <div v-for="item in resumo" :key="item.usuario">
       <q-table
         :loading="carregando"
@@ -75,7 +75,7 @@ function addDelMostrarUsuario(idUsuario) {
         :rows-per-page-options="[5]"
         row-key="data"
       >
-        <template v-slot:header="props">
+        <template #header="props">
           <q-tr :props="props">
             <q-th v-for="col in props.cols" :key="col.name" :props="props">
               {{ col.label }}
@@ -83,15 +83,15 @@ function addDelMostrarUsuario(idUsuario) {
           </q-tr>
         </template>
 
-        <template v-slot:body="props">
-          <q-tr :props="props" v-if="mostrarDadosUsuario(item.usuario.id)">
+        <template #body="props">
+          <q-tr v-if="mostrarDadosUsuario(item.usuario.id)" :props="props">
             <q-td v-for="col in props.cols" :key="col.name" :props="props">
               {{ col.value }}
             </q-td>
           </q-tr>
         </template>
 
-        <template v-slot:bottom-row="props">
+        <template #bottom-row="props">
           <q-tr :props="props" @click="addDelMostrarUsuario(item.usuario.id)">
             <q-td class="text-uppercase text-bold text-left">total</q-td>
 

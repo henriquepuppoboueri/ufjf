@@ -2,13 +2,13 @@
   <q-card square>
     <q-card-section>
       <q-table
+        v-model:selected="usuarioSelecionado"
         flat
         title="Usuários"
         :rows="usuarios"
         :columns="colunas"
         row-key="id"
         selection="single"
-        v-model:selected="usuarioSelecionado"
         :pagination="paginacaoOpcoes"
         :bordered="false"
         :selected-rows-label="registroPortugues"

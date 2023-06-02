@@ -1,7 +1,11 @@
 <script setup>
-import { onMounted, onUnmounted, onUpdated } from "vue";
-
-const props = defineProps(["modelValue", "evento", "titulo", "mensagem"]);
+// const props = defineProps(["modelValue", "evento", "titulo", "mensagem"]);
+const props = defineProps({
+  modelValue: { type: Boolean, default: false },
+  evento: { type: String, default: "" },
+  titulo: { type: String, default: "" },
+  mensagem: { type: String, default: "" },
+});
 const emit = defineEmits(["update:modelValue", "resposta"]);
 
 function enviarResposta(resposta) {

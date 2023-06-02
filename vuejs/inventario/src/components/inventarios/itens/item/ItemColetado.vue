@@ -197,42 +197,42 @@ async function onDecode(data) {
 </script>
 
 <template>
-  <div class="camera-container flex flex-center" v-if="mostrarCamera">
+  <div v-if="mostrarCamera" class="camera-container flex flex-center">
     <!-- <qr-stream @decode="onDecode"></qr-stream> -->
     <StreamBarcodeReader @decode="onDecode"></StreamBarcodeReader>
   </div>
   <q-form @submit.prevent="onSubmit">
-    <section class="col q-ma-sm q-gutter-y-sm" v-if="itemColetado">
+    <section v-if="itemColetado" class="col q-ma-sm q-gutter-y-sm">
       <div class="row q-gutter-x-sm justify-between no-wrap">
         <q-input
-          outlined
           v-model="itemColetado.patrimonio"
+          outlined
           label="Patrimônio"
           dense
           class="fit"
         >
         </q-input>
         <q-btn
+          v-if="!isModoEdicao"
           color="blue"
           label="Buscar"
           type="button"
           @click="buscarItemPorPatrimonio"
-          v-if="!isModoEdicao"
         />
         <q-btn
+          v-if="!isModoEdicao"
           class="btn_camera"
           :color="mostrarCamera === 'patrimonio' ? 'red' : 'green'"
           icon="fa-solid fa-camera"
           type="button"
           @click="onMostrarCamera('patrimonio')"
-          v-if="!isModoEdicao"
         />
       </div>
       <div class="row q-gutter-x-sm justify-between no-wrap">
         <q-input
+          v-model="itemColetado.identificador"
           class="fit"
           outlined
-          v-model="itemColetado.identificador"
           label="Identificador"
           dense
           :rules="[
@@ -242,13 +242,13 @@ async function onDecode(data) {
         >
         </q-input>
         <q-btn
+          v-if="!isModoEdicao"
           :style="{ maxHeight: '40px' }"
           class="btn_camera"
           :color="mostrarCamera === 'identificador' ? 'red' : 'green'"
           icon="fa-solid fa-camera"
           type="button"
           @click="onMostrarCamera('identificador')"
-          v-if="!isModoEdicao"
         />
       </div>
       <q-editor
@@ -258,8 +258,8 @@ async function onDecode(data) {
         dense
       />
       <q-select
-        outlined
         v-model="itemColetado.setor"
+        outlined
         :options="setoresDependencias"
         :option-label="(item) => item.nome"
         label="Setor"
@@ -267,8 +267,8 @@ async function onDecode(data) {
       />
       <q-select
         v-if="itemColetado.setor"
-        outlined
         v-model="itemColetado.dependencia"
+        outlined
         :options="dependencias"
         :option-label="(item) => item.nome"
         label="Dependência"
@@ -281,16 +281,16 @@ async function onDecode(data) {
         dense
       />
       <q-select
-        outlined
         v-model="itemColetado.situacao_"
+        outlined
         :options="situacoes"
         :option-label="(item) => item.nome"
         label="Situação"
         dense
       />
       <q-select
-        outlined
         v-model="itemColetado.estadoPlaqueta"
+        outlined
         :options="estadosPlaquetas"
         :option-label="(item) => item.nome"
         label="Estado da plaqueta"
@@ -303,9 +303,9 @@ async function onDecode(data) {
         dense
       />
       <q-input
+        v-model="itemColetado.usuario"
         outlined
         disabled
-        v-model="itemColetado.usuario"
         label="Usuário"
         dense
         disable
@@ -319,12 +319,7 @@ async function onDecode(data) {
         type="submit"
         :disabled="desabilitaSalvar"
       />
-      <q-btn
-        dense
-        color="primary"
-        label="Cancelar"
-        @click="router.replace(routeUrl)"
-      />
+      <q-btn dense color="primary" label="Cancelar" @click="router.back()" />
     </section>
   </q-form>
 </template>

@@ -71,7 +71,7 @@ function corBarra(percValor) {
 </script>
 
 <template>
-  <div class="col q-gutter-y-md" v-if="temDados">
+  <div v-if="temDados" class="col q-gutter-y-md">
     <div v-for="item in resumo.setores" :key="item.setor.id">
       <q-table
         flat
@@ -84,7 +84,7 @@ function corBarra(percValor) {
         row-key="data"
         :rows-per-page-options="[0]"
       >
-        <template v-slot:body="props">
+        <template #body="props">
           <q-tr :props="props">
             <q-td v-for="col in props.cols" :key="col.name" :props="props">
               <!-- {{
@@ -94,9 +94,9 @@ function corBarra(percValor) {
               }} -->
               {{ col.name === "percConcluido" ? `` : col.value }}
               <q-linear-progress
+                v-if="col.name === 'percConcluido'"
                 stripe
                 rounded
-                v-if="col.name === 'percConcluido'"
                 size="25px"
                 :value="col.value / 100"
                 :color="corBarra(col.value)"
@@ -112,7 +112,7 @@ function corBarra(percValor) {
             </q-td>
           </q-tr>
         </template>
-        <template v-slot:bottom-row>
+        <template #bottom-row>
           <q-tr>
             <q-td class="text-uppercase text-bold text-left">total</q-td>
             <q-td class="text-bold text-right">{{ item.qtde }}</q-td>

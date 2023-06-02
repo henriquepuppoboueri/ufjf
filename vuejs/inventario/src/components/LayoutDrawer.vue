@@ -1,18 +1,13 @@
 <script setup>
 import { inject, onMounted } from "vue";
 
-import { useAuthStore } from "src/stores/auth";
 import DrawerHeader from "src/components/DrawerHeader.vue";
 import DrawerList from "src/components/DrawerList.vue";
-
-const { usuario } = useAuthStore();
 
 const leftDrawer = inject("leftDrawer");
 
 onMounted(() => {});
 </script>
-
-<style scoped></style>
 
 <template>
   <q-drawer v-model="leftDrawer" show-if-above bordered>
@@ -25,3 +20,5 @@ onMounted(() => {});
     </div>
   </q-drawer>
 </template>
+
+<style scoped></style>

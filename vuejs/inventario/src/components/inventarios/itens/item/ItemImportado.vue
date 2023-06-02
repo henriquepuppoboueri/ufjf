@@ -1,7 +1,7 @@
 <template>
   <section>
     <q-form class="col q-ma-sm q-gutter-y-sm">
-      <q-input outlined v-model="patrimonio" label="Patrimônio" dense disable />
+      <q-input v-model="patrimonio" outlined label="Patrimônio" dense disable />
       <q-editor
         v-model="itemDescricao"
         min-height="5rem"
@@ -10,8 +10,8 @@
         disable
       />
       <q-select
-        outlined
         v-model="setor"
+        outlined
         :options="setoresDependencias"
         :option-label="(item) => item.nome"
         :option-value="(item) => item.nome"
@@ -20,8 +20,8 @@
         disable
       />
       <q-select
-        outlined
         v-model="dependencia"
+        outlined
         :options="dependencias"
         :option-label="(item) => item.nome"
         :option-value="(item) => item.nome"
@@ -29,7 +29,7 @@
         dense
         disable
       />
-      <q-input outlined v-model="empenho" label="Empenho" dense disable />
+      <q-input v-model="empenho" outlined label="Empenho" dense disable />
       <!-- <q-select
         outlined
         v-model="estadoPlaqueta"
@@ -40,8 +40,8 @@
         dense
       /> -->
       <q-input
-        outlined
         v-model="nomeFornecedor"
+        outlined
         label="Fornecedor"
         dense
         disable
@@ -68,9 +68,9 @@
         dense
       /> -->
       <q-input
+        v-model="usuario"
         outlined
         disabled
-        v-model="usuario"
         label="Usuário"
         dense
         disable

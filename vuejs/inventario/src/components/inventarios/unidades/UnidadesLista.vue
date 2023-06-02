@@ -188,8 +188,8 @@ function onSelecionaUnidade(selected) {
         <p class="text-center text-h6">{{ dialogLbl }}</p>
         <q-input
           id="inputUnidade"
-          outlined
           v-model="unidadeSelecionada.nome"
+          outlined
           label="Unidade/dependência"
         />
       </q-card-section>
@@ -212,8 +212,8 @@ function onSelecionaUnidade(selected) {
         <p class="text-center text-h6">{{ dialogLbl }}</p>
         <q-input
           id="inputUnidade"
-          outlined
           v-model="novaUnidade.nome"
+          outlined
           label="Unidade/dependência"
         />
       </q-card-section>
@@ -278,9 +278,9 @@ function onSelecionaUnidade(selected) {
     </div>
     <q-separator></q-separator> -->
     <q-tree
+      v-model:selected="keySelecionada"
       :nodes="setores"
       default-expand-all
-      v-model:selected="keySelecionada"
       selected-color="primary"
       node-key="key"
       label-key="nome"

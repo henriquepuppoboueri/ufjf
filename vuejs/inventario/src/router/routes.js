@@ -19,7 +19,6 @@ const routes = [
   },
   {
     path: "/usuario",
-    // name: 'usuariosLista',
     component: MainLayout,
     meta: { restrito: true },
     children: [
