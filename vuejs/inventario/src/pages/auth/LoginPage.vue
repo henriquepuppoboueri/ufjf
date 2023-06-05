@@ -23,7 +23,7 @@ async function onLogar() {
       const lastUrl = JSON.parse(sessionStorage.getItem("lastUrl"));
       const lastUrlFull = lastUrl
         ? { path: lastUrl.path, query: lastUrl.query }
-        : { name: "inventario" };
+        : { name: "inventarioIndex" };
       router.replace(lastUrlFull);
       Notify.create({
         color: "green",

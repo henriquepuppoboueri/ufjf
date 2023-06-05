@@ -147,7 +147,7 @@ async function mudarSituacaoInventario() {
       </q-card-actions>
     </q-card>
   </q-dialog>
-  <q-card square>
+  <q-card flat>
     <q-card-section>
       <q-table
         v-model:selected="inventarioSelecionado"
@@ -211,6 +211,7 @@ async function mudarSituacaoInventario() {
       />
     </q-card-actions>
   </q-card>
+  <q-separator inset />
 </template>
 
 <style lang="sass">

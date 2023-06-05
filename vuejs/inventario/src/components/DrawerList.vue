@@ -45,7 +45,7 @@ const { usuario } = useAuthStore();
       <q-item-section>Novo inventário</q-item-section>
     </q-item>
 
-    <q-item v-ripple dense :to="{ name: 'inventario' }" exact clickable>
+    <q-item v-ripple dense :to="{ name: 'inventarioIndex' }" exact clickable>
       <q-item-section avatar>
         <q-icon text-color="white" name="fa-solid fa-book-open" />
       </q-item-section>

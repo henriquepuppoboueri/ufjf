@@ -1,5 +1,5 @@
 <template>
-  <UsuarioLista></UsuarioLista>
+  <usuario-lista></usuario-lista>
 </template>
 
 <script setup>

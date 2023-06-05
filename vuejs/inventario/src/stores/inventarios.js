@@ -13,9 +13,12 @@ export const useInventariosStore = defineStore({
   }),
   persist: true,
   getters: {
-    // filtrarInventarios(state) {
-
-    // }
+    presidentes(state) {
+      if (state.inventario && state.usuariosInventario) {
+        return state.usuariosInventario.filter(usuario => usuario.presidente).map(_usuario => _usuario.nome)
+      } else
+        return []
+    }
   },
   actions: {
     async liberarInventario(idInventario) {
@@ -106,10 +109,10 @@ export const useInventariosStore = defineStore({
     },
 
     async buscarUsuariosInventario(idInventario) {
-      const usuariosInventarioResponse = await api.get(
+      const { data: usuariosInventario } = await api.get(
         `v1/restrito/inventario/usuario/${idInventario}`
       );
-      this.usuariosInventario = await usuariosInventarioResponse.data;
+      this.usuariosInventario = await usuariosInventario;
     },
 
     async setUsuarioInventarioPresidente(idInventario, idUsuario) {

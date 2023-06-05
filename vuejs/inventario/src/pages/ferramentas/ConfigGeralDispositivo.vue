@@ -9,7 +9,7 @@ const router = useRouter();
 const saveConfig = () => {
   localStorage.setItem("itensPorPagina", config.value.itensPorPagina);
   paginacaoOpcoes.rowsPerPage = config.value.itensPorPagina;
-  router.replace({ path: "/" });
+  router.back();
 };
 
 onMounted(() => {

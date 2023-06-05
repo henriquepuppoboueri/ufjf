@@ -1,5 +1,5 @@
 <template>
-  <div class="q-pa-md">
+  <div class="q-pa-sm">
     <q-form class="q-gutter-sm" @submit.prevent="onSubmit">
       <q-input
         v-model="usuarioTemp.email"
@@ -49,6 +49,7 @@
       </div>
     </q-form>
   </div>
+  <q-separator inset class="q-mt-sm" />
 </template>
 
 <script setup>

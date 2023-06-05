@@ -104,7 +104,7 @@ const relatoriosOpcoes = ref([
     fn: null,
   },
   {
-    nome: "nao-coletados",
+    nome: "bens-nao-coletados",
     titulo: "Bens não coletados",
     itemTipo: "itemImportado",
     fn: relatoriosStore.bensNaoEncontrados,

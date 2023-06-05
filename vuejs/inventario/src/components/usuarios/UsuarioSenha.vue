@@ -35,6 +35,7 @@
       </div>
     </q-form>
   </div>
+  <q-separator inset />
 </template>
 
 <script setup>

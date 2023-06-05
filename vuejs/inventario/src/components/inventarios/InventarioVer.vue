@@ -5,13 +5,10 @@ import { useRoute } from "vue-router";
 import { storeToRefs } from "pinia";
 
 import { useInventariosStore } from "stores/inventarios";
-import { useUsuariosStore } from "src/stores/usuarios";
 
 const inventariosStore = useInventariosStore();
 const { buscarInventario } = useInventariosStore();
 const { inventario } = storeToRefs(inventariosStore);
-
-const usuariosStore = useUsuariosStore();
 
 const tabSelecionada = ref("itens_coletados");
 const idInventario = ref(0);
@@ -30,7 +27,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div>
+  <div class="menu-inventario">
     <p class="text-h4 text-center q-mt-md">{{ nomeInventario }}</p>
     <q-tabs
       v-model="tabSelecionada"

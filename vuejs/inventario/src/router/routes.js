@@ -1,13 +1,13 @@
-import InventarioLista from 'components/inventarios/InventarioLista.vue';
 import MainLayout from 'layouts/MainLayout.vue';
-import RelatorioPage from 'pages/RelatorioPage.vue';
+import InventarioLista from 'components/inventarios/InventarioLista.vue';
 import RelatorioBase from 'src/components/inventarios/relatorio/RelatorioBase.vue'
+import LoginPage from 'pages/auth/LoginPage.vue';
 import { useUsuariosStore } from 'src/stores/usuarios';
 
 const checarAcessoInventario = async (to, from, next) => {
   const { podeAcessarInventario } = useUsuariosStore()
   if (!await podeAcessarInventario(to.params.idInventario)) {
-    next({ name: 'inventario', })
+    next({ name: 'inventarioIndex', })
   } else {
     next()
   }
@@ -25,12 +25,12 @@ const routes = [
       {
         path: "",
         name: 'usuariosLista',
-        component: () => import("pages/usuario/Index.vue"),
+        component: () => import("pages/usuario/index.vue"),
       },
       {
         path: "novo",
         name: 'novoUsuario',
-        component: () => import("pages/usuario/Adicionar.vue"),
+        component: () => import("pages/usuario/adicionar.vue"),
       },
       {
         path: ":id",
@@ -64,7 +64,7 @@ const routes = [
       {
         path: "login",
         name: 'Login',
-        component: () => import("pages/auth/LoginPage.vue")
+        component: LoginPage
       },
     ],
   },
@@ -77,15 +77,15 @@ const routes = [
       {
         path: "importar",
         component: () =>
-          import("pages/ferramentas/PatImport.vue"),
+          import("src/pages/ferramentas/PatImport.vue"),
       },
       {
         path: "config",
-        component: () => import("pages/ferramentas/ConfigGeralDispositivo.vue"),
+        component: () => import("src/pages/ferramentas/ConfigGeralDispositivo.vue"),
       },
       {
         path: "etiquetas",
-        component: () => import("pages/ferramentas/ImprimirEtiqueta.vue"),
+        component: () => import("src/pages/ferramentas/ImprimirEtiqueta.vue"),
       },
     ]
   },
@@ -121,12 +121,12 @@ const routes = [
     children: [
       {
         path: "",
-        name: 'inventario',
-        component: InventarioLista,
+        name: 'inventarioIndex',
+        component: () => import('src/pages/inventario/index.vue'),
       },
       {
         path: "novo",
-        component: () => import("components/inventarios/InventarioCad.vue"),
+        component: () => import("src/pages/inventario/adicionar.vue"),
       },
       {
         path: "lista",
@@ -135,7 +135,7 @@ const routes = [
       {
         path: "v/:idInventario",
         // name: 'verInventario',
-        component: () => import("components/inventarios/InventarioVer.vue"),
+        component: () => import('src/pages/inventario/v/[id]/index.vue'),
         beforeEnter: [checarAcessoInventario],
         children: [
           {
@@ -151,29 +151,29 @@ const routes = [
               {
                 path: 'setores',
                 name: 'resumoSetores',
-                component: () => import('components/inventarios/estatisticas/StatsSetores.vue'),
+                component: () => import('src/pages/inventario/v/[id]/resumo/setores.vue'),
               },
               {
                 path: 'usuarios',
                 name: 'resumoUsuarios',
-                component: () => import('components/inventarios/estatisticas/StatsUsuarios.vue'),
+                component: () => import('src/pages/inventario/v/[id]/resumo/usuarios.vue'),
               },
               {
                 path: 'semana',
                 name: 'resumoSemana',
-                component: () => import('components/inventarios/estatisticas/StatsSemana.vue'),
+                component: () => import('src/pages/inventario/v/[id]/resumo/semana.vue'),
               },
               {
                 path: 'dia',
                 name: 'resumoDia',
-                component: () => import('components/inventarios/estatisticas/StatsDia.vue'),
+                component: () => import('src/pages/inventario/v/[id]/resumo/dia.vue'),
               },
             ]
           },
           {
             path: 'unidades',
             name: 'Unidades',
-            component: () => import('components/inventarios/unidades/UnidadesLista.vue'),
+            component: () => import('src/pages/inventario/v/[id]/unidades.vue'),
           },
           {
             path: 'itens',
@@ -182,37 +182,37 @@ const routes = [
           {
             path: 'itens/coletados',
             name: 'itensColetados',
-            component: () => import('src/components/inventarios/itens/ItensColetados.vue'),
+            component: () => import('src/pages/inventario/v/[id]/itens/coletados/index.vue')
           },
           {
             path: 'itens/coletados/novo',
             name: 'itemColetadoNovo',
-            component: () => import('components/inventarios/itens/item/ItemColetado.vue'),
+            component: () => import('src/pages/inventario/v/[id]/itens/coletados/[id].vue'),
           },
           {
             path: 'itens/coletados/:idItem',
             name: 'itemColetado',
-            component: () => import('components/inventarios/itens/item/ItemColetado.vue'),
+            component: () => import('src/pages/inventario/v/[id]/itens/coletados/[id].vue'),
           },
           {
             path: 'itens/importados',
             name: 'itensImportados',
-            component: () => import('src/components/inventarios/itens/ItensImportados.vue'),
+            component: () => import('src/pages/inventario/v/[id]/itens/importados/index.vue'),
           },
           {
             path: 'itens/importados/:idItem',
             name: 'itemImportado',
-            component: () => import('components/inventarios/itens/item/ItemImportado.vue'),
+            component: () => import('src/pages/inventario/v/[id]/itens/importados/[id].vue'),
           },
           {
             path: 'permissoes',
             name: 'Permissoes',
-            component: () => import('components/inventarios/usuarios/UsuariosInventario.vue'),
+            component: () => import('src/pages/inventario/v/[id]/permissoes.vue'),
           },
           {
             path: 'relatorio',
             name: 'relatorioGeral',
-            component: RelatorioPage,
+            component: () => import('src/pages/inventario/v/[id]/relatorio.vue'),
             children: [
               {
                 path: '',
