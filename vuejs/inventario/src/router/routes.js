@@ -81,36 +81,12 @@ const routes = [
       },
       {
         path: "config",
-        component: () => import("src/pages/ferramentas/ConfigGeralDispositivo.vue"),
+        component: () => import("src/pages/ferramentas/config.vue"),
       },
       {
         path: "etiquetas",
-        component: () => import("src/pages/ferramentas/ImprimirEtiqueta.vue"),
+        component: () => import("src/pages/ferramentas/imprimirEtiqueta.vue"),
       },
-    ]
-  },
-  {
-    path: "/config",
-    component: () => import("layouts/MainLayout.vue"),
-    meta: { restrito: true },
-    children: [
-      {
-        path: "",
-        component: () =>
-          import("pages/ConfigGeralDispositivo.vue"),
-      }
-    ]
-  },
-  {
-    path: "/etiquetas",
-    component: () => import("layouts/MainLayout.vue"),
-    meta: { restrito: true },
-    children: [
-      {
-        path: "",
-        component: () =>
-          import("pages/ImprimirEtiqueta.vue"),
-      }
     ]
   },
   {
