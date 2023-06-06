@@ -38,18 +38,17 @@ export default route(function (/* { store, ssrContext } */) {
       const { isUsuarioLogado } = storeToRefs(authStore)
       if (!isUsuarioLogado.value) {
         next({ name: 'Login', replace: true, })
-        return
-      }
-      api.interceptors.request.use(config => {
+      } else {
         const usuarioLogado = localStorage.getItem('usuarioLogado')
-        if (usuarioLogado) {
-          const json = JSON.parse(usuarioLogado)
+        const json = JSON.parse(usuarioLogado)
+        api.interceptors.request.use(config => {
           config.headers.Authorization = `Bearer ${json.token}`
-        }
-        return config
-      })
-    }
-    next()
+          return config
+        })
+        next()
+      }
+    } else
+      next()
   })
   Router.afterEach((to, _from, failure) => {
     if (!failure) {

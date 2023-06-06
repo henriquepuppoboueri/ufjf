@@ -329,7 +329,6 @@ async function renderPage() {
 </template>
 
 <style lang="sass">
-.my-sticky-header-table
 
 .q-card__section--vert
   padding: 0

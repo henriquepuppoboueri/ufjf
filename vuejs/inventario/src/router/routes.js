@@ -15,7 +15,7 @@ const checarAcessoInventario = async (to, from, next) => {
 
 const routes = [
   {
-    path: "/", redirect: { name: 'inventario' },
+    path: "/", redirect: { name: 'inventarioIndex' },
   },
   {
     path: "/usuario",
