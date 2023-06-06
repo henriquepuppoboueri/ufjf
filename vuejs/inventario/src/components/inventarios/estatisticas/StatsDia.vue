@@ -66,8 +66,9 @@ async function montarGrafico(esconderUsuariosDiasSemColeta = false) {
   labels.splice(0, labels.length);
   let dadosRelatorio = ref(null);
 
-  if (esconderUsuariosDiasSemColeta) dadosRelatorio = usuariosComColetaDia;
-  else dadosRelatorio = dados;
+  if (esconderUsuariosDiasSemColeta)
+    dadosRelatorio.value = usuariosComColetaDia;
+  else dadosRelatorio.value = dados;
 
   chartData.datasets = await dadosRelatorio.value.coleta.map((row) => ({
     label: row.usuario.nome,

@@ -3,7 +3,7 @@
 </template>
 
 <script setup>
-import { onMounted } from "@vue/runtime-core";
+import { onMounted } from "vue";
 import { useAuthStore } from "src/stores/auth";
 
 onMounted(() => {
