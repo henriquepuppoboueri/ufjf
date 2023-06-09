@@ -1,8 +1,5 @@
 import { defineStore } from 'pinia';
-import { api } from 'boot/axios';
-import { useSetoresStore } from 'src/stores/setores'
 
-const setoresStore = useSetoresStore()
 
 export const useItensImportadosStore = defineStore({
   id: 'itensImportados',
@@ -21,6 +18,8 @@ export const useItensImportadosStore = defineStore({
   getters: {
     itensNominais(state) {
       try {
+        const setoresStore = useSetoresStore()
+
         state.carregando = true;
 
         if (state.itensImportados.length > 0) {
@@ -53,9 +52,9 @@ export const useItensImportadosStore = defineStore({
     async buscarItensImportados(idInventario) {
       try {
         this.carregando = true
-        const response = await api.get(`v1/restrito/item/itens/${idInventario}`)
-        if (response.data.length > 0)
-          this.itensImportados = await response.data
+        const { data } = await api.get(`v1/restrito/item/itens/${idInventario}`)
+        if (data)
+          this.itensImportados = await data
       } catch (error) {
         this.error = error
       } finally {

@@ -1,7 +1,7 @@
 <script setup>
-import { onMounted, reactive, ref, watch } from "vue";
-import { useRoute } from "vue-router";
-import { Line } from "vue-chartjs";
+import { onMounted, reactive, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
+import { Line } from 'vue-chartjs';
 import {
   Chart as ChartJS,
   Title,
@@ -12,10 +12,13 @@ import {
   LinearScale,
   PointElement,
   LineElement,
-} from "chart.js";
-import { storeToRefs } from "pinia";
-import ColorHash from "color-hash";
-import { useEstatisticasStore } from "stores/estatisticas";
+} from 'chart.js';
+import { storeToRefs } from 'pinia';
+import ColorHash from 'color-hash';
+
+definePageMeta({
+  name: 'resumo-diario',
+});
 
 ChartJS.register(
   Title,
@@ -48,7 +51,7 @@ watch(esconderUsuariosDiasSemColeta, async (newV, old) => {
 });
 
 onMounted(async () => {
-  if ("idInventario" in route.params) {
+  if ('idInventario' in route.params) {
     const id = +route.params.idInventario;
     await buscarResumoDia(id);
     temDados.value = !!dados.value.coleta.length;

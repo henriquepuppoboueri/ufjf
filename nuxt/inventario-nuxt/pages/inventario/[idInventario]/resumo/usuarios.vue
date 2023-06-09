@@ -1,8 +1,12 @@
 <script setup>
-import { onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
-import { useEstatisticasStore } from "stores/estatisticas";
-import { storeToRefs } from "pinia";
+import { onMounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
+
+import { storeToRefs } from 'pinia';
+
+definePageMeta({
+  name: 'resumo-usuarios',
+});
 
 const estatisticasStore = useEstatisticasStore();
 const { carregando, dados } = storeToRefs(estatisticasStore);
@@ -13,23 +17,23 @@ const temDados = ref(false);
 const usuariosDados = ref([]);
 const colunas = [
   {
-    name: "data",
-    align: "left",
-    label: "DATA",
-    field: "data",
+    name: 'data',
+    align: 'left',
+    label: 'DATA',
+    field: 'data',
     sortable: true,
   },
   {
-    name: "qtde",
-    align: "left",
-    label: "QUANTIDADE",
-    field: "qtde",
+    name: 'qtde',
+    align: 'left',
+    label: 'QUANTIDADE',
+    field: 'qtde',
     sortable: true,
   },
 ];
 
 onMounted(async () => {
-  if ("idInventario" in route.params) {
+  if ('idInventario' in route.params) {
     // modo de edição ou visualização
     const id = +route.params.idInventario;
     await buscarResumoUsuarios(id);

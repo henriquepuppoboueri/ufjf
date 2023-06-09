@@ -19,7 +19,7 @@ export const useUsuariosStore = defineStore({
     async addUsuario(usuario) {
       try {
         this.carregando = true
-        const response = await api.post(`v1/restrito/usuarios`, usuario)
+        const response = await useCustomFetch(`usuarios`, { method: 'POST', body: usuario })
         this.buscarUsuarios()
         return response;
       } catch (error) {
@@ -32,7 +32,7 @@ export const useUsuariosStore = defineStore({
     async editUsuario(idUsuario, usuario) {
       try {
         this.carregando = true
-        const response = await api.put(`v1/restrito/usuarios/${idUsuario}`, usuario)
+        const response = await useCustomFetch(`usuarios/${idUsuario}`, { method: 'PUT', body: usuario })
         await this.buscarUsuarios()
         return response;
       } catch (error) {
@@ -45,7 +45,7 @@ export const useUsuariosStore = defineStore({
     async delUsuario(idUsuario) {
       try {
         this.carregando = true
-        const response = await api.delete(`v1/restrito/usuarios/${idUsuario}`)
+        const response = await useCustomFetch(`usuarios/${idUsuario}`, { method: 'DELETE' })
         this.buscarUsuarios()
         return response;
       } catch (error) {
@@ -58,10 +58,11 @@ export const useUsuariosStore = defineStore({
     async buscarUsuario(idUsuario) {
       try {
         this.carregando = true
-        const response = await api.get(`v1/restrito/usuarios/${idUsuario}`)
-        if (response.data)
-          this.usuario = await response.data
-        return response;
+        const data = await useCustomFetch(`usuarios/${idUsuario}`)
+        if (data) {
+          this.usuario = await data
+          return data;
+        }
       } catch (error) {
         this.error = error
       } finally {
@@ -71,7 +72,7 @@ export const useUsuariosStore = defineStore({
     async buscarUsuarios() {
       try {
         this.carregando = true
-        const { data } = await api.get(`v1/restrito/usuarios`)
+        const data = await useCustomFetch(`usuarios`)
         if (data)
           this.usuarios = await data;
       } catch (error) {
@@ -83,9 +84,11 @@ export const useUsuariosStore = defineStore({
     async buscarUsuarioInventarios() {
       try {
         this.carregando = true
-        const { data } = await api.get(`v1/restrito/usuarios/inventarios`)
-        this.usuarioInventarios = await data
-        return data
+        const data = await useCustomFetch(`usuarios/inventarios`)
+        if (data) {
+          this.usuarioInventarios = await data
+          return data
+        }
       } catch (error) {
         this.erro = error
       } finally {

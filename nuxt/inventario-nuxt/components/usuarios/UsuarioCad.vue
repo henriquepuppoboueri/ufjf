@@ -53,11 +53,10 @@
 </template>
 
 <script setup>
-import { onMounted, ref, computed } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { Notify } from "quasar";
-import { useUsuariosStore } from "stores/usuarios";
-import { storeToRefs } from "pinia";
+import { onMounted, ref, computed } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { Notify } from 'quasar';
+import { storeToRefs } from 'pinia';
 
 const usuariosStore = useUsuariosStore();
 const { usuario } = storeToRefs(usuariosStore);
@@ -69,19 +68,19 @@ const senha = ref(null);
 const senhaConfirmacao = ref(null);
 
 const usuarioTemp = ref({
-  nome: "",
-  email: "",
+  nome: '',
+  email: '',
   cpf: `${Math.floor(Math.random() * 99999999999)}`,
   id: 0,
-  login: "",
-  senha: "",
-  nascimento: "",
+  login: '',
+  senha: '',
+  nascimento: '',
 });
 
 const isBtnEnabled = computed(() => {
   if (!isModoEdicao.value) {
     return (
-      usuarioTemp.value.email.includes("@ufjf.br") &&
+      usuarioTemp.value.email.includes('@ufjf.br') &&
       senha.value === senhaConfirmacao.value &&
       !!senha.value
     );
@@ -92,8 +91,8 @@ const isBtnEnabled = computed(() => {
 
 onMounted(async () => {
   if (
-    route.params.hasOwnProperty("id") &&
-    typeof +route.params.id === "number"
+    route.params.hasOwnProperty('id') &&
+    typeof +route.params.id === 'number'
   ) {
     id.value = route.params.id;
     isModoEdicao.value = id.value !== 0;
@@ -113,11 +112,11 @@ async function onSubmit() {
         usuarioTemp.value
       );
       if (status === 200) {
-        Notify.create({ color: "green", message: "Usuário atualizado!" });
-        router.push({ path: "/usuario" });
+        Notify.create({ color: 'green', message: 'Usuário atualizado!' });
+        router.push({ path: '/usuario' });
       }
     } catch (err) {
-      Notify.create({ color: "red", message: `Erro: ${err}` });
+      Notify.create({ color: 'red', message: `Erro: ${err}` });
     }
   } else {
     // novo, então
@@ -126,10 +125,10 @@ async function onSubmit() {
         ...usuarioTemp.value,
         senha: senha.value,
       });
-      Notify.create({ color: "green", message: "Usuário cadastrado!" });
-      router.push({ path: "/usuario" });
+      Notify.create({ color: 'green', message: 'Usuário cadastrado!' });
+      router.push({ path: '/usuario' });
     } catch (err) {
-      Notify.create({ color: "red", message: `Erro: ${err}` });
+      Notify.create({ color: 'red', message: `Erro: ${err}` });
     }
   }
 }

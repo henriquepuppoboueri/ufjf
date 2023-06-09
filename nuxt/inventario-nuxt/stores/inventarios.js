@@ -61,10 +61,11 @@ export const useInventariosStore = defineStore({
 
     async buscarInventario(idInventario) {
 
-      const inventarioResponse = await useCustomFetch(
+      const response = await useCustomFetch(
         `inventario/${idInventario}`
       );
-      this.inventario = await inventarioResponse.data
+      if (response)
+        this.inventario = await response
     },
 
     async buscarInventarios(usuarioInventarios = []) {

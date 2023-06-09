@@ -5,7 +5,7 @@ import { useRoute } from 'vue-router';
 import { storeToRefs } from 'pinia';
 
 const inventariosStore = useInventariosStore();
-const { buscarInventario } = useInventariosStore();
+const { buscarInventario } = inventariosStore;
 const { inventario } = storeToRefs(inventariosStore);
 
 const idInventario = ref(0);
@@ -18,14 +18,13 @@ onMounted(async () => {
     idInventario.value = +_route.params.idInventario;
 
     await buscarInventario(idInventario.value);
-    nomeInventario.value = inventario.nome;
   }
 });
 </script>
 
 <template>
   <div class="menu-inventario">
-    <inventario-header :nome="nomeInventario"></inventario-header>
+    <inventario-header :nome="inventario?.nome"></inventario-header>
     <inventario-menu></inventario-menu>
     <div class="q-px-none">
       <NuxtPage />

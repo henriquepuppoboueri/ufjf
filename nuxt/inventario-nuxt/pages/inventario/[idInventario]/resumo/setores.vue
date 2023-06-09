@@ -1,8 +1,12 @@
 <script setup>
-import { onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
-import { useEstatisticasStore } from "stores/estatisticas";
-import { storeToRefs } from "pinia";
+import { onMounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
+
+import { storeToRefs } from 'pinia';
+
+definePageMeta({
+  name: 'resumo-setores',
+});
 
 const estatisticasStore = useEstatisticasStore();
 const { carregando, dados } = storeToRefs(estatisticasStore);
@@ -12,44 +16,37 @@ const resumo = ref([]);
 const temDados = ref(false);
 const colunas = [
   {
-    name: "setor",
-    align: "left",
-    label: "DEPENDÊNCIA",
-    field: "nomeDependencia",
+    name: 'setor',
+    align: 'left',
+    label: 'DEPENDÊNCIA',
+    field: 'nomeDependencia',
     sortable: true,
   },
   {
-    name: "importados",
-    align: "right",
-    label: "ITENS IMPORTADOS",
-    field: "qtde",
+    name: 'importados',
+    align: 'right',
+    label: 'ITENS IMPORTADOS',
+    field: 'qtde',
     sortable: true,
   },
   {
-    name: "importados",
-    align: "right",
-    label: "ITENS COLETADOS",
-    field: "qtdeColetada",
+    name: 'importados',
+    align: 'right',
+    label: 'ITENS COLETADOS',
+    field: 'qtdeColetada',
     sortable: true,
   },
   {
-    name: "percConcluido",
-    align: "right",
-    label: "(%) CONCLUÍDO",
-    field: "percentualConcluido",
+    name: 'percConcluido',
+    align: 'right',
+    label: '(%) CONCLUÍDO',
+    field: 'percentualConcluido',
     sortable: true,
   },
-  // {
-  //   name: "percConcGraph",
-  //   align: "right",
-  //   label: "(%) CONCLUÍDO",
-  //   field: "percConcGraph",
-  //   sortable: true,
-  // },
 ];
 
 onMounted(async () => {
-  if ("idInventario" in route.params) {
+  if ('idInventario' in route.params) {
     // modo de edição ou visualização
     const id = +route.params.idInventario;
 
@@ -62,11 +59,11 @@ onMounted(async () => {
 });
 
 function corBarra(percValor) {
-  if (percValor === 100) return "green";
-  if (percValor > 75) return "light-green";
-  if (percValor > 50) return "yellow";
-  if (percValor > 25) return "orange";
-  return "red";
+  if (percValor === 100) return 'green';
+  if (percValor > 75) return 'light-green';
+  if (percValor > 50) return 'yellow';
+  if (percValor > 25) return 'orange';
+  return 'red';
 }
 </script>
 
@@ -87,12 +84,7 @@ function corBarra(percValor) {
         <template #body="props">
           <q-tr :props="props">
             <q-td v-for="col in props.cols" :key="col.name" :props="props">
-              <!-- {{
-                col.name === "percConcluido"
-                  ? `${parseFloat(col.value).toFixed(2)}%`
-                  : col.value
-              }} -->
-              {{ col.name === "percConcluido" ? `` : col.value }}
+              {{ col.name === 'percConcluido' ? `` : col.value }}
               <q-linear-progress
                 v-if="col.name === 'percConcluido'"
                 stripe

@@ -1,19 +1,15 @@
 <script setup>
-import { ref, onUnmounted, computed, onMounted, watch } from "vue";
-import { useItensColetadosStore } from "src/stores/itensColetados";
-import { useSetoresStore } from "src/stores/setores";
-import { useItensImportadosStore } from "src/stores/itensImportados";
-import { useRoute, useRouter } from "vue-router";
-import { storeToRefs } from "pinia";
-import { useSituacaoStore } from "src/stores/situacao";
-import { usePlaquetaStore } from "src/stores/plaqueta";
-import { useAuthStore } from "src/stores/auth";
-import { isNumber, notStartWith } from "src/helper/formValidation";
-import { Notify, useQuasar } from "quasar";
-import { StreamBarcodeReader } from "vue-barcode-reader";
+import { ref, onUnmounted, computed, onMounted, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+
+import { storeToRefs } from 'pinia';
+import { Notify, useQuasar } from 'quasar';
+import { StreamBarcodeReader } from 'vue-barcode-reader';
+
+import { isNumber, notStartWith } from '/helper/formValidation';
 
 const $q = useQuasar();
-const mostrarCamera = ref("");
+const mostrarCamera = ref('');
 const router = useRouter();
 // stores
 const authStore = useAuthStore();
@@ -30,7 +26,7 @@ const { situacoes } = storeToRefs(situacaoStore);
 const { estadosPlaquetas } = storeToRefs(plaquetaStore);
 const { itemImportado } = storeToRefs(itensImportadosStore);
 const { buscarItemImportadoPorPatrimonio } = itensImportadosStore;
-const { itemColetado, itemNominal, erro } = storeToRefs(itensColetadosStore);
+const { itemColetado, erro } = storeToRefs(itensColetadosStore);
 const { limparItemColetado } = itensColetadosStore;
 const { usuario } = storeToRefs(authStore);
 const isModoEdicao = ref(false);
@@ -56,18 +52,12 @@ onMounted(async () => {
 
   if (isModoEdicao.value) await montaFormEditar(idItem);
   else {
-    // limparItemColetado();
   }
 });
 
 onUnmounted(() => {
   itensColetadosStore.$reset();
-  // limparItemColetado();
 });
-
-// itensColetadosStore.$subscribe((mutation, state) => {
-//   console.log(state);
-// });
 
 watch(
   () => itemColetado.value.setor,
@@ -79,16 +69,16 @@ watch(
         (setor) => setor.id === newV.id
       )[0];
       if (deps) {
-        dependencias.value = deps["dependencias"];
+        dependencias.value = deps['dependencias'];
       }
     }
   }
 );
 
 function onMostrarCamera(campo) {
-  mostrarCamera.value === ""
+  mostrarCamera.value === ''
     ? (mostrarCamera.value = campo)
-    : (mostrarCamera.value = "");
+    : (mostrarCamera.value = '');
 }
 
 async function montaFormEditar(idItem) {
@@ -109,7 +99,7 @@ async function buscarItemPorPatrimonio() {
     itemColetado.value.dependencia = itemImportado.value.dependencia;
   } else {
     Notify.create({
-      color: "red",
+      color: 'red',
       message: `Patrimônio não encontrado!`,
     });
   }
@@ -140,15 +130,15 @@ async function onSubmit() {
         item
       );
       if (!!erro.value) {
-        $q.notify({ message: erro.value, color: "red", icon: "warning" });
+        $q.notify({ message: erro.value, color: 'red', icon: 'warning' });
       } else {
         router.replace({
           path: routeUrl.value,
         });
         Notify.create({
-          type: "info",
-          message: "Item atualizado.",
-          color: "green",
+          type: 'info',
+          message: 'Item atualizado.',
+          color: 'green',
         });
       }
     } catch (error) {
@@ -163,8 +153,8 @@ async function onSubmit() {
       $q.dialog({
         title: `Item cadastrado`,
         message: `Deseja cadastrar um novo item?`,
-        ok: { type: "button", label: "Confirmar", color: "green" },
-        cancel: { type: "button", label: "Cancelar", color: "primary" },
+        ok: { type: 'button', label: 'Confirmar', color: 'green' },
+        cancel: { type: 'button', label: 'Cancelar', color: 'primary' },
       })
         .onOk(() => {
           limparItemColetado(itemColetado);
@@ -176,7 +166,7 @@ async function onSubmit() {
         });
     } else if (response && response.status === 400) {
       Notify.create({
-        color: "red",
+        color: 'red',
         message: `${response.data}`,
       });
     }
@@ -185,13 +175,13 @@ async function onSubmit() {
 
 async function onDecode(data) {
   if (!!data) {
-    if (mostrarCamera.value === "patrimonio") {
+    if (mostrarCamera.value === 'patrimonio') {
       itemColetado.value.patrimonio = await data;
       await buscarItemPorPatrimonio();
-    } else if (mostrarCamera.value === "identificador") {
+    } else if (mostrarCamera.value === 'identificador') {
       itemColetado.value.identificador = await data;
     }
-    mostrarCamera.value = "";
+    mostrarCamera.value = '';
   }
 }
 </script>
@@ -327,12 +317,10 @@ async function onDecode(data) {
 
 .camera-container
   background-color: #c0c0c0
-  // display: flex
-  // justify-content: center
+
 
 .overlay-element
   clip-path: polygon(0% 0%, 0% 0%, 0% 20%, 0% 20%, 100% 20%, 100% 80%, 0% 80%, 0% 100%, 100% 100%, 100% 0%) !important
-//   height: 100% !important
 
 .laser
   margin-left: 0% !important

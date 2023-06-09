@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-const props = defineProps({ nome: { type: String, default: "" } });
+const props = defineProps({ nome: { type: String, default: '' } });
 </script>
 
 <style scoped></style>

@@ -1,6 +1,7 @@
 <script setup></script>
 
 <template>
+  <div>{{ $route.fullPath }}</div>
   <div class="col permissoes q-gutter-y-sm q-pa-sm">
     <inventario-permissoes-input></inventario-permissoes-input>
     <inventario-permissoes-tabela></inventario-permissoes-tabela>

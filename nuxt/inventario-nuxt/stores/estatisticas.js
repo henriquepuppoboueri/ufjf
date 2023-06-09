@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { api } from 'boot/axios'
 
 export const useEstatisticasStore = defineStore({
   id: 'estatisticas',
@@ -62,30 +61,6 @@ export const useEstatisticasStore = defineStore({
         return usuario.idUsuario
       })
     },
-    // usuariosComColetaPorPeriodo: (state) => (dataSource) => {
-    //   return {
-    //     ...dataSource, coleta: dataSource.coleta.filter(usuColeta => {
-    //       return usuComColeta.includes(usuColeta.usuario.id)
-    //     })
-    //   }
-    // },
-    // coletasSemanaisAcumuladas(state) {
-    //   return state.dados.coleta.map(usuarioColeta => ({
-    //     ...usuarioColeta,
-    //     coleta: usuarioColeta.coleta.map((coletaMes, index) => {
-    //       return {
-    //         ...coletaMes,
-    //         qtde: usuarioColeta.coleta.slice(0, ++index).map(coleta => coleta.qtde).reduce((pv, cv) => {
-    //           return pv + cv
-    //         }),
-    //       }
-    //     })
-    //   }))
-    // },
-    // somenteColetasSemanaisAcumuladas(state) {
-    //   console.log(this.coletasSemanaisAcumuladas);
-    //   return this.coletasSemanaisAcumuladas;
-    // },
     somenteSemanasUsuariosComColeta: (state) => {
       const filtered = state.dados.coleta.filter(usuarioColeta => {
         return state.listaUsuariosComColeta.includes(usuarioColeta.usuario.id)
@@ -128,20 +103,14 @@ export const useEstatisticasStore = defineStore({
         })
       }
     },
-    // usuariosComColetaDia: (state) => {
-    //   return state.usuariosComColetaPorPeriodo(state.diasComColeta)
-    // },
-    // usuariosComColetaSemana: (state) => {
-    //   return state.usuariosComColetaPorPeriodo(state.dados)
-    // }
   },
   actions: {
     async buscarTotaisSetores(idInventario) {
       try {
         this.carregando = true
-        const response = await api.get(`v1/restrito/resumo/obtemResumoPorSetor/${idInventario}`)
-        const data = await response.data
-        this.dados = await data
+        const data = await useCustomFetch(`resumo/obtemResumoPorSetor/${idInventario}`)
+        if (data)
+          this.dados = await data
         this.carregando = false
         this.ultimaBusca = { recalcular: this.recalcularTotaisSetores.bind(this, idInventario) }
       } catch (error) {
@@ -151,7 +120,7 @@ export const useEstatisticasStore = defineStore({
     async recalcularTotaisSetores(idInventario) {
       try {
         this.carregando = true
-        await api.get(`v1/restrito/resumo/geraResumoPorSetor/${idInventario}`)
+        await useCustomFetch(`resumo/geraResumoPorSetor/${idInventario}`)
         await this.buscarTotaisSetores(idInventario);
         this.carregando = false
       } catch (error) {
@@ -162,8 +131,9 @@ export const useEstatisticasStore = defineStore({
       try {
 
         this.carregando = true
-        const { data } = await api.get(`v1/restrito/resumo/obtemResumoPorSemana/${idInventario}`)
-        this.dados = await data
+        const data = await useCustomFetch(`resumo/obtemResumoPorSemana/${idInventario}`)
+        if (data)
+          this.dados = await data
         this.carregando = false
         this.ultimaBusca = { recalcular: this.recalcularResumoSemana.bind(this, idInventario) }
       } catch (error) {
@@ -173,7 +143,7 @@ export const useEstatisticasStore = defineStore({
     async recalcularResumoSemana(idInventario) {
       try {
         this.carregando = true
-        await api.get(`v1/restrito/resumo/geraResumoPorSemana/${idInventario}`)
+        await useCustomFetch(`resumo/geraResumoPorSemana/${idInventario}`)
         await this.buscarResumoSemana(idInventario);
         this.carregando = false
       } catch (error) {
@@ -184,8 +154,9 @@ export const useEstatisticasStore = defineStore({
     async buscarResumoUsuarios(idInventario) {
       try {
         this.carregando = true
-        const { data } = await api.get(`v1/restrito/resumo/obtemResumoPorUsuario/${idInventario}`)
-        this.dados = await data
+        const response = await useCustomFetch(`resumo/obtemResumoPorUsuario/${idInventario}`)
+        if (response)
+          this.dados = await response
         this.carregando = false
         this.ultimaBusca = { recalcular: this.recalcularResumoUsuarios.bind(this, idInventario) }
       } catch (error) {
@@ -195,8 +166,7 @@ export const useEstatisticasStore = defineStore({
     async recalcularResumoUsuarios(idInventario) {
       try {
         this.carregando = true
-        await api.get(`v1/restrito/resumo/geraResumoPorUsuario/${idInventario}`)
-        console.log('recalcularResumoUsuarios');
+        await useCustomFetch(`resumo/geraResumoPorUsuario/${idInventario}`)
         await this.buscarResumoUsuarios(idInventario);
         this.carregando = false
       } catch (error) {
@@ -207,8 +177,9 @@ export const useEstatisticasStore = defineStore({
     async buscarResumoDia(idInventario) {
       try {
         this.carregando = true
-        const { data } = await api.get(`v1/restrito/resumo/obtemResumoPorDia/${idInventario}`)
-        this.dados = await data
+        const response = await useCustomFetch(`resumo/obtemResumoPorDia/${idInventario}`)
+        if (response)
+          this.dados = await response
         this.ultimaBusca = { recalcular: this.recalcularResumoDia.bind(this, idInventario) }
         this.carregando = false
       } catch (error) {
@@ -218,7 +189,7 @@ export const useEstatisticasStore = defineStore({
     async recalcularResumoDia(idInventario) {
       try {
         this.carregando = true
-        await api.get(`v1/restrito/resumo/geraResumoPorDia/${idInventario}`)
+        await useCustomFetch(`resumo/geraResumoPorDia/${idInventario}`)
         await this.buscarResumoDia(idInventario);
         this.carregando = false
       } catch (error) {

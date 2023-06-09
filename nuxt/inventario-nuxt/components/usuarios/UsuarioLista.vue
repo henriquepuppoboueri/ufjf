@@ -45,18 +45,18 @@
 </template>
 
 <script setup>
-import { computed, onMounted, onUnmounted, reactive, ref } from "vue";
+import { computed, onMounted, ref } from 'vue';
 
-import { Notify, useQuasar } from "quasar";
-import { storeToRefs } from "pinia";
+import { Notify, useQuasar } from 'quasar';
+import { storeToRefs } from 'pinia';
 
-import { registroPortugues } from "src/helper/functions";
-import { paginacaoOpcoes } from "src/helper/qtableOpcoes";
-import { useUsuariosStore } from "src/stores/usuarios";
+import { registroPortugues } from '/helper/functions';
+import { paginacaoOpcoes } from '/helper/qtableOpcoes';
 
 const $q = useQuasar();
 const usuariosStore = useUsuariosStore();
 const { usuarios } = storeToRefs(usuariosStore);
+const { buscarUsuarios } = usuariosStore;
 const isUsuarioSelecionado = computed(() => {
   return usuarioSelecionado.value.length > 0;
 });
@@ -66,30 +66,22 @@ const idUsuario = computed(() => {
 const usuarioSelecionado = ref([]);
 const colunas = ref([
   {
-    name: "nome",
-    align: "left",
-    label: "NOME",
-    field: "nome",
+    name: 'nome',
+    align: 'left',
+    label: 'NOME',
+    field: 'nome',
   },
   {
-    name: "email",
-    align: "left",
-    label: "E-MAIL",
-    // field: (row) => row.situacaoInventario.nome,
-    field: "email",
+    name: 'email',
+    align: 'left',
+    label: 'E-MAIL',
+    field: 'email',
   },
-  // {
-  //   name: "id",
-  //   align: "left",
-  //   label: "id",
-  //   // field: (row) => row.situacaoInventario.nome,
-  //   field: "id",
-  // },
 ]);
 
 onMounted(async () => {
   try {
-    await usuariosStore.buscarUsuarios();
+    await buscarUsuarios();
   } catch (error) {}
 });
 
@@ -97,15 +89,15 @@ async function excluirUsuario() {
   $q.dialog({
     title: `Confirmação de exclusão de usuário`,
     message: `Tem certeza de que deseja excluir o usuário '${usuarioSelecionado.value[0].nome}'?`,
-    cancel: { type: "button", label: "Cancelar", color: "primary" },
-    ok: { type: "button", label: "Confirmar", color: "green" },
+    cancel: { type: 'button', label: 'Cancelar', color: 'primary' },
+    ok: { type: 'button', label: 'Confirmar', color: 'green' },
   }).onOk(async () => {
     try {
       const response = await usuariosStore.delUsuario(idUsuario.value);
       const usuarioTemp = usuarioSelecionado.value[0];
       if (response && response.status === 204) {
         Notify.create({
-          color: "green",
+          color: 'green',
           message: `Usuário '${usuarioTemp.nome}' excluído!`,
         });
       } else {
@@ -115,7 +107,7 @@ async function excluirUsuario() {
       }
     } catch (err) {
       Notify.create({
-        color: "red",
+        color: 'red',
         message: ` ${err}`,
       });
     } finally {

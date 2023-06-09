@@ -1,13 +1,14 @@
 <script setup>
-import { onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
-import { paginacaoOpcoes } from "src/helper/qtableOpcoes";
+import { onMounted, ref } from 'vue';
+import { paginacaoOpcoes } from '/helper/qtableOpcoes';
+
+definePageMeta({ name: 'ferramentasConfig' });
 
 const config = ref({ itensPorPagina: paginacaoOpcoes.rowsPerPage });
 const router = useRouter();
 
 const saveConfig = () => {
-  localStorage.setItem("itensPorPagina", config.value.itensPorPagina);
+  localStorage.setItem('itensPorPagina', config.value.itensPorPagina);
   paginacaoOpcoes.rowsPerPage = config.value.itensPorPagina;
   router.back();
 };

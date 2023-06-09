@@ -3,7 +3,7 @@
 </template>
 
 <script setup>
-import UsuarioLista from "src/components/usuarios/UsuarioLista.vue";
+import UsuarioLista from '/components/usuarios/UsuarioLista.vue';
 </script>
 
 <style scoped></style>

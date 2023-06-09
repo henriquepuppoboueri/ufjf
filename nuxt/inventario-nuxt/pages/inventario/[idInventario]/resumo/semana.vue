@@ -1,5 +1,4 @@
 <script setup>
-import { useEstatisticasStore } from 'stores/estatisticas';
 import { onMounted, ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { Line } from 'vue-chartjs';
@@ -16,6 +15,10 @@ import {
 } from 'chart.js';
 import { storeToRefs } from 'pinia';
 import ColorHash from 'color-hash';
+
+definePageMeta({
+  name: 'resumo-semanal',
+});
 
 ChartJS.register(
   Title,

@@ -1,18 +1,10 @@
-import { defineStore } from 'pinia';
-import { api } from 'boot/axios';
-import { useSetoresStore } from 'src/stores/setores'
-import { useSituacaoStore } from './situacao';
-import { usePlaquetaStore } from './plaqueta';
-import { useDependenciasStore } from './dependencias';
-import filtroItensColetadosModel from 'src/model/FiltroItensColetadosModel';
 
-const setoresStore = useSetoresStore()
-const dependenciasStore = useDependenciasStore();
-const situacaoStore = useSituacaoStore()
-const plaquetaStore = usePlaquetaStore()
+import filtroItensColetadosModel from '/model/FiltroItensColetadosModel';
 
-situacaoStore.buscarSituacoes()
-plaquetaStore.buscarEstadosPlaquetas()
+// const setoresStore = useSetoresStore()
+// const dependenciasStore = useDependenciasStore();
+// const situacaoStore = useSituacaoStore()
+// const plaquetaStore = usePlaquetaStore()
 
 export const useItensColetadosStore = defineStore({
   id: 'itensColetados',
@@ -35,12 +27,17 @@ export const useItensColetadosStore = defineStore({
   getters: {
     async itemNominal(state) {
       try {
+        const { buscarSituacao } = useSituacaoStore()
+        const { buscarEstadoPlaqueta } = usePlaquetaStore()
+        const { buscarSetor } = useSetoresStore()
+        const { buscarDependencia } = useDependenciasStore()
+
         state.carregando = true
         if (state.itemColetado) {
-          const setor = await setoresStore.buscarSetor(state.itemColetado.idSetor)
-          const dependencia = await dependenciasStore.buscarDependencia(state.itemColetado.idDependencia)
-          const situacao_ = await situacaoStore.buscarSituacao(state.itemColetado.situacao)
-          const estadoPlaqueta = await plaquetaStore.buscarEstadoPlaqueta(state.itemColetado.idEstadoPlaqueta)
+          const setor = await buscarSetor(state.itemColetado.idSetor)
+          const dependencia = await buscarDependencia(state.itemColetado.idDependencia)
+          const situacao_ = await buscarSituacao(state.itemColetado.situacao)
+          const estadoPlaqueta = await buscarEstadoPlaqueta(state.itemColetado.idEstadoPlaqueta)
           return { ...state.itemColetado, setor, dependencia, situacao_, estadoPlaqueta }
         }
       } catch (error) {
@@ -50,12 +47,16 @@ export const useItensColetadosStore = defineStore({
     itensNominais(state) {
       try {
         state.carregandoTodos = true
+        const { buscarSituacaoPorId } = useSituacaoStore()
+        const { buscarEstadoPlaqueta } = usePlaquetaStore()
+        const { buscarSetorPorId } = useSetoresStore()
+
 
         if (state.itensColetadosTodos.length > 0) {
           const itensLista = state.itensColetadosTodos.map((item) => {
-            const situacao = situacaoStore.buscarSituacaoPorId(item.situacao.id).nome
-            const estadoPlaqueta = plaquetaStore.buscarEstadoPlaqueta(item.estadoPlaqueta.id).nome
-            const setor = setoresStore.buscarSetorPorId(item.setor.id)
+            const situacao = buscarSituacaoPorId(item.situacao.id).nome
+            const estadoPlaqueta = buscarEstadoPlaqueta(item.estadoPlaqueta.id).nome
+            const setor = buscarSetorPorId(item.setor.id)
             let dependenciaNome = 'Sem dependência'
             if (
               setor.nome !== "Sem setor" &&
@@ -147,7 +148,6 @@ export const useItensColetadosStore = defineStore({
       }
     },
 
-    // async buscarItensColetadosPaginados(idInventario, FiltroItensColetadosModel) {
     async buscarItensColetadosPaginados(idInventario, filtroItensColetados = filtroItensColetadosModel) {
       try {
         this.carregando = true

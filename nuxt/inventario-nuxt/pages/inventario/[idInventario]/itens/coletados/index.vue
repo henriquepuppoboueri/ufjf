@@ -1,21 +1,14 @@
 <script setup>
-import { ref, reactive, watch, computed, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { useQuasar, Notify } from "quasar";
-import { storeToRefs } from "pinia";
+import { ref, reactive, watch, computed, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useQuasar, Notify } from 'quasar';
+import { storeToRefs } from 'pinia';
 
-import { diminuiTexto, registroPortugues } from "src/helper/functions";
-import { paginacaoOpcoes } from "src/helper/qtableOpcoes";
-import { useSetoresStore } from "src/stores/setores";
-import { useInventariosStore } from "src/stores/inventarios";
-import { useItensColetadosStore } from "src/stores/itensColetados";
-import { exportTable } from "src/helper/functions";
-import { useAuthStore } from "src/stores/auth";
-import ItemPatrimonio from "src/components/inventarios/itens/ItemPatrimonio.vue";
-import filtroItensColetadosModel from "src/model/FiltroItensColetadosModel";
-import { usePlaquetaStore } from "src/stores/plaqueta";
-import { useSituacaoStore } from "src/stores/situacao";
-import { useUsuariosStore } from "src/stores/usuarios";
+import { diminuiTexto, registroPortugues } from '/helper/functions';
+import { paginacaoOpcoes } from '/helper/qtableOpcoes';
+
+import { exportTable } from '/helper/functions';
+import ItemPatrimonio from '/components/inventarios/itens/ItemPatrimonio.vue';
 
 const $q = useQuasar();
 const authStore = useAuthStore();
@@ -70,138 +63,138 @@ const router = useRouter();
 const route = useRoute();
 const colunasItens = reactive([
   {
-    name: "patrimonio",
-    align: "left",
-    label: "PATRIMÔNIO",
-    field: "patrimonio",
+    name: 'patrimonio',
+    align: 'left',
+    label: 'PATRIMÔNIO',
+    field: 'patrimonio',
     sortable: true,
-    component: { name: "input" },
+    component: { name: 'input' },
   },
   {
-    name: "descricao",
-    align: "left",
-    label: "DESCRIÇÃO",
-    field: "descricao",
+    name: 'descricao',
+    align: 'left',
+    label: 'DESCRIÇÃO',
+    field: 'descricao',
     sortable: true,
-    component: { name: "input" },
+    component: { name: 'input' },
   },
   {
-    name: "setor",
-    align: "left",
-    label: "SETOR",
+    name: 'setor',
+    align: 'left',
+    label: 'SETOR',
     field: (item) => item.setor.nome,
     sortable: true,
     component: {
-      name: "select",
-      idField: "id",
-      labelField: "nome",
+      name: 'select',
+      idField: 'id',
+      labelField: 'nome',
       dataSource: setoresDependencias,
     },
   },
   {
-    name: "dependencia",
-    align: "left",
-    label: "DEPENDÊNCIA",
+    name: 'dependencia',
+    align: 'left',
+    label: 'DEPENDÊNCIA',
     field: (item) => item.dependencia.nome,
     sortable: true,
     component: {
-      name: "select",
-      idField: "id",
-      labelField: "nome",
+      name: 'select',
+      idField: 'id',
+      labelField: 'nome',
       dataSource: dependencias,
     },
   },
   {
-    name: "localizacao",
-    align: "left",
-    label: "LOCALIZAÇÃO",
-    field: "localizacao",
+    name: 'localizacao',
+    align: 'left',
+    label: 'LOCALIZAÇÃO',
+    field: 'localizacao',
     sortable: true,
-    component: { name: "input" },
+    component: { name: 'input' },
   },
   {
-    name: "situacao",
-    align: "left",
-    label: "SITUAÇÃO",
+    name: 'situacao',
+    align: 'left',
+    label: 'SITUAÇÃO',
     field: (item) => item.situacao.nome,
     sortable: true,
     component: {
-      name: "select",
-      idField: "id",
-      labelField: "nome",
+      name: 'select',
+      idField: 'id',
+      labelField: 'nome',
       dataSource: situacoes,
     },
   },
   {
-    name: "estadoPlaqueta",
-    align: "left",
-    label: "ESTADO DA PLAQUETA",
+    name: 'estadoPlaqueta',
+    align: 'left',
+    label: 'ESTADO DA PLAQUETA',
     field: (item) => item.estadoPlaqueta.nome,
     sortable: true,
     component: {
-      name: "select",
-      idField: "id",
-      labelField: "nome",
+      name: 'select',
+      idField: 'id',
+      labelField: 'nome',
       dataSource: estadosPlaquetas,
     },
   },
   {
-    name: "usuario",
-    align: "left",
-    label: "USUÁRIO",
-    field: "usuario",
+    name: 'usuario',
+    align: 'left',
+    label: 'USUÁRIO',
+    field: 'usuario',
     sortable: true,
     component: {
-      name: "select",
-      idField: "id",
-      labelField: "login",
+      name: 'select',
+      idField: 'id',
+      labelField: 'login',
       dataSource: usuarios,
     },
   },
   {
-    name: "identificador",
-    align: "left",
-    label: "IDENTIFICADOR",
-    field: "identificador",
+    name: 'identificador',
+    align: 'left',
+    label: 'IDENTIFICADOR',
+    field: 'identificador',
     sortable: true,
-    component: { name: "input" },
+    component: { name: 'input' },
   },
 ]);
 const colunasFiltro = ref([]);
 const colunasMostrar = ref([
   {
-    name: "patrimonio",
-    align: "left",
-    label: "PATRIMÔNIO",
-    field: "patrimonio",
+    name: 'patrimonio',
+    align: 'left',
+    label: 'PATRIMÔNIO',
+    field: 'patrimonio',
     sortable: true,
   },
   {
-    name: "descricao",
-    align: "left",
-    label: "DESCRIÇÃO",
-    field: "descricao",
+    name: 'descricao',
+    align: 'left',
+    label: 'DESCRIÇÃO',
+    field: 'descricao',
     sortable: true,
   },
   {
-    name: "setor",
-    align: "left",
-    label: "SETOR",
-    field: "setor",
+    name: 'setor',
+    align: 'left',
+    label: 'SETOR',
+    field: 'setor',
     sortable: true,
   },
   {
-    name: "dependencia",
-    align: "left",
-    label: "DEPENDÊNCIA",
-    field: "dependencia",
+    name: 'dependencia',
+    align: 'left',
+    label: 'DEPENDÊNCIA',
+    field: 'dependencia',
     sortable: true,
   },
   {
-    name: "situacao",
-    align: "left",
-    label: "SITUAÇÃO",
-    field: "situacao",
+    name: 'situacao',
+    align: 'left',
+    label: 'SITUAÇÃO',
+    field: 'situacao',
     sortable: true,
   },
 ]);
@@ -210,7 +203,7 @@ const idInventario = ref(route.params.idInventario || false);
 function filtroAvancado(row, terms, cols, getCellValue) {
   if (!terms) return row;
 
-  if (colunasFiltro.value.hasOwnProperty("field")) {
+  if (colunasFiltro.value.hasOwnProperty('field')) {
     return row.filter((item) =>
       item[colunasFiltro.value.field]
         .toLowerCase()
@@ -243,17 +236,17 @@ onMounted(() => {
 
 const pagination = ref({
   descending: false,
-  sortBy: "id",
-  descricao: "",
+  sortBy: 'id',
+  descricao: '',
   idDependencia: 0,
   idPlaqueta: 0,
   idSetor: 0,
   idSituacao: 0,
   idTipoColeta: 0,
   idUsuario: 0,
-  localizacao: "",
-  numIdentificador: "",
-  numPatrimonio: "",
+  localizacao: '',
+  numIdentificador: '',
+  numPatrimonio: '',
   page: 0,
   rowsPerPage: 10,
   rowsNumber: 0,
@@ -261,17 +254,17 @@ const pagination = ref({
 
 const fetchData = async ({
   ascendente = true,
-  campoOrderBy = "id",
-  descricao = "",
+  campoOrderBy = 'id',
+  descricao = '',
   idDependencia = 0,
   idPlaqueta = 0,
   idSetor = 0,
   idSituacao = 0,
   idTipoColeta = 0,
   idUsuario = 0,
-  localizacao = "",
-  numIdentificador = "",
-  numPatrimonio = "",
+  localizacao = '',
+  numIdentificador = '',
+  numPatrimonio = '',
   paginaAtual = 0,
   tamanho = paginacaoOpcoes.rowsPerPage,
 } = {}) => {
@@ -335,7 +328,7 @@ watch(
 );
 
 function gerarCSV() {
-  exportTable(colunasItens, itensColetados, "itens-coletados");
+  exportTable(colunasItens, itensColetados, 'itens-coletados');
 }
 
 function clearFilter() {
@@ -354,7 +347,7 @@ function editItem() {
 function verItem() {
   if (itensSelecionados.value.length === 1) {
     router.push({
-      name: "itemColetado",
+      name: 'itemColetado',
       params: { idItem: itensSelecionados.value[0].id },
     });
   }
@@ -363,7 +356,7 @@ function verItem() {
 function novoItem() {
   if (itensSelecionados.value.length === 0) {
     router.push({
-      name: "itemColetadoNovo",
+      name: 'itemColetadoNovo',
     });
   }
 }
@@ -371,22 +364,22 @@ function novoItem() {
 function delItens() {
   if (itensSelecionados.value.length > 0) {
     $q.dialog({
-      title: "Exclusão de itens",
+      title: 'Exclusão de itens',
       message:
-        "Tem certeza de que deseja excluir o(s) item(ns) selecionado(s)?",
-      cancel: { type: "button", label: "Cancelar", color: "primary" },
-      ok: { type: "button", label: "Confirmar", color: "green" },
+        'Tem certeza de que deseja excluir o(s) item(ns) selecionado(s)?',
+      cancel: { type: 'button', label: 'Cancelar', color: 'primary' },
+      ok: { type: 'button', label: 'Confirmar', color: 'green' },
     }).onOk(async () => {
       for (const item of itensSelecionados.value) {
         try {
           await itensColetadosStore.delItemColetado(item.id);
           Notify.create({
-            color: "green",
+            color: 'green',
             message: `Item excluído!`,
           });
         } catch (err) {
           Notify.create({
-            color: "red",
+            color: 'red',
             message: `Erro ao excluir item: ${err}`,
           });
         } finally {
@@ -406,13 +399,13 @@ function vincularPatrimonio() {
     },
   })
     .onOk(() => {
-      console.log("OK");
+      console.log('OK');
     })
     .onCancel(() => {
-      console.log("Cancel");
+      console.log('Cancel');
     })
     .onDismiss(() => {
-      console.log("Called on OK or Cancel");
+      console.log('Called on OK or Cancel');
     });
 }
 

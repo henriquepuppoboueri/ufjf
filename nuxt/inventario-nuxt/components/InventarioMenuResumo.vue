@@ -23,10 +23,10 @@
 <script setup>
 const props = defineProps({ inventario: { type: Object, required: true } });
 const resumoLista = [
-  { name: "Por setor", to: "resumoSetores" },
-  { name: "Por usuário", to: "resumoUsuarios" },
-  { name: "Por semana", to: "resumoSemana" },
-  { name: "Por dia", to: "resumoDia" },
+  { name: 'Por setor', to: 'resumo-setores' },
+  { name: 'Por usuário', to: 'resumo-usuarios' },
+  { name: 'Por semana', to: 'resumo-semanal' },
+  { name: 'Por dia', to: 'resumo-diario' },
 ];
 </script>
 
