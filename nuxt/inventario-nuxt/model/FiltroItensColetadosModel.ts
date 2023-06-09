@@ -1,0 +1,16 @@
+export default {
+  ascendente: true,
+  campoOrderBy: "id",
+  descricao: "",
+  idDependencia: 0,
+  idPlaqueta: 0,
+  idSetor: 0,
+  idSituacao: 0,
+  idTipoColeta: 0,
+  idUsuario: 0,
+  localizacao: "",
+  numIdentificador: "",
+  numPatrimonio: "",
+  paginaAtual: 0,
+  tamanho: 10,
+};
