@@ -48,24 +48,22 @@ export const useInventariosStore = defineStore({
     },
 
     async delInventario(idInventario) {
-      const res = await api
-        .delete(`v1/restrito/inventario/${idInventario}`)
+      const res = await useCustomFetch(`v1/restrito/inventario/${idInventario}`, { method: 'delete' })
       this.buscarInventarios()
       return res.status
     },
 
     async editInventario(idInventario, inventario) {
-      await api
-        .put(`v1/restrito/inventario/${idInventario}`, inventario)
+      await useCustomFetch(`v1/restrito/inventario/${idInventario}`, { method: 'put', body: inventario })
     },
 
     async buscarInventario(idInventario) {
 
-      const response = await useCustomFetch(
+      const data = await useCustomFetch(
         `inventario/${idInventario}`
       );
-      if (response)
-        this.inventario = await response
+      if (data)
+        this.inventario = await data
     },
 
     async buscarInventarios(usuarioInventarios = []) {
@@ -82,7 +80,7 @@ export const useInventariosStore = defineStore({
     async definirPresidente(idInventario, idUsuario) {
       try {
         this.carregando = true
-        const { data } = await api.get(`v1/restrito/inventario/usuario/presidente/${idInventario}&${idUsuario}`)
+        const { data } = await useCustomFetch(`inventario/usuario/presidente/${idInventario}&${idUsuario}`)
         if (data)
           this.usuario = data
       } catch (error) {
@@ -93,55 +91,60 @@ export const useInventariosStore = defineStore({
     },
 
     async buscarInventariosEmPreparacao() {
-      const inventariosResponse = await api.get(`v1/restrito/inventario_preparando`)
-      this.inventarios = await inventariosResponse.data
+      const data = await useCustomFetch(`inventario_preparando`)
+      if (data)
+        this.inventarios = await data
     },
 
     async addUsuarioInventario(idInventario, usuario) {
-      await api
-        .post(`v1/restrito/inventario/usuario/${idInventario}`, usuario)
+      await useCustomFetch(`inventario/usuario/${idInventario}`, { method: 'post', body: usuario })
       await this.buscarUsuariosInventario(idInventario);
     },
 
     async delUsuarioInventario(idInventario, idUsuario) {
-      await api
-        .delete(`v1/restrito/inventario/usuario/${idInventario}&${idUsuario}`)
+      await useCustomFetch(`inventario/usuario/${idInventario}&${idUsuario}`, { method: 'delete' })
       await this.buscarUsuariosInventario(idInventario);
     },
 
     async buscarUsuariosInventario(idInventario) {
-      const { data: usuariosInventario } = await api.get(
-        `v1/restrito/inventario/usuario/${idInventario}`
+      const data = await useCustomFetch(
+        `inventario/usuario/${idInventario}`
       );
-      this.usuariosInventario = await usuariosInventario;
+      if (data)
+        this.usuariosInventario = await data;
     },
 
     async setUsuarioInventarioPresidente(idInventario, idUsuario) {
-      await api.patch(`/v1/restrito/inventario/usuario/presidente/${idInventario}&${idUsuario}`)
+      await useCustomFetch(`inventario/usuario/presidente/${idInventario}&${idUsuario}`, { method: 'patch' })
       await this.buscarUsuariosInventario(idInventario);
     },
 
     async setUsuarioInventarioNormal(idInventario, idUsuario) {
-      await api.patch(`/v1/restrito/inventario/usuario/normal/${idInventario}&${idUsuario}`)
+      await useCustomFetch(`inventario/usuario/normal/${idInventario}&${idUsuario}`, { method: 'patch' })
       await this.buscarUsuariosInventario(idInventario);
     },
 
     async setUsuarioInventarioAdmin(idInventario, idUsuario) {
-      const response = await api.patch(`/v1/restrito/inventario/usuario/admin/${idInventario}&${idUsuario}`)
+      const response = await useCustomFetch(`inventario/usuario/admin/${idInventario}&${idUsuario}`, { method: 'patch' })
       await this.buscarUsuariosInventario(idInventario);
     },
 
     async setUsuarioInventarioNaoAdmin(idInventario, idUsuario) {
-      const response = await api.patch(`/v1/restrito/inventario/usuario/naoadmin/${idInventario}&${idUsuario}`)
+      const response = await useCustomFetch(`inventario/usuario/naoadmin/${idInventario}&${idUsuario}`, { method: 'patch' })
       await this.buscarUsuariosInventario(idInventario);
     },
 
     async setUsuarioEmitenteRel(idInventario, idUsuario) {
-      await api.patch(`/v1/restrito/inventario/usuario/emitente/${idInventario}&${idUsuario}`)
+      await useCustomFetch(`inventario/usuario/emitente/${idInventario}&${idUsuario}`, { method: 'patch' })
     },
 
     async setUsuarioNaoEmitenteRel(idInventario, idUsuario) {
-      await api.patch(`/v1/restrito/inventario/usuario/naoemitente/${idInventario}&${idUsuario}`)
+      try {
+        const response = await useCustomFetch(`inventario/usuario/naoemitente/${idInventario}&${idUsuario}`, { method: 'patch' })
+        console.log(response);
+      } catch (error) {
+        this.erro = error
+      }
     },
   }
 })

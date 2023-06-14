@@ -1,9 +1,11 @@
 <template>
   <div>
-    <p>Index</p>
+    <p>Index page!</p>
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup>
+definePageMeta({ redirect: { name: 'inventario' } });
+</script>
 
 <style scoped></style>

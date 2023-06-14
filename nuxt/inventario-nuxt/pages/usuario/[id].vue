@@ -1,9 +1,9 @@
 <template>
-  <usuario-cad></usuario-cad>
+  <usuarios-usuario-cad></usuarios-usuario-cad>
 </template>
 
 <script setup>
-import UsuarioCad from '/components/usuarios/UsuarioCad.vue';
+definePageMeta({});
 </script>
 
 <style scoped></style>

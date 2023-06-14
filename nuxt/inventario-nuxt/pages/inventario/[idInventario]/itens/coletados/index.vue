@@ -10,6 +10,8 @@ import { paginacaoOpcoes } from '/helper/qtableOpcoes';
 import { exportTable } from '/helper/functions';
 import ItemPatrimonio from '/components/inventarios/itens/ItemPatrimonio.vue';
 
+definePageMeta({ name: 'itensColetados' });
+
 const $q = useQuasar();
 const authStore = useAuthStore();
 const { usuario } = storeToRefs(authStore);

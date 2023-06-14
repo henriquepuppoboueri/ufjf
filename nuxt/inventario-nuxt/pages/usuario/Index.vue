@@ -1,9 +1,7 @@
 <template>
-  <usuario-lista></usuario-lista>
+  <usuarios-usuario-lista></usuarios-usuario-lista>
 </template>
 
-<script setup>
-import UsuarioLista from '/components/usuarios/UsuarioLista.vue';
-</script>
+<script setup></script>
 
 <style scoped></style>

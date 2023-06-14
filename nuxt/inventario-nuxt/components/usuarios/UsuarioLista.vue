@@ -1,49 +1,3 @@
-<template>
-  <q-card flat>
-    <q-card-section>
-      <q-table
-        v-model:selected="usuarioSelecionado"
-        flat
-        title="Usuários"
-        :rows="usuarios"
-        :columns="colunas"
-        row-key="id"
-        selection="single"
-        :pagination="paginacaoOpcoes"
-        :bordered="false"
-        :selected-rows-label="registroPortugues"
-        loading-label="Carregando"
-        no-data-label="Não foram encontrados dados."
-        rows-per-page-label="Registros por página:"
-      />
-    </q-card-section>
-    <q-card-actions>
-      <q-btn
-        v-if="!isUsuarioSelecionado"
-        dense
-        color="green"
-        label="Novo"
-        :to="`/usuario/novo`"
-      />
-      <q-btn
-        v-if="isUsuarioSelecionado"
-        dense
-        color="blue"
-        label="Editar"
-        :to="`/usuario/${idUsuario}`"
-      />
-      <q-btn
-        v-if="isUsuarioSelecionado"
-        dense
-        color="primary"
-        label="Excluir"
-        @click="excluirUsuario"
-      />
-    </q-card-actions>
-  </q-card>
-  <q-separator inset />
-</template>
-
 <script setup>
 import { computed, onMounted, ref } from 'vue';
 
@@ -64,6 +18,7 @@ const idUsuario = computed(() => {
   return usuarioSelecionado.value[0].id || 0;
 });
 const usuarioSelecionado = ref([]);
+const filtro = ref('');
 const colunas = ref([
   {
     name: 'nome',
@@ -93,18 +48,7 @@ async function excluirUsuario() {
     ok: { type: 'button', label: 'Confirmar', color: 'green' },
   }).onOk(async () => {
     try {
-      const response = await usuariosStore.delUsuario(idUsuario.value);
-      const usuarioTemp = usuarioSelecionado.value[0];
-      if (response && response.status === 204) {
-        Notify.create({
-          color: 'green',
-          message: `Usuário '${usuarioTemp.nome}' excluído!`,
-        });
-      } else {
-        throw new Error(
-          `Não foi possível excluir o usuário '${usuarioTemp.nome}'`
-        );
-      }
+      await usuariosStore.delUsuario(idUsuario.value);
     } catch (err) {
       Notify.create({
         color: 'red',
@@ -116,6 +60,71 @@ async function excluirUsuario() {
   });
 }
 </script>
+
+<template>
+  <q-card flat>
+    <q-card-section>
+      <q-table
+        v-model:selected="usuarioSelecionado"
+        flat
+        :filter="filtro"
+        title="Usuários"
+        :rows="usuarios"
+        :columns="colunas"
+        row-key="id"
+        selection="single"
+        :pagination="paginacaoOpcoes"
+        :bordered="false"
+        :selected-rows-label="registroPortugues"
+        loading-label="Carregando"
+        no-data-label="Não foram encontrados dados."
+        rows-per-page-label="Registros por página:"
+      >
+        <template #top-right>
+          <div class="row q-gutter-sm">
+            <q-input
+              v-model="filtro"
+              borderless
+              dense
+              filled
+              debounce="300"
+              placeholder="Filtrar"
+              clearable
+            >
+              <template #append>
+                <q-icon name="search" />
+              </template>
+            </q-input>
+          </div>
+        </template>
+      </q-table>
+    </q-card-section>
+    <q-card-actions>
+      <q-btn
+        v-if="!isUsuarioSelecionado"
+        dense
+        color="green"
+        label="Novo"
+        :to="`/usuario/adicionar`"
+      />
+      <q-btn
+        v-if="isUsuarioSelecionado"
+        dense
+        color="blue"
+        label="Editar"
+        :to="`/usuario/${idUsuario}`"
+      />
+      <q-btn
+        v-if="isUsuarioSelecionado"
+        dense
+        color="primary"
+        label="Excluir"
+        @click="excluirUsuario"
+      />
+    </q-card-actions>
+  </q-card>
+  <q-separator inset />
+</template>
 
 <style lang="sass">
 

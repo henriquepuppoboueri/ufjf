@@ -1,6 +1,6 @@
 export async function useCustomFetch(
   req, opts,
-  { isRestrito = true, hasVersao = true } = {}
+  { isRestrito = true, hasVersao = true, raw = false } = {}
 ) {
   const config = useRuntimeConfig();
   const {
@@ -11,7 +11,10 @@ export async function useCustomFetch(
 
   let baseURL = `${base}${hasVersao ? versao : ''}${isRestrito ? restrito : ''}`;
 
-  return await $fetch(req, {
+  // $fetch.raw
+
+  const fetchMode = raw ? $fetch.raw : $fetch;
+  return await fetchMode(req, {
     baseURL,
     server: false,
     method: 'GET',

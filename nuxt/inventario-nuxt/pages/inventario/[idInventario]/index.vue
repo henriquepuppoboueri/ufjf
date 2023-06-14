@@ -1,6 +1,6 @@
 <template>
   <div>
-    Página de visualização do inventário {{ $route.params.idInventario }}
+    Página de visualização do inventário {{ $route.params.idInventario }}.
   </div>
 </template>
 

@@ -1,103 +1,117 @@
 import { defineStore } from 'pinia'
 
+export const useUsuariosStore = defineStore('usuarios', () => {
+  const usuario = ref(null);
+  const usuarios = ref([]);
+  const carregando = ref(false);
+  const erro = ref(null);
+  const usuarioInventarios = ref([]);
 
-export const useUsuariosStore = defineStore({
-  id: 'usuarios', state: () =>
-  ({
-    usuario: null,
-    usuarios: [],
-    carregando: false,
-    erro: null,
-    usuarioInventarios: [],
-  })
-  ,
-  getters: {
+  function $resetUsuario() {
+    usuario.value = null;
+    carregando.value = false;
+    erro.value = null;
+  }
 
-  },
-
-  actions: {
-    async addUsuario(usuario) {
-      try {
-        this.carregando = true
-        const response = await useCustomFetch(`usuarios`, { method: 'POST', body: usuario })
-        this.buscarUsuarios()
-        return response;
-      } catch (error) {
-        this.error = error
-      } finally {
-        this.carregando = false
-      }
-    },
-
-    async editUsuario(idUsuario, usuario) {
-      try {
-        this.carregando = true
-        const response = await useCustomFetch(`usuarios/${idUsuario}`, { method: 'PUT', body: usuario })
-        await this.buscarUsuarios()
-        return response;
-      } catch (error) {
-        this.error = error
-      } finally {
-        this.carregando = false
-      }
-    },
-
-    async delUsuario(idUsuario) {
-      try {
-        this.carregando = true
-        const response = await useCustomFetch(`usuarios/${idUsuario}`, { method: 'DELETE' })
-        this.buscarUsuarios()
-        return response;
-      } catch (error) {
-        this.error = error
-      } finally {
-        this.carregando = false
-      }
-    },
-
-    async buscarUsuario(idUsuario) {
-      try {
-        this.carregando = true
-        const data = await useCustomFetch(`usuarios/${idUsuario}`)
-        if (data) {
-          this.usuario = await data
-          return data;
-        }
-      } catch (error) {
-        this.error = error
-      } finally {
-        this.carregando = false
-      }
-    },
-    async buscarUsuarios() {
-      try {
-        this.carregando = true
-        const data = await useCustomFetch(`usuarios`)
-        if (data)
-          this.usuarios = await data;
-      } catch (error) {
-        this.error = error
-      } finally {
-        this.carregando = false
-      }
-    },
-    async buscarUsuarioInventarios() {
-      try {
-        this.carregando = true
-        const data = await useCustomFetch(`usuarios/inventarios`)
-        if (data) {
-          this.usuarioInventarios = await data
-          return data
-        }
-      } catch (error) {
-        this.erro = error
-      } finally {
-        this.carregando = false
-      }
-    },
-    async podeAcessarInventario(idInventario) {
-      await this.buscarUsuarioInventarios()
-      return this.usuarioInventarios.map(inventario => inventario.idInventario).includes(+idInventario)
+  async function addUsuario(usuario) {
+    try {
+      carregando.value = true
+      const response = await useCustomFetch(`usuarios`, { method: 'POST', body: usuario })
+      await buscarUsuarios()
+      return response;
+    } catch (error) {
+      $resetUsuario()
+      erro.value = error
+    } finally {
+      carregando.value = false
     }
+  }
+
+  async function editUsuario(idUsuario, usuario, { raw = true } = {}) {
+    try {
+      carregando.value = true
+      const response = await useCustomFetch(`usuarios/${idUsuario}`, { method: 'PUT', body: usuario }, { raw })
+      await buscarUsuarios()
+      return response;
+    } catch (error) {
+      $resetUsuario()
+      erro.value = error
+    } finally {
+      carregando.value = false
+    }
+  }
+
+  async function delUsuario(idUsuario) {
+    try {
+      carregando.value = true
+      const response = await useCustomFetch(`usuarios/${idUsuario}`, { method: 'DELETE' })
+      await buscarUsuarios()
+      return response;
+    } catch (error) {
+      $resetUsuario()
+      erro.value = error
+    } finally {
+      carregando.value = false
+    }
+  }
+
+  async function buscarUsuario(idUsuario) {
+    try {
+      carregando.value = true
+      const data = await useCustomFetch(`usuarios/${idUsuario}`)
+      if (data) {
+        usuario.value = data
+        return data;
+      }
+    } catch (error) {
+      $resetUsuario()
+      erro.value = error
+    } finally {
+      carregando.value = false
+    }
+  }
+
+  async function buscarUsuarios() {
+    try {
+      carregando.value = true
+      const data = await useCustomFetch(`usuarios`)
+      if (data)
+        usuarios.value = data;
+    } catch (error) {
+      $resetUsuario()
+      erro.value = error
+    } finally {
+      carregando.value = false
+    }
+  }
+
+  async function buscarUsuarioInventarios() {
+    try {
+      carregando.value = true
+      const data = await useCustomFetch(`usuarios/inventarios`)
+      if (data) {
+        usuarioInventarios.value = data
+        return data
+      }
+    } catch (error) {
+      erro.value = error
+    } finally {
+      carregando.value = false
+    }
+  }
+
+  return {
+    usuario,
+    usuarios,
+    carregando,
+    erro,
+    usuarioInventarios,
+    $resetUsuario,
+    addUsuario,
+    editUsuario,
+    delUsuario,
+    buscarUsuario,
+    buscarUsuarios,
+    buscarUsuarioInventarios
   }
 })

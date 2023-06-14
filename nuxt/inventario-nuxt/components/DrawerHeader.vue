@@ -4,7 +4,7 @@ import { storeToRefs } from 'pinia';
 const authStore = useAuthStore();
 const { usuario } = storeToRefs(authStore);
 
-const timer = useCountdownTimer(usuario.value.dataExt);
+const timer = useCountdownTimer(usuario.value?.dataExt);
 </script>
 
 <template>

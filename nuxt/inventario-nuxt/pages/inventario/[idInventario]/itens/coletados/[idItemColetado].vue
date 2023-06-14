@@ -8,6 +8,8 @@ import { StreamBarcodeReader } from 'vue-barcode-reader';
 
 import { isNumber, notStartWith } from '/helper/formValidation';
 
+definePageMeta({ name: 'itemColetado' });
+
 const $q = useQuasar();
 const mostrarCamera = ref('');
 const router = useRouter();

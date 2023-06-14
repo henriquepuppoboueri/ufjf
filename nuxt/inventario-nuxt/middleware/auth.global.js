@@ -1,5 +1,9 @@
 export default defineNuxtRouteMiddleware((to, from) => {
-  const auth = useAuthStore()
-  const { carregarToken } = auth
-  carregarToken()
+  const routasSemToken = ['/auth/login']
+
+  if (!routasSemToken.includes(to.fullPath)) {
+    const { carregarToken } = useAuthStore()
+    if (!carregarToken())
+      return navigateTo('/auth/login')
+  }
 })

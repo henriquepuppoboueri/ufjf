@@ -2,6 +2,8 @@
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
+definePageMeta({ name: 'unidades' });
+
 const route = useRoute();
 const idInventario = ref(null);
 const mostrarDialogAdicao = ref(false);

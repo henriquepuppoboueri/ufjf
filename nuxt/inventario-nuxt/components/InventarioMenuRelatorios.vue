@@ -1,6 +1,6 @@
 <template>
   <q-btn-dropdown
-    v-if="!!inventario && inventario.situacaoInventario.nome !== 'Preparando'"
+    v-if="inventario && inventario?.situacaoInventario?.nome !== 'Preparando'"
     auto-close
     stretch
     flat
@@ -24,12 +24,12 @@
 <script setup>
 const props = defineProps({ inventario: { type: Object, required: true } });
 const relatorioLista = [
-  { name: "sem-patrimonio", description: "Bens sem patrimônio" },
-  { name: "bens-nao-coletados", description: "Bens não coletados" },
-  { name: "plaquetas-problemas", description: "Plaquetas com problemas" },
-  { name: "local-diferente", description: "Bens em outras unidades" },
-  { name: "sem-itens", description: "Coletas sem itens" },
-  { name: "repetidos", description: "Coletas repetidas" },
+  { name: 'sem-patrimonio', description: 'Bens sem patrimônio' },
+  { name: 'bens-nao-coletados', description: 'Bens não coletados' },
+  { name: 'plaquetas-problemas', description: 'Plaquetas com problemas' },
+  { name: 'local-diferente', description: 'Bens em outras unidades' },
+  { name: 'sem-itens', description: 'Coletas sem itens' },
+  { name: 'repetidos', description: 'Coletas repetidas' },
 ];
 </script>
 

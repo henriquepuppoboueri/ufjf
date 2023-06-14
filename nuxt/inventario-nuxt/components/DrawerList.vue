@@ -9,14 +9,14 @@ const { usuario } = storeToRefs(authStore);
 
 <template>
   <q-expansion-item
-    v-if="usuario.adminSistema"
+    v-if="usuario?.adminSistema"
     expand-separator
     icon="fa-solid fa-user"
     label="Usuários"
     caption="Controle de usuários"
     :content-inset-level="0.5"
   >
-    <q-item v-ripple dense clickable to="/usuario/novo" exact>
+    <q-item v-ripple dense clickable to="/usuario/adicionar" exact>
       <q-item-section avatar>
         <q-icon text-color="white" name="fa-solid fa-user-plus" />
       </q-item-section>

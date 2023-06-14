@@ -83,13 +83,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import { useUsuariosStore } from "src/stores/usuarios";
-import { useItensImportadosStore } from "src/stores/itensImportados";
-import { useSetoresStore } from "src/stores/setores";
-import { useRouter, useRoute } from "vue-router";
-import { storeToRefs } from "pinia";
-import { useDependenciasStore } from "src/stores/dependencias";
+import { ref, onMounted } from 'vue';
+import { useUsuariosStore } from 'src/stores/usuarios';
+import { useItensImportadosStore } from 'src/stores/itensImportados';
+import { useSetoresStore } from 'src/stores/setores';
+import { useRouter, useRoute } from 'vue-router';
+import { storeToRefs } from 'pinia';
+import { useDependenciasStore } from 'src/stores/dependencias';
+
+definePageMeta({ name: 'itemImportado' });
 
 const router = useRouter();
 const dependenciasStore = useDependenciasStore();
@@ -97,16 +99,16 @@ const route = useRoute();
 const setoresStore = useSetoresStore();
 const itensImportadosStore = useItensImportadosStore();
 const usuariosStore = useUsuariosStore();
-const itemDescricao = ref("");
-const dependenciaAtual = ref("");
-const empenho = ref("");
-const nomeFornecedor = ref("");
+const itemDescricao = ref('');
+const dependenciaAtual = ref('');
+const empenho = ref('');
+const nomeFornecedor = ref('');
 const patrimonio = ref([]);
 const { dependencias, dependencia } = storeToRefs(dependenciasStore);
 const { setoresDependencias, setor } = storeToRefs(setoresStore);
 const { itemImportado } = storeToRefs(itensImportadosStore);
 const { buscarItemImportado } = useItensImportadosStore();
-const usuario = ref("");
+const usuario = ref('');
 
 onMounted(async () => {
   const idItem = +route.params.idItem;

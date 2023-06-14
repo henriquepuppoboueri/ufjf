@@ -151,10 +151,10 @@ export const useItensColetadosStore = defineStore({
     async buscarItensColetadosPaginados(idInventario, filtroItensColetados = filtroItensColetadosModel) {
       try {
         this.carregando = true
-        const response = await api.get(`v1/restrito/coleta/inventario/page/${idInventario}`, { params: filtroItensColetados })
-        if (response.data && response.data.content.length > 0)
-          this.itensColetados = await response.data.content
-        this.paginacaoMeta = await { ...response.data, content: null }
+        const data = await useCustomFetch(`coleta/inventario/page/${idInventario}`, { params: filtroItensColetados })
+        if (data && data.content.length > 0)
+          this.itensColetados = await data.content
+        this.paginacaoMeta = await { ...data, content: null }
       } catch (error) {
         this.erro = error;
       } finally {
@@ -165,15 +165,18 @@ export const useItensColetadosStore = defineStore({
     async buscarItemColetado(idItem) {
       try {
         this.carregando = true
-        const response = await api.get(`v1/restrito/coleta/${idItem}`)
-        this.itemColetado = await response.data
+        const data = await useCustomFetch(`coleta/${idItem}`)
+        if (!data)
+          return
 
-        const setor = await setoresStore.buscarSetor(this.itemColetado.idSetor)
-        const dependencia = await dependenciasStore.buscarDependencia(this.itemColetado.idDependencia)
-        const situacao_ = await situacaoStore.buscarSituacao(this.itemColetado.situacao)
-        const estadoPlaqueta = await plaquetaStore.buscarEstadoPlaqueta(this.itemColetado.idEstadoPlaqueta)
+        this.itemColetado = await data
+        const setor = await useSetoresStore().buscarSetor(this.itemColetado?.idSetor)
+        const dependencia = await useDependenciasStore().buscarDependencia(this.itemColetado?.idDependencia)
+        const situacao_ = await useSituacaoStore().buscarSituacao(this.itemColetado?.situacao)
+        const estadoPlaqueta = usePlaquetaStore().buscarEstadoPlaqueta(this.itemColetado?.idEstadoPlaqueta)
         this.itemColetado = { ...this.itemColetado, setor, dependencia, situacao_, estadoPlaqueta }
         return this.itemColetado
+
       } catch (error) {
         this.erro = error;
       } finally {

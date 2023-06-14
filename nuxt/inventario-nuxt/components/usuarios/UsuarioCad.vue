@@ -1,119 +1,70 @@
-<template>
-  <div class="q-pa-sm">
-    <q-form class="q-gutter-sm" @submit.prevent="onSubmit">
-      <q-input
-        v-model="usuarioTemp.email"
-        stack-label
-        type="e-mail"
-        outlined
-        label="E-mail (@ufjf.br)"
-        :disable="isModoEdicao"
-        :rules="[(v) => v.includes('@ufjf.br') || 'E-mail não pertence à UFJF']"
-      />
-      <q-input v-model="usuarioTemp.nome" stack-label outlined label="Nome" />
-      <q-input v-model="usuarioTemp.login" stack-label outlined label="Login" />
-      <div v-if="!isModoEdicao" class="q-gutter-y-sm">
-        <q-separator></q-separator>
-        <q-input
-          v-model="senha"
-          type="password"
-          outlined
-          label="Senha"
-          stack-label
-        />
-        <q-input
-          v-model="senhaConfirmacao"
-          type="password"
-          outlined
-          label="Repetir senha"
-          stack-label
-        />
-      </div>
-
-      <div>
-        <q-btn
-          dense
-          :disabled="!isBtnEnabled"
-          label="Salvar"
-          type="submit"
-          color="green"
-        />
-        <q-btn
-          dense
-          label="Voltar"
-          type="reset"
-          color="primary"
-          class="q-ml-sm"
-          to="/usuario"
-        />
-      </div>
-    </q-form>
-  </div>
-  <q-separator inset class="q-mt-sm" />
-</template>
-
 <script setup>
-import { onMounted, ref, computed } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { ref, computed } from 'vue';
+
 import { Notify } from 'quasar';
-import { storeToRefs } from 'pinia';
 
 const usuariosStore = useUsuariosStore();
-const { usuario } = storeToRefs(usuariosStore);
+const { usuario, erro, carregando } = storeToRefs(usuariosStore);
+const { $resetUsuario } = usuariosStore;
 const isModoEdicao = ref(false);
-const router = useRouter();
 const route = useRoute();
-const id = ref(null);
-const senha = ref(null);
 const senhaConfirmacao = ref(null);
-
-const usuarioTemp = ref({
-  nome: '',
-  email: '',
-  cpf: `${Math.floor(Math.random() * 99999999999)}`,
-  id: 0,
-  login: '',
-  senha: '',
-  nascimento: '',
-});
+const isPwd = ref(true);
 
 const isBtnEnabled = computed(() => {
   if (!isModoEdicao.value) {
     return (
-      usuarioTemp.value.email.includes('@ufjf.br') &&
-      senha.value === senhaConfirmacao.value &&
-      !!senha.value
+      usuario.value.email.includes('@ufjf.br') &&
+      usuario.value.senha === senhaConfirmacao.value
     );
   } else {
     return true;
   }
 });
 
-onMounted(async () => {
-  if (
-    route.params.hasOwnProperty('id') &&
-    typeof +route.params.id === 'number'
-  ) {
-    id.value = route.params.id;
-    isModoEdicao.value = id.value !== 0;
+onBeforeMount(async () => {
+  const { id } = route.params;
+
+  if (!id) {
+    return;
   }
 
+  isModoEdicao.value = id !== 'adicionar';
+
   if (isModoEdicao.value) {
-    await usuariosStore.buscarUsuario(id.value);
-    Object.assign(usuarioTemp.value, usuario.value);
+    try {
+      await usuariosStore.buscarUsuario(id);
+    } catch (error) {
+      erro.value = error;
+    }
+  } else {
+    usuario.value = {
+      id: 0,
+      nome: '',
+      login: '',
+      senha: '',
+      email: '',
+      nascimento: '',
+    };
   }
+});
+
+onUnmounted(() => {
+  $resetUsuario();
 });
 
 async function onSubmit() {
   if (isModoEdicao.value) {
     try {
       const { status } = await usuariosStore.editUsuario(
-        id.value,
-        usuarioTemp.value
+        usuario.value.id,
+        usuario.value,
+        { raw: true }
       );
+
       if (status === 200) {
         Notify.create({ color: 'green', message: 'Usuário atualizado!' });
-        router.push({ path: '/usuario' });
+        navigateTo({ path: '/usuario' });
       }
     } catch (err) {
       Notify.create({ color: 'red', message: `Erro: ${err}` });
@@ -121,15 +72,96 @@ async function onSubmit() {
   } else {
     // novo, então
     try {
-      const response = await usuariosStore.addUsuario({
-        ...usuarioTemp.value,
-        senha: senha.value,
-      });
+      const response = await usuariosStore.addUsuario(usuario.value);
       Notify.create({ color: 'green', message: 'Usuário cadastrado!' });
-      router.push({ path: '/usuario' });
+      navigateTo({ path: '/usuario' });
     } catch (err) {
       Notify.create({ color: 'red', message: `Erro: ${err}` });
     }
   }
 }
 </script>
+
+<template>
+  <q-card class="my-card">
+    <q-card-section>
+      <div class="text-center text-h5">
+        {{ isModoEdicao ? 'Editar' : 'Cadastrar' }} usuário
+      </div>
+    </q-card-section>
+    <q-card-section v-if="erro"> {{ erro }} </q-card-section>
+    <q-card-section v-if="usuario && !erro && !carregando">
+      <q-form class="q-gutter-sm">
+        <q-input
+          v-model="usuario.email"
+          stack-label
+          type="e-mail"
+          outlined
+          label="E-mail (@ufjf.br)"
+          :disable="isModoEdicao"
+          :rules="[
+            (v) => v.includes('@ufjf.br') || 'E-mail não pertence à UFJF',
+          ]"
+        />
+        <q-input v-model="usuario.nome" stack-label outlined label="Nome" />
+        <q-input v-model="usuario.login" stack-label outlined label="Login" />
+        <div v-if="!isModoEdicao" class="q-gutter-y-sm">
+          <q-separator></q-separator>
+          <q-input
+            v-model="usuario.senha"
+            type="password"
+            outlined
+            label="Senha"
+            stack-label
+            :autocomplete="usuario.senha"
+            :type="!isPwd ? 'password' : 'text'"
+          >
+            <template v-slot:append>
+              <q-icon
+                :name="isPwd ? 'visibility_off' : 'visibility'"
+                class="cursor-pointer"
+                @click="isPwd = !isPwd"
+              />
+            </template>
+          </q-input>
+          <q-input
+            v-model="senhaConfirmacao"
+            type="password"
+            outlined
+            label="Repetir senha"
+            stack-label
+            :autocomplete="senhaConfirmacao"
+            :type="!isPwd ? 'password' : 'text'"
+          >
+            <template v-slot:append>
+              <q-icon
+                :name="isPwd ? 'visibility_off' : 'visibility'"
+                class="cursor-pointer"
+                @click="isPwd = !isPwd"
+              />
+            </template>
+          </q-input>
+        </div>
+      </q-form>
+    </q-card-section>
+    <q-card-actions v-if="usuario && !erro && !carregando" class="q-ml-sm">
+      <q-btn
+        dense
+        :disabled="!isBtnEnabled"
+        label="Salvar"
+        type="submit"
+        color="green"
+        @click="onSubmit"
+      />
+      <q-btn
+        dense
+        label="Voltar"
+        type="reset"
+        color="primary"
+        class="q-ml-sm"
+        to="/usuario"
+      />
+    </q-card-actions>
+  </q-card>
+  <div class="q-pa-sm"></div>
+</template>

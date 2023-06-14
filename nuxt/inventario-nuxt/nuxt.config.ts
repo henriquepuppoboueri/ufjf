@@ -8,7 +8,7 @@ export default defineNuxtConfig({
   imports: { dirs: ['stores'] },
   modules: ['nuxt-quasar-ui', '@pinia/nuxt'],
   pinia: {
-    autoImports: ['defineStore'],
+    autoImports: ['defineStore', 'storeToRefs'],
   },
   quasar: {
     plugins: [

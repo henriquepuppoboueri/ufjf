@@ -1,13 +1,15 @@
 <script setup>
 import { onMounted, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
+
 import { Notify } from 'quasar';
 import { useQuasar } from 'quasar';
-// import { useInventariosStore } from 'src/stores/inventarios';
-// import { useUsuariosStore } from 'src/stores/usuarios';
+import { storeToRefs } from 'pinia';
+
 import { registroPortugues } from '/helper/functions';
 import { paginacaoOpcoes } from '/helper/qtableOpcoes';
-import { storeToRefs } from 'pinia';
+
+definePageMeta({ name: 'inventario' });
 
 const mostrarDialog = ref(false);
 const inventariosStore = useInventariosStore();
@@ -40,7 +42,7 @@ const isEditavel = computed(() => {
 function verInventario() {
   const _id = inventarioSelecionado.value[0].id;
   return navigateTo({
-    path: `/inventario/v/${_id}/unidades`,
+    path: `/inventario/${_id}/unidades`,
     params: { idInventario: _id },
   });
 }

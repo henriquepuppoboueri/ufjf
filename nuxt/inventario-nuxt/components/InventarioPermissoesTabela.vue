@@ -1,10 +1,11 @@
 <script setup>
 import { onMounted, ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
-import { Notify } from 'quasar';
-import { registroPortugues } from '/helper/functions';
-import { useQuasar } from 'quasar';
+
+import { Notify, useQuasar } from 'quasar';
 import { storeToRefs } from 'pinia';
+
+import { registroPortugues } from '/helper/functions';
 
 const inventariosStore = useInventariosStore();
 const { usuariosInventario } = storeToRefs(inventariosStore);
@@ -15,6 +16,7 @@ const { usuario } = storeToRefs(authStore);
 const $q = useQuasar();
 const route = useRoute();
 const idInventario = ref(null);
+const filtro = ref('');
 
 const usuariosSelecionados = ref([]);
 const colunasTblUsuarios = ref([
@@ -283,6 +285,7 @@ async function deletarUsuario() {
     flat
     bordered
     title="Usuários e permissões"
+    :filter="filtro"
     :rows="usuariosInventario"
     :columns="colunasTblUsuarios"
     row-key="id"
@@ -291,6 +294,23 @@ async function deletarUsuario() {
     rows-per-page-label="Registros por página:"
     :selected-rows-label="registroPortugues"
   >
+    <template #top-right>
+      <div class="row q-gutter-sm">
+        <q-input
+          v-model="filtro"
+          borderless
+          dense
+          filled
+          debounce="300"
+          placeholder="Filtrar"
+          clearable
+        >
+          <template #append>
+            <q-icon name="search" />
+          </template>
+        </q-input>
+      </div>
+    </template>
     <template #body-cell-permissoes="props">
       <q-td :props="props">
         <q-btn

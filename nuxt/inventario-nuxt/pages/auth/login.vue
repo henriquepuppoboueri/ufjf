@@ -16,6 +16,7 @@ const { usuario } = storeToRefs(authStore);
 const { logar } = authStore;
 
 definePageMeta({
+  name: 'login',
   layout: 'login',
 });
 
