@@ -5,4 +5,9 @@ node_modules
 .cache
 .output
 .env
+<<<<<<< Updated upstream
 dist
+=======
+dist
+.DS_Store
+>>>>>>> Stashed changes
