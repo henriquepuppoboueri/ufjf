@@ -1,5 +1,9 @@
 <script setup>
-import RelatorioBase from "src/components/inventarios/relatorio/RelatorioBase.vue";
+import RelatorioBase from '/components/inventarios/relatorio/RelatorioBase.vue';
+
+definePageMeta({
+  name: 'relatorios',
+});
 </script>
 
 <template>

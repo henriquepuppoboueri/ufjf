@@ -21,7 +21,7 @@
 </template>
 
 <script setup>
-const props = defineProps({ inventario: { type: Object, required: true } });
+const props = defineProps({ inventario: { type: Object } });
 const resumoLista = [
   { name: 'Por setor', to: 'resumo-setores' },
   { name: 'Por usuário', to: 'resumo-usuarios' },

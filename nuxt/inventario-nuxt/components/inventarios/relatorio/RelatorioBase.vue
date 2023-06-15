@@ -1,273 +1,135 @@
 <script setup>
-import { storeToRefs } from "pinia";
-import { useRelatoriosStore } from "src/stores/relatorios";
-import { onMounted, ref, watch, computed } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useQuasar } from 'quasar';
 
 import {
   diminuiTexto,
   registroPortugues,
   exportTable,
-} from "src/helper/functions";
-import { paginacaoOpcoes } from "src/helper/qtableOpcoes";
-import { useSetoresStore } from "src/stores/setores";
-import { useDependenciasStore } from "src/stores/dependencias";
-import { useQuasar } from "quasar";
+} from '/helper/functions';
+import { paginacaoOpcoes } from '/helper/qtableOpcoes';
 
 const $q = useQuasar();
 const route = useRoute();
-let idInventario = null;
-const dependenciasStore = useDependenciasStore();
-const { dependencias, dependencia } = storeToRefs(dependenciasStore);
+const idInventario = ref(0);
 const setoresStore = useSetoresStore();
-const { setoresDependencias, setor } = storeToRefs(setoresStore);
-const router = useRouter();
+const { setoresDependencias, setor, setorDependencias, dependencia } =
+  storeToRefs(setoresStore);
+const { buscarSetoresDependencias, buscarDepsDoSetor, $resetSetores } =
+  setoresStore;
+const situacaoStore = useSituacaoStore();
+const { situacao, situacoes } = storeToRefs(situacaoStore);
+const { buscarSituacoes, $resetSituacao } = situacaoStore;
 const itensSelecionados = ref([]);
-const filtro = ref("");
-const nomeRelatorio = ref("");
+const filtro = ref('');
+const nomeRelatorio = ref('1212');
 const relatoriosStore = useRelatoriosStore();
 const { relatorio, carregando, erro } = storeToRefs(relatoriosStore);
+const { buscarDadosRelatorio, $resetRelatorio } = relatoriosStore;
 
-const colunasItens = [
-  {
-    name: "patrimonio",
-    align: "left",
-    label: "PATRIMÔNIO",
-    field: "patrimonio",
-    sortable: true,
-  },
-  {
-    name: "descricao",
-    align: "left",
-    label: "DESCRIÇÃO",
-    field: "descricao",
-    sortable: true,
-  },
-  {
-    name: "setorEncontrado",
-    align: "left",
-    label: "SETOR ENCONTRADO",
-    field: "setorEncontrado",
-    sortable: true,
-  },
-  {
-    name: "setorPrevisto",
-    align: "left",
-    label: "SETOR PREVISTO",
-    field: "setorPrevisto",
-    sortable: true,
-  },
-  {
-    name: "dependenciaEncontrada",
-    align: "left",
-    label: "DEP. ENCONTRADA",
-    field: "dependenciaEncontrada",
-    sortable: true,
-  },
-  {
-    name: "dependenciaPrevista",
-    align: "left",
-    label: "DEP. PREVISTA",
-    field: "dependenciaPrevista",
-    sortable: true,
-  },
-  {
-    name: "localizacao",
-    align: "left",
-    label: "LOCALIZAÇÃO",
-    field: "localizacao",
-    sortable: true,
-  },
-  {
-    name: "estadoPlaqueta",
-    align: "left",
-    label: "ESTADO PLAQUETA",
-    field: "estadoPlaqueta",
-    sortable: true,
-  },
-  {
-    name: "qtde",
-    align: "left",
-    label: "QUANTIDADE",
-    field: "qtde",
-    sortable: true,
-  },
-];
-
-const colunasVisiveis = ref([]);
-
-const relatoriosOpcoes = ref([
-  {
-    nome: "",
-    titulo: "Sem título",
-    itemTipo: "",
-    fn: null,
-  },
-  {
-    nome: "bens-nao-coletados",
-    titulo: "Bens não coletados",
-    itemTipo: "itemImportado",
-    fn: relatoriosStore.bensNaoEncontrados,
-    colunasVisiveis: ["patrimonio", "descricao"],
-  },
-  {
-    nome: "plaquetas-problemas",
-    titulo: "Plaquetas com problemas",
-    itemTipo: "itemColetado",
-    fn: relatoriosStore.plaquetasComProblemas,
-    colunasVisiveis: [
-      "patrimonio",
-      "descricao",
-      "localizacao",
-      "setorEncontrado",
-      "dependenciaEncontrada",
-      "estadoPlaqueta",
-    ],
-  },
-  {
-    nome: "sem-patrimonio",
-    titulo: "Bens sem patrimônio",
-    itemTipo: "itemColetado",
-    fn: relatoriosStore.bensSemPatrimonio,
-    colunasVisiveis: [
-      "patrimonio",
-      "descricao",
-      "localizacao",
-      "setorEncontrado",
-      "dependenciaEncontrada",
-    ],
-  },
-  {
-    nome: "local-diferente",
-    titulo: "Bens em outras unidades",
-    itemTipo: "itemColetado",
-    fn: relatoriosStore.localDiferente,
-    colunasVisiveis: [
-      "patrimonio",
-      "descricao",
-      "localizacao",
-      "setorEncontrado",
-      "setorPrevisto",
-      "dependenciaEncontrada",
-      "dependenciaPrevista",
-    ],
-  },
-  {
-    nome: "sem-itens",
-    titulo: "Coletas sem itens",
-    itemTipo: "itemColetado",
-    fn: relatoriosStore.coletasSemItens,
-    colunasVisiveis: [
-      "patrimonio",
-      "descricao",
-      "localizacao",
-      "setorEncontrado",
-      "setorPrevisto",
-      "dependenciaEncontrada",
-      "dependenciaPrevista",
-    ],
-  },
-  {
-    nome: "repetidos",
-    titulo: "Coletas repetidas",
-    itemTipo: "itemColetado",
-    fn: relatoriosStore.coletasRepetidas,
-    colunasVisiveis: ["patrimonio", "qtde"],
-  },
-]);
+const itemSelecionado = computed(() => {
+  return itensSelecionados.value[0] || null;
+});
 
 const relatorioSelec = computed(() => {
-  return relatoriosOpcoes.value.find(
-    (relatorio) => relatorio.nome === nomeRelatorio.value
+  return (
+    relatoriosLista.find(
+      (relatorio) => relatorio.nome === nomeRelatorio.value
+    ) || null
   );
+});
+
+const qtItensSelec = computed(() => {
+  if (itensSelecionados.value && itensSelecionados?.value?.length) {
+    return itensSelecionados.value.length;
+  }
+});
+
+const idSetor = computed(() => {
+  return setor.value !== null && setor.value.hasOwnProperty('id')
+    ? setor.value.id
+    : '';
+});
+
+const idDependencia = computed(() => {
+  return dependencia.value !== null && dependencia.value.hasOwnProperty('id')
+    ? dependencia.value.id
+    : '';
+});
+
+const idTipoItem = computed(() =>
+  relatorioSelec.value.itemTipo === 'itemColetado'
+    ? 'idItemColetado'
+    : 'idItemImportado' || 0
+);
+
+watch(itensSelecionados, (nv, ov) => {
+  if (nv?.length > 1) {
+    itensSelecionados.value.shift();
+  }
 });
 
 watch(
   () => route.query,
   (query) => {
     nomeRelatorio.value = query.relatorio;
-    relatorio.value = [];
-    if (nomeRelatorio.value === "repetidos") {
-      filtrarSetorDep();
-    }
+    $resetRelatorio();
+    $resetSetores();
+    $resetSituacao();
   }
 );
 
-const qtItensSelec = computed(() => {
-  return itensSelecionados.value.length;
-});
-
-const idSetor = computed(() => {
-  return setor.value !== null && setor.value.hasOwnProperty("id")
-    ? setor.value.id
-    : "";
-});
-
-const idDependencia = computed(() => {
-  return dependencia.value !== null && dependencia.value.hasOwnProperty("id")
-    ? dependencia.value.id
-    : "";
-});
-
-watch(itensSelecionados, (nv, ov) => {
-  if (nv.length > 1) {
-    itensSelecionados.value.shift();
-  }
-});
-
-watch(setor, (nv, ov) => {
+watch(setor, async (nv, ov) => {
   if (nv) {
-    dependenciasStore.buscarDependencias(nv.id);
-    dependenciasStore.dependencia = [];
+    setorDependencias.value = [];
+    dependencia.value = null;
+    await buscarDepsDoSetor(nv.id);
   }
 });
 
-onMounted(async () => {
-  idInventario = route.params["idInventario"];
-  nomeRelatorio.value = route.query["relatorio"];
-  if (nomeRelatorio.value !== "repetidos") {
-    await setoresStore.buscarSetoresDependencias(idInventario);
-  } else filtrarSetorDep();
+onBeforeMount(async () => {
+  idInventario.value = route.params['idInventario'];
+  nomeRelatorio.value = route.query['relatorio'];
+  await buscarSetoresDependencias(idInventario.value);
+  await buscarSituacoes();
 });
-
-function verItem() {
-  if (itensSelecionados.value.length === 1) {
-    router.push({
-      name: relatorioSelec.value.itemTipo,
-      params: { idItem: itensSelecionados.value[0].id },
-    });
-  }
-}
 
 function exportarDados() {
-  exportTable(colunasItens, relatorio.value, "bens-sem-patrimonios");
+  exportTable(tabelaColunas, relatorio.value, 'bens-sem-patrimonios');
 }
 
 async function filtrarSetorDep() {
   try {
     erro.value = null;
-    await relatorioSelec.value.fn(
-      idInventario,
-      idSetor.value,
-      idDependencia.value
-    );
-    if (erro.value && erro.value.response.status == "403") {
+    await buscarDadosRelatorio({
+      nome: nomeRelatorio.value,
+      params: {
+        idInventario: idInventario.value,
+        idSetor: idSetor.value,
+        idDependencia: idDependencia.value,
+        idSituacao: situacao?.value?.id || null,
+      },
+    });
+    if (erro.value && erro.value.response.status == '403') {
       throw new Error(erro.value.response.data);
     }
   } catch (error) {
-    $q.dialog({ title: "Erro!", message: error.message });
+    $q.dialog({ title: 'Erro!', message: error.message });
   }
 }
 
 function limparFiltro() {
-  setor.value = null;
-  dependencia.value = null;
+  $resetRelatorio();
+  $resetSetores();
+  $resetSituacao();
 }
 </script>
 
 <template>
   <q-card bordered>
-    <q-card-section v-if="nomeRelatorio !== 'repetidos'" class="q-gutter-sm">
+    <q-card-section v-if="relatorioSelec" align="center" class="text-h5">
+      {{ relatorioSelec.descricao }}
+    </q-card-section>
+    <q-card-section v-if="!carregando" class="q-gutter-sm">
       <q-select
         v-model="setor"
         outlined
@@ -280,10 +142,20 @@ function limparFiltro() {
       <q-select
         v-model="dependencia"
         outlined
-        :options="dependencias"
+        :options="setorDependencias"
         :option-label="(item) => item.nome"
         :option-value="(item) => item.nome"
         label="Dependência"
+        dense
+      />
+      <q-select
+        v-if="relatorioSelec?.filtros?.includes('situacao')"
+        v-model="situacao"
+        outlined
+        :options="situacoes"
+        :option-label="(item) => item.nome"
+        :option-value="(item) => item.nome"
+        label="Situação"
         dense
       />
       <q-btn
@@ -305,15 +177,19 @@ function limparFiltro() {
       />
       <q-separator inset />
     </q-card-section>
+    <q-card-section v-if="carregando">
+      <q-inner-loading :showing="carregando">
+        <q-spinner-gears size="50px" color="primary" />
+      </q-inner-loading>
+    </q-card-section>
     <q-card-section>
-      <!-- <q-card-section v-if="!carregando"> -->
       <q-table
+        v-if="relatorio && !carregando"
         flat
         :loading="carregando"
-        :title="relatorioSelec.titulo"
         :visible-columns="relatorioSelec.colunasVisiveis"
         :rows="relatorio"
-        :columns="colunasItens"
+        :columns="relatorioColunas"
         row-key="id"
         separator="cell"
         :wrap-cells="true"
@@ -349,17 +225,10 @@ function limparFiltro() {
           </q-input>
         </template>
 
-        <template #loading>
-          <q-inner-loading :showing="carregando">
-            <q-spinner-gears size="50px" color="primary" />
-          </q-inner-loading>
-        </template>
-
         <template #body="props">
           <q-tr :props="props">
             <q-td>
               <q-checkbox
-                v-if="nomeRelatorio !== 'repetidos'"
                 v-model="itensSelecionados"
                 left-label
                 :val="props.row"
@@ -384,17 +253,19 @@ function limparFiltro() {
         </template>
       </q-table>
     </q-card-section>
-    <q-card-actions>
+    <q-card-actions v-if="!carregando && relatorio" class="q-gutter-sm">
       <q-btn
         v-if="qtItensSelec && qtItensSelec === 1"
         dense
         color="orange"
         class="text-white"
         label="Visualizar"
-        @click="verItem"
-      />
+        :to="{
+          name: relatorioSelec.itemTipo,
+          params: { [idTipoItem]: itemSelecionado.id },
+        }"
+      ></q-btn>
       <q-btn
-        v-if="!carregando"
         dense
         color="red"
         class="text-white"
@@ -404,3 +275,5 @@ function limparFiltro() {
     </q-card-actions>
   </q-card>
 </template>
+
+<style></style>

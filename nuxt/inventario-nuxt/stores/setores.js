@@ -1,101 +1,123 @@
-import { defineStore } from 'pinia'
+export const useSetoresStore = defineStore('setores', () => {
+  const setores = ref([]);
+  const setoresDependencias = ref([]);
+  const setor = ref(null);
+  const setorDependencias = ref([]);
+  const carregando = ref(false);
+  const erro = ref(null);
+  const dependencia = ref(null);
 
+  function buscarSetorPorId(idSetor) {
+    const setor = setores.value.find((setor) => setor.id === idSetor)
+    return setor || 'Sem setor';
+  }
 
-export const useSetoresStore = defineStore({
-  id: 'setores',
-  state: () => ({
-    setores: [],
-    setoresDependencias: [],
-    setor: null,
-    carregando: false,
-    erro: null,
-    dependencia: null,
-  }),
-  actions: {
-    buscarSetorPorId(idSetor) {
-      const setor = this.setoresDependencias.find((setor) => setor.id === idSetor)
-      return setor || 'Sem setor';
-    },
-    async addSetor(setor) {
-      try {
-        this.carregando = true
-        const response = await api.post(`v1/restrito/setor`, setor)
-        return response;
-      } catch (error) {
-        this.error = error;
-      } finally {
-        this.carregando = false
-      }
-    },
-    async editSetor(idSetor, setor) {
-      try {
-        this.carregando = true
-        const response = await api.put(`v1/restrito/setor/${idSetor}`, setor)
-        return response;
-      } catch (error) {
-        this.error = error;
-      } finally {
-        this.carregando = false
-      }
-    },
-    async delSetor(idSetor) {
-      try {
-        this.carregando = true
-        const response = await api.delete(`v1/restrito/setor/${idSetor}`)
-        return response;
-      } catch (error) {
-        this.error = error;
-      } finally {
-        this.carregando = false
-      }
-    },
-    async buscarDepsDoSetor(idSetor) {
-      try {
-        this.carregando = true
-        const response = await api.get(`v1/restrito/setor/dependencia/${idSetor}`)
-        return response;
-      } catch (error) {
-        this.error = error;
-      } finally {
-        this.carregando = false
-      }
-    },
-    async buscarSetor(idSetor) {
-      try {
-        this.carregando = true
-        const response = await api.get(`v1/restrito/setor/${idSetor}`)
-        this.setor = await response.data
-        return await response.data
-      } catch (error) {
-        this.error = error
-      } finally {
-        this.carregando = false
-      }
-    },
-    async buscarSetores() {
-      try {
-        this.carregando = true
-        const response = await api.get(`v1/restrito/setor`)
-        this.setores
-        return response;
-      } catch (error) {
-        this.error = error;
-      } finally {
-        this.carregando = false
-      }
-    },
-    async buscarSetoresDependencias(idInventario) {
-      try {
-        this.carregando = true
-        const response = await api.get(`v1/restrito/inventario/setor/dependencia/${idInventario}`)
-        if (response)
-          this.setoresDependencias = await response.data;
-      } catch (error) {
-        this.error = error;
-      } finally {
-        this.carregando = false;
+  async function addSetor(setor) {
+    try {
+      carregando.value = true
+      const response = await useCustomFetch(`setor`, { body: setor, method: 'post' })
+      return response;
+    } catch (error) {
+      erro.value = error;
+    } finally {
+      carregando.value = false
+    }
+  }
 
-      }
-    },
+  async function editSetor(idSetor, setor) {
+    try {
+      carregando.value = true
+      const response = await useCustomFetch(`setor/${idSetor}`, { body: setor, method: 'put' })
+      return response;
+    } catch (error) {
+      erro.value = error;
+    } finally {
+      carregando.value = false
+    }
+  }
+
+  async function delSetor(idSetor) {
+    try {
+      carregando.value = true
+      const response = await useCustomFetch(`setor/${idSetor}`, { method: 'delete' })
+      return response;
+    } catch (error) {
+      erro.value = error;
+    } finally {
+      carregando.value = false
+    }
+  }
+
+  async function buscarDepsDoSetor(idSetor) {
+    try {
+      carregando.value = true
+      const data = await useCustomFetch(`setor/dependencia/${idSetor}`)
+      setorDependencias.value = data || [];
+    } catch (error) {
+      erro.value = error;
+    } finally {
+      carregando.value = false
+    }
+  }
+
+  async function buscarSetor(idSetor) {
+    try {
+      carregando.value = true
+      const { data } = await useCustomFetch(`setor/${idSetor}`)
+      setor.value = data || null
+    } catch (error) {
+      erro.value = error;
+    } finally {
+      carregando.value = false
+    }
+  }
+
+  async function buscarSetores() {
+    try {
+      carregando.value = true
+      const { data } = await useCustomFetch(`setor`)
+      setores.value = data || [];
+    } catch (error) {
+      erro.value = error;
+    } finally {
+      carregando.value = false
+    }
+  }
+
+  async function buscarSetoresDependencias(idInventario) {
+    try {
+      carregando.value = true
+      const data = await useCustomFetch(`inventario/setor/dependencia/${idInventario}`)
+      setoresDependencias.value = data || [];
+    } catch (error) {
+      erro.value = error;
+    } finally {
+      carregando.value = false
+    }
+  }
+
+  function $resetSetores() {
+    setor.value = null;
+    setorDependencias.value = [];
+    dependencia.value = null;
+  }
+
+  return {
+    setores,
+    setoresDependencias,
+    setorDependencias,
+    setor,
+    carregando,
+    erro,
+    dependencia,
+    buscarSetorPorId,
+    addSetor,
+    editSetor,
+    delSetor,
+    buscarDepsDoSetor,
+    buscarSetor,
+    buscarSetores,
+    buscarSetoresDependencias,
+    $resetSetores
   }
 })

@@ -1,116 +1,43 @@
-import { defineStore } from 'pinia'
-import { api } from 'boot/axios'
+export const useRelatoriosStore = defineStore('relatorios', () => {
+  const relatorio = ref(null)
+  const carregando = ref(false)
+  const erro = ref(null)
 
-export const useRelatoriosStore = defineStore({
-  id: 'relatorios',
-  state: () => ({
-    relatorio: [],
-    carregando: false,
-    erro: null
-  }),
-  actions: {
-    async bensNaoEncontrados(idInventario, idSetor, idDependencia) {
-      try {
-        this.carregando = true
-        const response = await api.get(`v1/restrito/relatorios/semColeta/${idInventario}?idSetor=${idSetor}&idDependencia=${idDependencia}`)
-        const data = await response.data
-        this.relatorio = await data
-        this.carregando = false
-      } catch (error) {
-        this.erro = error
-        this.carregando = false
-      }
-    },
-    async coletasSemItens(idInventario, idSetor, idDependencia) {
-      idSetor = idSetor || ''
-      idDependencia = idDependencia || ''
-      try {
-        this.carregando = true
-        const response = await api.get(`v1/restrito/relatorios/semItem/${idInventario}?idSetor=${idSetor}&idDependencia=${idDependencia}`)
-        const data = await response.data
-        this.relatorio = await data
-        this.carregando = false
-      } catch (error) {
-        this.erro = error
-        this.carregando = false
-      }
-    },
-    async bensSemPatrimonio(idInventario, idSetor, idDependencia) {
-      idSetor = idSetor || ''
-      idDependencia = idDependencia || ''
-      try {
-        this.carregando = true
-        const response = await api.get(`v1/restrito/relatorios/semPatrimonio/${idInventario}?idSetor=${idSetor}&idDependencia=${idDependencia}`)
-        const data = await response.data
-        this.relatorio = await data
-        this.carregando = false
-      } catch (error) {
-        this.erro = error
-        this.carregando = false
-      }
-    },
-    async plaquetasComProblemas(idInventario, idSetor, idDependencia) {
-      idSetor = idSetor || ''
-      idDependencia = idDependencia || ''
-      try {
-        this.carregando = true
-        const response = await api.get(`v1/restrito/relatorios/problemaNaPlaqueta/${idInventario}?idSetor=${idSetor}&idDependencia=${idDependencia}`)
-        const data = await response.data
-        this.relatorio = await data
-        this.carregando = false
-      } catch (error) {
-        this.erro = error
-        this.carregando = false
-      }
-    },
-    async localDiferente(idInventario, idSetor, idDependencia) {
-      try {
-        this.carregando = true
-        const response = await api.get(`v1/restrito/relatorios/localDiferente/${idInventario}?idSetor=${idSetor}&idDependencia=${idDependencia}`)
-        const data = await response.data
-        this.relatorio = await data
-        this.carregando = false
-      } catch (error) {
-        this.erro = error
-        this.carregando = false
-      }
-    },
-    async estatisticasPorDia(idInventario) {
-      try {
-        this.carregando = true
-        const response = await api.get(`v1/restrito/resumo/obtemResumoPorUsuario/${idInventario}`)
-        const data = await response.data
-        this.relatorio = await data
-        this.carregando = false
-      } catch (error) {
-        this.erro = error
-        this.carregando = false
-      }
-    },
-    async estatisticasPorSemana(idInventario) {
-      try {
-        this.carregando = true
-        const { data } = await api.get(`v1/restrito/inventario/usuario/qtdecoletasemana/${idInventario}`)
-        // const data = await response.data
-        this.relatorio = await data
-        console.log(data);
-        this.carregando = false
-      } catch (error) {
-        this.erro = error
-        this.carregando = false
-      }
-    },
-    async coletasRepetidas(idInventario, idSetor, idDependencia) {
-      try {
-        this.carregando = true
-        const { data } = await api.get(`v1/restrito/relatorios/repetidos/${idInventario}?idSetor=${idSetor}&idDependencia=${idDependencia}`)
-        // const data = await response.data
-        this.relatorio = await data
-        this.carregando = false
-      } catch (error) {
-        this.erro = error
-        this.carregando = false
-      }
-    },
+  function sanitizeUrl(url, params = {}) {
+    const regex = /\${(.*?)}/g
+    const sanitizedUrl = url.replace(regex, (match, pl) => {
+      return params[pl.trim()] || ''
+    }
+    )
+    return sanitizedUrl
   }
+
+  async function buscarDadosRelatorio({ nome = '', params = {} }) {
+    try {
+      carregando.value = true
+      const url = relatoriosLista.find(rel => rel.nome === nome)?.url || ''
+      // não existe relatório ou url não informada
+      if (!url) return
+      const sanitizedUrl = sanitizeUrl(url, params)
+      const data = await useCustomFetch(sanitizedUrl)
+      relatorio.value = data || []
+    } catch (error) {
+      erro.value = error
+    } finally {
+      carregando.value = false
+    }
+  }
+
+  function $resetRelatorio() {
+    relatorio.value = null
+  }
+
+  return {
+    relatorio,
+    carregando,
+    erro,
+    buscarDadosRelatorio,
+    $resetRelatorio
+  }
+
 })

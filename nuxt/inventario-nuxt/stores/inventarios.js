@@ -1,6 +1,3 @@
-import { defineStore } from 'pinia'
-
-
 export const useInventariosStore = defineStore({
   id: 'inventarios',
   state: () => ({

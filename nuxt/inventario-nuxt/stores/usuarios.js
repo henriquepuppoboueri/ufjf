@@ -1,5 +1,3 @@
-import { defineStore } from 'pinia'
-
 export const useUsuariosStore = defineStore('usuarios', () => {
   const usuario = ref(null);
   const usuarios = ref([]);

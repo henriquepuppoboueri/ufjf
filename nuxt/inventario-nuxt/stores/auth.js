@@ -1,6 +1,3 @@
-import { defineStore } from 'pinia'
-import { useRouter, useRoute } from 'vue-router'
-
 export const useAuthStore = defineStore('auth', () => {
 
   const usuario = ref(null);
