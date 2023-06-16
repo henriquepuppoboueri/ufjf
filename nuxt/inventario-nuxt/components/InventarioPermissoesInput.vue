@@ -1,14 +1,10 @@
 <script setup>
-import { ref, computed } from 'vue';
-
 import lodash from 'lodash';
-import { storeToRefs } from 'pinia';
 import { Notify } from 'quasar';
-
-import { useRoute } from 'vue-router';
 
 const inventariosStore = useInventariosStore();
 const { usuariosInventario, presidentes } = storeToRefs(inventariosStore);
+const { addUsuarioInventario } = inventariosStore;
 const novoUsuario = ref(null);
 const usuariosListaFiltro = ref([]);
 const usuariosStore = useUsuariosStore();
@@ -35,16 +31,16 @@ function filterFn(val, update, abort) {
   });
 }
 
-async function addUsuarioInventario() {
-  const { idInventario } = route.params;
-  const usuInventario = { idInventario, idUsuario: novoUsuario.value.id };
-
+async function addUsuInventario() {
   try {
-    await inventariosStore.addUsuarioInventario(idInventario, usuInventario);
-    Notify.create({
-      color: 'green',
-      message: `Usuário ${novoUsuario.value.nome} vinculado!`,
-    });
+    const { idInventario } = route.params;
+    const usuInventario = { idInventario, idUsuario: novoUsuario.value.id };
+    const { status } = await addUsuarioInventario(idInventario, usuInventario);
+    if (status === 200)
+      Notify.create({
+        color: 'green',
+        message: `Usuário ${novoUsuario.value.nome} vinculado!`,
+      });
   } catch (err) {
     let errMsg = err;
     if (err.response && err.response.data) errMsg = err.response.data;
@@ -96,7 +92,7 @@ async function addUsuarioInventario() {
       outline
       icon="add"
       color="green"
-      @click="addUsuarioInventario"
+      @click="addUsuInventario"
     />
   </div>
 </template>

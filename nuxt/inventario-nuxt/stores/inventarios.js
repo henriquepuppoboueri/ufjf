@@ -99,13 +99,23 @@ export const useInventariosStore = defineStore({
     },
 
     async addUsuarioInventario(idInventario, usuario) {
-      await useCustomFetch(`inventario/usuario/${idInventario}`, { method: 'post', body: usuario })
-      await this.buscarUsuariosInventario(idInventario);
+      try {
+        const response = await useCustomFetch(`inventario/usuario/${idInventario}`, { method: 'post', body: usuario }, { raw: true })
+        await this.buscarUsuariosInventario(idInventario);
+        return response
+      } catch (error) {
+        this.erro = error
+      }
     },
 
     async delUsuarioInventario(idInventario, idUsuario) {
-      await useCustomFetch(`inventario/usuario/${idInventario}&${idUsuario}`, { method: 'delete' })
-      await this.buscarUsuariosInventario(idInventario);
+      try {
+        const response = await useCustomFetch(`inventario/usuario/${idInventario}&${idUsuario}`, { method: 'delete' }, { raw: true })
+        await this.buscarUsuariosInventario(idInventario);
+        return response
+      } catch (error) {
+        this.erro = error
+      }
     },
 
     async buscarUsuariosInventario(idInventario) {

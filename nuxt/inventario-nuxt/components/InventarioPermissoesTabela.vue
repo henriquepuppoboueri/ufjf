@@ -1,15 +1,19 @@
 <script setup>
-import { onMounted, ref, computed } from 'vue';
-import { useRoute } from 'vue-router';
-
 import { Notify, useQuasar } from 'quasar';
-import { storeToRefs } from 'pinia';
 
 import { registroPortugues } from '/helper/functions';
 
 const inventariosStore = useInventariosStore();
 const { usuariosInventario } = storeToRefs(inventariosStore);
-const { setUsuarioEmitenteRel, setUsuarioNaoEmitenteRel } = inventariosStore;
+const {
+  setUsuarioEmitenteRel,
+  setUsuarioNaoEmitenteRel,
+  delUsuarioInventario,
+  setUsuarioInventarioPresidente,
+  setUsuarioInventarioNormal,
+  setUsuarioInventarioAdmin,
+  setUsuarioInventarioNaoAdmin,
+} = inventariosStore;
 const usuariosStore = useUsuariosStore();
 const authStore = useAuthStore();
 const { usuario } = storeToRefs(authStore);
@@ -71,10 +75,7 @@ const PRESIDENTE_OPTIONS = {
     if (usuariosSelecionados.value.length > 0) {
       const usuario = usuariosSelecionados.value[0];
 
-      await inventariosStore.setUsuarioInventarioNormal(
-        idInventario.value,
-        usuario.id
-      );
+      await setUsuarioInventarioNormal(idInventario.value, usuario.id);
     }
   },
   errorMsg: `Erro ao remover presidência do usuário!`,
@@ -92,10 +93,7 @@ const NAO_PRESIDENTE_OPTIONS = {
     if (usuariosSelecionados.value.length > 0) {
       const usuario = usuariosSelecionados.value[0];
 
-      await inventariosStore.setUsuarioInventarioPresidente(
-        idInventario.value,
-        usuario.id
-      );
+      await setUsuarioInventarioPresidente(idInventario.value, usuario.id);
     }
   },
   errorMsg: `Erro ao definir usuário como presidente!`,
@@ -113,10 +111,7 @@ const ADMIN_OPTIONS = {
     if (usuariosSelecionados.value.length > 0) {
       const usuario = usuariosSelecionados.value[0];
 
-      await inventariosStore.setUsuarioInventarioNaoAdmin(
-        idInventario.value,
-        usuario.id
-      );
+      await setUsuarioInventarioNaoAdmin(idInventario.value, usuario.id);
     }
   },
   errorMsg: `Erro ao revogar status de administrador do usuário!`,
@@ -134,10 +129,7 @@ const NAO_ADMIN_OPTIONS = {
     if (usuariosSelecionados.value.length > 0) {
       const usuario = usuariosSelecionados.value[0];
 
-      await inventariosStore.setUsuarioInventarioAdmin(
-        idInventario.value,
-        usuario.id
-      );
+      await setUsuarioInventarioAdmin(idInventario.value, usuario.id);
     }
   },
   errorMsg: `Erro ao definir usuário como administrador do usuário!`,
@@ -254,10 +246,11 @@ const DELETE_OPTIONS = {
   async cbTry() {
     if (usuariosSelecionados.value.length > 0)
       usuariosSelecionados.value.forEach(async (usuario) => {
-        await inventariosStore.delUsuarioInventario(
+        const { status } = await delUsuarioInventario(
           idInventario.value,
           usuario.id
         );
+        if (status !== 204) throw new Error('Erro ao desvincular usuário!');
       });
   },
   errorMsg: `Erro ao desvincular usuário!`,
