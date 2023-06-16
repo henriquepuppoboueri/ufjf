@@ -1,10 +1,5 @@
 <script setup>
-import { onMounted, ref, computed } from 'vue';
-import { useRouter } from 'vue-router';
-
-import { Notify } from 'quasar';
-import { useQuasar } from 'quasar';
-import { storeToRefs } from 'pinia';
+import { Notify, useQuasar } from 'quasar';
 
 import { registroPortugues } from '/helper/functions';
 import { paginacaoOpcoes } from '/helper/qtableOpcoes';
@@ -14,12 +9,11 @@ definePageMeta({ name: 'inventario' });
 const mostrarDialog = ref(false);
 const inventariosStore = useInventariosStore();
 const usuariosStore = useUsuariosStore();
-const { inventarios, carregando } = storeToRefs(inventariosStore);
-const { buscarInventarios } = inventariosStore;
+const { inventarios, carregando, erro } = storeToRefs(inventariosStore);
+const { buscarInventarios, delInventario } = inventariosStore;
 const { usuarioInventarios } = storeToRefs(usuariosStore);
 const $q = useQuasar();
 const inventarioSelecionado = ref([]);
-const router = useRouter();
 const colunas = ref([
   {
     name: 'nome',
@@ -35,32 +29,15 @@ const colunas = ref([
   },
 ]);
 
-const isEditavel = computed(() => {
+const isInvSelecionado = computed(() => {
   return !inventarioSelecionado.value.length > 0;
 });
-
-function verInventario() {
-  const _id = inventarioSelecionado.value[0].id;
-  return navigateTo({
-    path: `/inventario/${_id}/unidades`,
-    params: { idInventario: _id },
-  });
-}
-
-function editarInventario() {
-  const _id = inventarioSelecionado.value[0].id;
-  router.push(`/inventario/edit/${_id}/`);
-}
-
-function novoInventario() {
-  router.push({ path: '/inventario/novo/' });
-}
 
 async function excluirInventario() {
   const _id = inventarioSelecionado.value[0].id;
 
   try {
-    const status = await inventariosStore.delInventario(_id);
+    const { status } = await delInventario(_id);
     if (status === 204) {
       Notify.create({ color: 'green', message: 'Inventário excluído!' });
       inventarioSelecionado.value = [];
@@ -94,7 +71,7 @@ const statusInventarioBtn = computed(() => {
   return lblTemp;
 });
 
-onMounted(async () => {
+onBeforeMount(async () => {
   await usuariosStore.buscarUsuarioInventarios();
   const usuarioInventariosId = usuarioInventarios.value.map(
     (inventario) => inventario.idInventario
@@ -136,6 +113,7 @@ async function mudarSituacaoInventario() {
 </script>
 
 <template>
+  {{ inventariosStore.erro }}
   <q-dialog v-model="mostrarDialog">
     <q-card class="q-pa-sm">
       <q-card-section class="text-h6 text-center text-bold">
@@ -174,42 +152,41 @@ async function mudarSituacaoInventario() {
     </q-card-section>
     <q-card-actions>
       <q-btn
-        v-if="!isEditavel"
+        v-if="!isInvSelecionado"
         dense
-        :disabled="isEditavel"
         color="orange"
         class="text-white"
         label="Visualizar"
-        @click="verInventario"
+        :to="{
+          path: `/inventario/${inventarioSelecionado[0].id}`,
+        }"
       />
       <q-btn
-        v-if="!isEditavel"
+        v-if="!isInvSelecionado"
         dense
-        :disabled="isEditavel"
         color="blue"
         label="Editar"
-        @click="editarInventario"
+        :to="{
+          path: `/inventario/editar/${inventarioSelecionado[0].id}`,
+        }"
       />
       <q-btn
-        v-if="!isEditavel"
+        v-if="!isInvSelecionado"
         dense
-        :disabled="isEditavel"
         color="primary"
         label="Excluir"
         @click="mostrarDialog = true"
       />
       <q-btn
-        v-if="isEditavel"
+        v-if="isInvSelecionado"
         dense
-        :disabled="!isEditavel"
         color="green"
         label="Novo"
-        @click="novoInventario"
+        to="/inventario/adicionar"
       />
       <q-btn
-        v-if="!isEditavel"
+        v-if="!isInvSelecionado"
         dense
-        :disabled="isEditavel"
         color="green"
         :label="statusInventarioBtn"
         @click="mudarSituacaoInventario"

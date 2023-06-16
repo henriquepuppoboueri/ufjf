@@ -7,7 +7,7 @@ export const useInventariosStore = defineStore({
     erro: null,
     inventario: null
   }),
-  persist: true,
+  // persist: true,
   getters: {
     presidentes(state) {
       if (state.inventario && state.usuariosInventario) {
@@ -39,28 +39,33 @@ export const useInventariosStore = defineStore({
     },
 
     async addInventario(inventario) {
-      const inventarioResponse = await api
-        .post(`v1/restrito/inventario`, inventario)
-      this.buscarInventarios()
+      const { status } = await useCustomFetch(`inventario`, { body: inventario, method: 'post' }, { raw: true })
     },
 
     async delInventario(idInventario) {
-      const res = await useCustomFetch(`v1/restrito/inventario/${idInventario}`, { method: 'delete' })
-      this.buscarInventarios()
-      return res.status
+      try {
+        const index = this.inventarios.findIndex(inventario => inventario.id === idInventario)
+        const response = await useCustomFetch(`inventario/${idInventario}`, { method: 'delete' }, { raw: true })
+        if (response && response.status === 204) {
+          this.inventarios.splice(index, 1)
+        }
+        return response
+      } catch (error) {
+        this.erro = error
+        throw new Error(error.data)
+      }
     },
 
     async editInventario(idInventario, inventario) {
-      await useCustomFetch(`v1/restrito/inventario/${idInventario}`, { method: 'put', body: inventario })
+      await useCustomFetch(`inventario/${idInventario}`, { method: 'put', body: inventario })
     },
 
     async buscarInventario(idInventario) {
-
       const data = await useCustomFetch(
         `inventario/${idInventario}`
       );
       if (data)
-        this.inventario = await data
+        this.inventario = data
     },
 
     async buscarInventarios(usuarioInventarios = []) {
@@ -108,7 +113,7 @@ export const useInventariosStore = defineStore({
         `inventario/usuario/${idInventario}`
       );
       if (data)
-        this.usuariosInventario = await data;
+        this.usuariosInventario = data;
     },
 
     async setUsuarioInventarioPresidente(idInventario, idUsuario) {
@@ -143,5 +148,9 @@ export const useInventariosStore = defineStore({
         this.erro = error
       }
     },
+
+    $initInventario() {
+      this.inventario = { id: 0, nome: '', idSituacaoInventario: 1, descricao: '' }
+    }
   }
 })

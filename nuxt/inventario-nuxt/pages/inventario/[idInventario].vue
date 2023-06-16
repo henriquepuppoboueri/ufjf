@@ -1,17 +1,10 @@
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
-
-import { storeToRefs } from 'pinia';
-
 const inventariosStore = useInventariosStore();
 const { buscarInventario } = inventariosStore;
 const { inventario } = storeToRefs(inventariosStore);
 
 const idInventario = ref(0);
 const _route = useRoute();
-
-const nomeInventario = ref('');
 
 onMounted(async () => {
   if ('idInventario' in _route.params) {

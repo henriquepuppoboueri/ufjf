@@ -1,9 +1,4 @@
 <script setup>
-import { onMounted, ref } from 'vue';
-import { useRoute } from 'vue-router';
-
-import { storeToRefs } from 'pinia';
-
 definePageMeta({
   name: 'resumo-setores',
 });

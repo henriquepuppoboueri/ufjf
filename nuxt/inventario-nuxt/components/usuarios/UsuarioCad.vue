@@ -1,6 +1,4 @@
 <script setup>
-import { ref, computed } from 'vue';
-
 import { Notify } from 'quasar';
 
 const usuariosStore = useUsuariosStore();

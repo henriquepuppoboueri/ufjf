@@ -11,19 +11,22 @@ export async function useCustomFetch(
 
   let baseURL = `${base}${hasVersao ? versao : ''}${isRestrito ? restrito : ''}`;
 
-  // $fetch.raw
 
   const fetchMode = raw ? $fetch.raw : $fetch;
+
   return await fetchMode(req, {
     baseURL,
     server: false,
     method: 'GET',
     ...opts,
-    onRequest({ request, options }) {
+    async onRequest({ request, options }) {
       options.headers = options.headers || {}
       if (localStorage.getItem('usuarioLogado')) {
         options.headers.Authorization = `Bearer ${JSON.parse(localStorage.getItem('usuarioLogado')).token}`
       }
-    }
+    },
+    // onResponse({ request, response, options }) {
+    //   console.log('[fetch response]', response)
+    // }
   })
 }

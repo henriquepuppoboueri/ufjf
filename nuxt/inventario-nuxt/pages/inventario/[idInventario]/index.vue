@@ -6,7 +6,10 @@
 
 <script setup lang="ts">
 const { idInventario } = useRoute().params;
-navigateTo({ path: `/inventario/${idInventario}/resumo/setores` });
+navigateTo({
+  path: `/inventario/${idInventario}/resumo/setores`,
+  replace: true,
+});
 </script>
 
 <style scoped></style>
