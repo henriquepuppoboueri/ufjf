@@ -81,24 +81,24 @@
 </template>
 
 <script>
-import { api } from "boot/axios";
+const api = { get: $fetch.native };
 
 export default {
   data() {
     return {
-      vSetor: "ICBV",
-      depend: "Farmácia",
-      arquivo: "",
-      lines: "",
+      vSetor: 'ICBV',
+      depend: 'Farmácia',
+      arquivo: '',
+      lines: '',
       linhas: [],
       linhas2: [],
-      nomeArquivo: "",
-      mensagem: "",
-      vjson: "",
+      nomeArquivo: '',
+      mensagem: '',
+      vjson: '',
       vJsonEmLinhas: [],
-      pes_selecionada: "",
-      inventariosNaoFechados: [{ nome: "op 1" }, { nome: "op 2" }],
-      vmensagem: "",
+      pes_selecionada: '',
+      inventariosNaoFechados: [{ nome: 'op 1' }, { nome: 'op 2' }],
+      vmensagem: '',
       retorno: [],
     };
   },
@@ -109,7 +109,7 @@ export default {
     obtemInventariosEmPreparacao() {
       this.inventariosNaoFechados = {};
       api
-        .get("v1/restrito/inventario_preparando")
+        .get('v1/restrito/inventario_preparando')
         .then((res) => {
           this.inventariosNaoFechados = res.data;
         })
@@ -120,20 +120,20 @@ export default {
     camposValidos() {
       let retorno = false;
       if (!this.pes_selecionada) {
-        console.log("Selecione o inventário.");
+        console.log('Selecione o inventário.');
       } else {
         retorno = true;
       }
       return retorno;
     },
     importar() {
-      this.vmensagem = "   Importando...";
+      this.vmensagem = '   Importando...';
 
       if (this.camposValidos()) {
         // Pega o arquivo convertido em JSON e salva na API
         let dados = {
-          dependencia: "",
-          setor: "",
+          dependencia: '',
+          setor: '',
           id: 0,
           inventario: {},
           itens: [],
@@ -148,58 +148,58 @@ export default {
         });
 
         api
-          .post("v1/restrito/item/itens", dados)
+          .post('v1/restrito/item/itens', dados)
           .then((res) => {
             this.retorno = res.data;
 
-            this.vmensagem = "  Importado.";
+            this.vmensagem = '  Importado.';
           })
           .catch((error) => {
             console.log(error);
           });
       } else {
-        console.log("Um ou mais campos inválidos");
+        console.log('Um ou mais campos inválidos');
       }
     },
     limpar() {
       this.linhas = [];
       this.linhas2 = [];
-      this.vjson = "";
+      this.vjson = '';
       this.vJsonEmLinhas = [];
-      this.vmensagem = "";
+      this.vmensagem = '';
       this.retorno = [];
     },
     loadTextFromFile(ev) {
-      this.vmensagem = "   Carregando arquivo...";
+      this.vmensagem = '   Carregando arquivo...';
 
-      console.log("Iniciando leitura do arquivo...");
+      console.log('Iniciando leitura do arquivo...');
       const file = ev.target.files[0];
       this.nomeArquivo = file.name;
-      this.mensagem = "Carregando o arquivo " + this.nomeArquivo;
-      const reader = new FileReader("*.csv");
+      this.mensagem = 'Carregando o arquivo ' + this.nomeArquivo;
+      const reader = new FileReader('*.csv');
 
       // tenta separar o setor e a dependencia do nome do arquivo
-      let partes = this.nomeArquivo.split(" - ");
+      let partes = this.nomeArquivo.split(' - ');
 
       if (partes.length > 1) {
         if (partes.length > 0) {
           this.vSetor = partes[0];
         }
         if (partes.length >= 1) {
-          let partes2 = partes[1].split(".csv");
+          let partes2 = partes[1].split('.csv');
           this.depend = partes2[0];
         }
       } else {
-        this.vSetor = "";
-        this.depend = "";
-        console.log("Nome do arquivo não possue setor nem dependencia.");
+        this.vSetor = '';
+        this.depend = '';
+        console.log('Nome do arquivo não possue setor nem dependencia.');
       }
 
       reader.onload = (e) => {
         this.limpar();
 
         this.arquivo = e.target.result;
-        this.lines = this.arquivo.split("\n");
+        this.lines = this.arquivo.split('\n');
         let n = 0;
         let LINHA_TITULO = 0;
         let campos = [];
@@ -210,10 +210,10 @@ export default {
           console.log(this.mensagem);
 
           if (n > LINHA_TITULO) {
-            campos = linha.split(";");
+            campos = linha.split(';');
 
             // Determina qual é a linha do titulo
-            if (campos[0] == "Descriçăo") {
+            if (campos[0] == 'Descriçăo') {
               LINHA_TITULO = n;
             }
 
@@ -225,7 +225,7 @@ export default {
             }
 
             // Junta todos os campos após a posição 11 para formar a descrição
-            let descricao = sopmac.slice(11).join(";");
+            let descricao = sopmac.slice(11).join(';');
             sopmac = sopmac.slice(0, 11);
 
             let qtde_pat = 1;
@@ -258,9 +258,9 @@ export default {
             }
           } else {
             console.log(
-              "Desconsiderando a linha " +
+              'Desconsiderando a linha ' +
                 n +
-                " por ser anterior à linha titulo " +
+                ' por ser anterior à linha titulo ' +
                 LINHA_TITULO
             );
           }
@@ -273,7 +273,7 @@ export default {
         }
 
         //Troca o nome da coluna "Final" para "Patrimonio"
-        this.linhas2[0][3] = "Patrimonio";
+        this.linhas2[0][3] = 'Patrimonio';
 
         // TIRA AS COLUNAS DESNECESSÁRIAS
         let linhas3 = [];
@@ -286,40 +286,40 @@ export default {
 
         this.vjson = this.converteToJson(linhas3);
 
-        this.vmensagem = "   ";
+        this.vmensagem = '   ';
       };
       //reader.readAsText(file, "UTF-8");
-      reader.readAsText(file, "iso-8859-2");
+      reader.readAsText(file, 'iso-8859-2');
     },
     parseValor(v) {
-      let retorno = v.replace(";", " ");
-      retorno = v.replace('"', " ");
-      retorno = v.replace(/"/g, " ");
+      let retorno = v.replace(';', ' ');
+      retorno = v.replace('"', ' ');
+      retorno = v.replace(/"/g, ' ');
       return retorno;
     },
     parseTitulo(t) {
       let retorno = t;
-      retorno = retorno.replace(" ", "_"); // trocar espaço por underscore
-      retorno = retorno.replace("/", ""); // tirar a barra
-      retorno = retorno.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // tirar acentos
-      return "[" + retorno + "]";
+      retorno = retorno.replace(' ', '_'); // trocar espaço por underscore
+      retorno = retorno.replace('/', ''); // tirar a barra
+      retorno = retorno.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // tirar acentos
+      return '[' + retorno + ']';
     },
     converteToJson(array) {
-      let retorno = "";
+      let retorno = '';
       let camposTitulo = array[0]; // assume que a primeira linha é de titulos
-      let separadorObjeto = "";
+      let separadorObjeto = '';
 
       for (let i = 1; i < array.length; i++) {
         let item = {
-          patrimonio: "",
-          fornecedor: "",
-          empenho: "",
-          descricao: "",
+          patrimonio: '',
+          fornecedor: '',
+          empenho: '',
+          descricao: '',
         };
 
         // monta a linha de retorno no formato JSON
-        let linhaRetorno = separadorObjeto + "{ ";
-        let separador = "";
+        let linhaRetorno = separadorObjeto + '{ ';
+        let separador = '';
         const linha = array[i];
         for (let c = 0; c < camposTitulo.length; c++) {
           //c = coluna
@@ -332,30 +332,30 @@ export default {
             '": "' +
             this.parseValor(String(colunaValor).trim()) +
             '"';
-          separador = ", ";
+          separador = ', ';
 
-          if (this.parseTitulo(colunaTitulo.trim()) == "[Descricao]") {
+          if (this.parseTitulo(colunaTitulo.trim()) == '[Descricao]') {
             item.descricao = this.parseValor(String(colunaValor).trim());
           }
-          if (this.parseTitulo(colunaTitulo.trim()) == "[Empenho]") {
+          if (this.parseTitulo(colunaTitulo.trim()) == '[Empenho]') {
             item.empenho = this.parseValor(String(colunaValor).trim());
           }
-          if (this.parseTitulo(colunaTitulo.trim()) == "[Fornecedor]") {
+          if (this.parseTitulo(colunaTitulo.trim()) == '[Fornecedor]') {
             item.fornecedor = this.parseValor(String(colunaValor).trim());
           }
-          if (this.parseTitulo(colunaTitulo.trim()) == "[Patrimonio]") {
+          if (this.parseTitulo(colunaTitulo.trim()) == '[Patrimonio]') {
             item.patrimonio = this.parseValor(String(colunaValor).trim());
           }
         }
-        linhaRetorno += "} ";
+        linhaRetorno += '} ';
 
         retorno += linhaRetorno;
-        separadorObjeto = ", ";
+        separadorObjeto = ', ';
 
         this.vJsonEmLinhas.push(item);
       }
       //
-      return "[" + retorno + "]";
+      return '[' + retorno + ']';
     },
   },
 };

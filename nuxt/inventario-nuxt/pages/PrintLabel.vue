@@ -1,7 +1,5 @@
 <script setup>
-import { useRoute } from "vue-router";
-
-import QrEtiqueta from "src/components/utils/QrEtiqueta.vue";
+import QrEtiqueta from '/components/utils/QrEtiqueta.vue';
 
 const route = useRoute();
 const prefix = route.query.prefix;

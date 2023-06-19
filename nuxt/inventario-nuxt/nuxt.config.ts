@@ -1,6 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   app: {
+    baseURL: '/invint',
     head: {
       title: 'Controle de Inventário - UFJF',
     },
