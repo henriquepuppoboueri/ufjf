@@ -1,10 +1,4 @@
-
 import filtroItensColetadosModel from '/model/FiltroItensColetadosModel';
-
-// const setoresStore = useSetoresStore()
-// const dependenciasStore = useDependenciasStore();
-// const situacaoStore = useSituacaoStore()
-// const plaquetaStore = usePlaquetaStore()
 
 export const useItensColetadosStore = defineStore({
   id: 'itensColetados',
@@ -12,14 +6,7 @@ export const useItensColetadosStore = defineStore({
     paginacaoMeta: null,
     itensColetados: [],
     itensColetadosTodos: [],
-    itemColetado: {
-      id: 0,
-      idItem: 0,
-      patrimonio: '', identificador: '', descricao: '',
-      setor: { id: null, nome: null, dependencias: [] },
-      dependencia: null, localizacao: "",
-      situacao: '', estadoPlaqueta: null, observacao: '', usuario: ''
-    },
+    itemColetado: null,
     carregando: false,
     carregandoTodos: false,
     erro: null,
@@ -183,7 +170,11 @@ export const useItensColetadosStore = defineStore({
         this.carregando = false
       }
     },
-    limparItemColetado() {
+    $reset() {
+      this.itemColetado = null
+    },
+
+    $novo() {
       this.itemColetado = {
         patrimonio: '', identificador: '', descricao: '',
         setor: { id: null, nome: null, dependencias: [] },

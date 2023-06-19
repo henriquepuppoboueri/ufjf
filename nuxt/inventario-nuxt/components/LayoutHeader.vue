@@ -1,6 +1,5 @@
 <script setup>
-import { inject, ref } from 'vue';
-const leftDrawer = inject('leftDrawer', ref(true));
+const leftDrawer = inject('leftDrawer', ref(false));
 
 function toggleLeftDrawer() {
   leftDrawer.value = !leftDrawer.value;

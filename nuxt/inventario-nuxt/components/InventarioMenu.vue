@@ -1,6 +1,4 @@
 <script setup>
-import { storeToRefs } from 'pinia';
-
 const inventariosStore = useInventariosStore();
 const { inventario } = storeToRefs(inventariosStore);
 </script>

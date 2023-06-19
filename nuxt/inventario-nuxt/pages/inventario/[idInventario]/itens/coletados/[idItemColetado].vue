@@ -1,8 +1,4 @@
 <script setup>
-import { ref, onUnmounted, computed, onMounted, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-
-import { storeToRefs } from 'pinia';
 import { Notify, useQuasar } from 'quasar';
 import { StreamBarcodeReader } from 'vue-barcode-reader';
 
@@ -13,69 +9,84 @@ definePageMeta({ name: 'itemColetado' });
 const $q = useQuasar();
 const mostrarCamera = ref('');
 const router = useRouter();
-// stores
-const authStore = useAuthStore();
-const plaquetaStore = usePlaquetaStore();
-const situacaoStore = useSituacaoStore();
-const setoresStore = useSetoresStore();
-const itensColetadosStore = useItensColetadosStore();
-const itensImportadosStore = useItensImportadosStore();
-
 const route = useRoute();
 
+const setoresStore = useSetoresStore();
 const { setoresDependencias } = storeToRefs(setoresStore);
+const { buscarSetoresDependencias, buscarSetorPorId } = setoresStore;
+
+const situacaoStore = useSituacaoStore();
 const { situacoes } = storeToRefs(situacaoStore);
+const { buscarSituacoes, buscarSituacao } = situacaoStore;
+
+const plaquetaStore = usePlaquetaStore();
 const { estadosPlaquetas } = storeToRefs(plaquetaStore);
+const { buscarEstadosPlaquetas, buscarEstadoPlaqueta } = plaquetaStore;
+
+const itensImportadosStore = useItensImportadosStore();
 const { itemImportado } = storeToRefs(itensImportadosStore);
 const { buscarItemImportadoPorPatrimonio } = itensImportadosStore;
+
+const itensColetadosStore = useItensColetadosStore();
 const { itemColetado, erro } = storeToRefs(itensColetadosStore);
-const { limparItemColetado } = itensColetadosStore;
+const {
+  limparItemColetado,
+  buscarItemColetado,
+  editItemColetado,
+  addItemColetado,
+  $reset: $resetItemColetado,
+  $novo,
+} = itensColetadosStore;
+
+const authStore = useAuthStore();
 const { usuario } = storeToRefs(authStore);
-const isModoEdicao = ref(false);
+
+const isModoEdicao = ref(null);
 const idInventario = ref(null);
-const dependencias = ref([]);
-const pularWatch = ref(false);
-const routeUrl = computed(
-  () => `/inventario/v/${idInventario.value}/itens/coletados`
-);
-const desabilitaSalvar = computed(() => {
-  return 0;
+
+const setores = computed(() => {
+  return setoresDependencias.value.map((setor) => ({
+    id: setor.id,
+    nome: setor.nome,
+  }));
 });
 
-onMounted(async () => {
-  const idItem = +route.params.idItem;
-  idInventario.value = +route.params.idInventario;
-  isModoEdicao.value = !!idItem;
-  itemColetado.value.idItem = 0;
+const dependencias = computed(() => {
+  return setoresDependencias.value.find(
+    (setor) => setor.id === itemColetado.value?.idSetor
+  )?.dependencias;
+});
 
-  await situacaoStore.buscarSituacoes();
-  await plaquetaStore.buscarEstadosPlaquetas();
-  await setoresStore.buscarSetoresDependencias(idInventario.value);
+onBeforeMount(async () => {
+  const { idItemColetado, idInventario } = route.params;
 
-  if (isModoEdicao.value) await montaFormEditar(idItem);
-  else {
-  }
+  if (!idItemColetado) return;
+
+  isModoEdicao.value = idItemColetado !== 'adicionar';
+
+  await buscarSituacoes();
+  await buscarEstadosPlaquetas();
+  await buscarSetoresDependencias(idInventario);
+
+  if (isModoEdicao.value) await montaFormEditar(idItemColetado);
+  else montaFormAdd();
 });
 
 onUnmounted(() => {
-  itensColetadosStore.$reset();
+  $resetItemColetado();
 });
 
-watch(
-  () => itemColetado.value.setor,
-  (newV, oldV) => {
-    if (!isModoEdicao.value && !pularWatch.value)
-      itemColetado.value.dependencia = null;
-    if (newV) {
-      const deps = setoresDependencias.value.filter(
-        (setor) => setor.id === newV.id
-      )[0];
-      if (deps) {
-        dependencias.value = deps['dependencias'];
-      }
-    }
-  }
-);
+// watch(
+//   itemColetado,
+//   () => {
+//     if (itemColetado.value?.setor?.id) {
+//       dependencias.value = setoresDependencias.value.find(
+//         (setor) => setor.id === itemColetado.value.setor.id
+//       )?.dependencias;
+//     }
+//   },
+//   { deep: true }
+// );
 
 function onMostrarCamera(campo) {
   mostrarCamera.value === ''
@@ -83,10 +94,14 @@ function onMostrarCamera(campo) {
     : (mostrarCamera.value = '');
 }
 
-async function montaFormEditar(idItem) {
-  await itensColetadosStore.buscarItemColetado(idItem);
-  await situacaoStore.buscarSituacao(itemColetado.value.situacao);
-  await plaquetaStore.buscarEstadoPlaqueta(itemColetado.value.idEstadoPlaqueta);
+async function montaFormEditar(idItemColetado) {
+  await buscarItemColetado(idItemColetado);
+  await buscarSituacao(itemColetado.value.situacao);
+  buscarEstadoPlaqueta(itemColetado.value.idEstadoPlaqueta);
+}
+
+function montaFormAdd() {
+  $novo();
 }
 
 async function buscarItemPorPatrimonio() {
@@ -127,10 +142,7 @@ async function onSubmit() {
     try {
       item.id = itemColetado.value.id;
       item.idItem = itemColetado.value.item;
-      const response = await itensColetadosStore.editItemColetado(
-        item.id,
-        item
-      );
+      const response = await editItemColetado(item.id, item);
       if (!!erro.value) {
         $q.notify({ message: erro.value, color: 'red', icon: 'warning' });
       } else {
@@ -143,14 +155,12 @@ async function onSubmit() {
           color: 'green',
         });
       }
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   } else {
     item.idItem = !!itemImportado.value ? itemImportado.value.id : 0;
     item.usuario = usuario.value.id;
 
-    const response = await itensColetadosStore.addItemColetado(item);
+    const response = await addItemColetado(item);
     if (response && response.status === 200) {
       $q.dialog({
         title: `Item cadastrado`,
@@ -189,8 +199,14 @@ async function onDecode(data) {
 </script>
 
 <template>
+  idSetor: {{ itemColetado?.idSetor }}
+  <br />
+  idDependencia: {{ itemColetado?.idDependencia }}
+  <br />
+  setores: {{ setores }}
+  <br />
+  dependencias: {{ dependencias }}
   <div v-if="mostrarCamera" class="camera-container flex flex-center">
-    <!-- <qr-stream @decode="onDecode"></qr-stream> -->
     <StreamBarcodeReader @decode="onDecode"></StreamBarcodeReader>
   </div>
   <q-form @submit.prevent="onSubmit">
@@ -250,19 +266,20 @@ async function onDecode(data) {
         dense
       />
       <q-select
-        v-model="itemColetado.setor"
+        v-model="itemColetado.idSetor"
         outlined
-        :options="setoresDependencias"
-        :option-label="(item) => item.nome"
+        :options="setores"
+        :option-label="(setor) => setor.nome"
+        :option-value="(setor) => setor.id"
         label="Setor"
         dense
       />
       <q-select
-        v-if="itemColetado.setor"
-        v-model="itemColetado.dependencia"
+        v-model="itemColetado.idDependencia"
         outlined
         :options="dependencias"
-        :option-label="(item) => item.nome"
+        :option-label="(dependencia) => dependencia.nome"
+        :option-value="(dependencia) => dependencia.id"
         label="Dependência"
         dense
       />
@@ -309,7 +326,7 @@ async function onDecode(data) {
         color="green"
         label="Salvar"
         type="submit"
-        :disabled="desabilitaSalvar"
+        :disabled="false"
       />
       <q-btn dense color="primary" label="Cancelar" @click="router.back()" />
     </section>

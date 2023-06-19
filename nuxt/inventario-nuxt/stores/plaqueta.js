@@ -26,7 +26,7 @@ export const usePlaquetaStore = defineStore({
       if (this.estadosPlaquetas.length > 0) {
         const estado = this.estadosPlaquetas.find(estado => estado.id === idEstadoPlaqueta)
         this.estadoPlaqueta = estado
-        return estado || []
+        return estado || null
       }
     }
   }

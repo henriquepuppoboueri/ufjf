@@ -1,12 +1,5 @@
 <script setup>
-import { inject, onMounted } from 'vue';
-
-import DrawerHeader from '/components/DrawerHeader.vue';
-import DrawerList from '/components/DrawerList.vue';
-
 const leftDrawer = inject('leftDrawer');
-
-onMounted(() => {});
 </script>
 
 <template>

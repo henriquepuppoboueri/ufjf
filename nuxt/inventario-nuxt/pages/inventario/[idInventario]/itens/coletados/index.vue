@@ -1,12 +1,8 @@
 <script setup>
-import { ref, reactive, watch, computed, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
 import { useQuasar, Notify } from 'quasar';
-import { storeToRefs } from 'pinia';
 
 import { diminuiTexto, registroPortugues } from '/helper/functions';
 import { paginacaoOpcoes } from '/helper/qtableOpcoes';
-
 import { exportTable } from '/helper/functions';
 import ItemPatrimonio from '/components/inventarios/itens/ItemPatrimonio.vue';
 
@@ -48,14 +44,8 @@ const dependencias = computed(() => {
 });
 
 const itensColetadosStore = useItensColetadosStore();
-const {
-  itensColetados,
-  itensColetadosTodos,
-  carregando,
-  carregandoTodos,
-  itensNominais,
-  paginacaoMeta,
-} = storeToRefs(itensColetadosStore);
+const { itensColetados, carregando, carregandoTodos, paginacaoMeta } =
+  storeToRefs(itensColetadosStore);
 const { buscarItensColetados } = itensColetadosStore;
 
 const itensSelecionados = ref([]);
@@ -227,13 +217,13 @@ const qtItensSelec = computed(() => {
   return itensSelecionados.value.length;
 });
 
-onMounted(() => {
-  buscarUsuariosInventario(idInventario.value);
-  buscarSetoresDependencias(idInventario.value);
-  buscarEstadosPlaquetas();
-  buscarUsuarios();
+onBeforeMount(async () => {
+  await buscarUsuariosInventario(idInventario.value);
+  await buscarSetoresDependencias(idInventario.value);
+  await buscarEstadosPlaquetas();
+  await buscarUsuarios();
 
-  renderPage();
+  await renderPage();
 });
 
 const pagination = ref({
@@ -329,10 +319,6 @@ watch(
   }
 );
 
-function gerarCSV() {
-  exportTable(colunasItens, itensColetados, 'itens-coletados');
-}
-
 function clearFilter() {
   Object.keys(filter).forEach((key) => delete filter[key]);
 }
@@ -412,14 +398,8 @@ function vincularPatrimonio() {
 }
 
 async function renderPage() {
-  itensColetados.value = [];
-  itensSelecionados.value = [];
-
   if (!idInventario.value) return;
-
-  try {
-    await setoresStore.buscarSetoresDependencias(idInventario.value);
-  } catch (error) {}
+  await buscarSetoresDependencias(idInventario.value);
 }
 
 fetchData();
@@ -562,7 +542,7 @@ fetchData();
         color="orange"
         class="text-white"
         label="Visualizar"
-        @click="verItem"
+        :to="`${$route.path}/${itensSelecionados[0].id}`"
       />
       <q-btn
         v-if="
@@ -573,7 +553,7 @@ fetchData();
         dense
         color="blue"
         label="Editar"
-        @click="editItem"
+        :to="`${$route.path}/${itensSelecionados[0].id}`"
       />
       <q-btn
         v-if="qtItensSelec && qtItensSelec > 0"
@@ -587,7 +567,7 @@ fetchData();
         dense
         color="green"
         label="Novo"
-        @click="novoItem"
+        :to="`${$route.path}/adicionar`"
       />
       <q-btn
         v-if="!carregando && !qtItensSelec"

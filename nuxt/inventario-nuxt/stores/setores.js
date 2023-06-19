@@ -1,14 +1,15 @@
 export const useSetoresStore = defineStore('setores', () => {
+  const setor = ref(null);
   const setores = ref([]);
   const setoresDependencias = ref([]);
-  const setor = ref(null);
   const setorDependencias = ref([]);
   const carregando = ref(false);
   const erro = ref(null);
   const dependencia = ref(null);
 
   function buscarSetorPorId(idSetor) {
-    const setor = setores.value.find((setor) => setor.id === idSetor)
+    const setor = setoresDependencias.value.find((setor) => setor.id === idSetor)
+    this.setor = setor
     return setor || 'Sem setor';
   }
 
@@ -52,7 +53,8 @@ export const useSetoresStore = defineStore('setores', () => {
     try {
       carregando.value = true
       const data = await useCustomFetch(`setor/dependencia/${idSetor}`)
-      setorDependencias.value = data || [];
+      if (data)
+        setorDependencias.value = data;
     } catch (error) {
       erro.value = error;
     } finally {
@@ -64,7 +66,8 @@ export const useSetoresStore = defineStore('setores', () => {
     try {
       carregando.value = true
       const { data } = await useCustomFetch(`setor/${idSetor}`)
-      setor.value = data || null
+      if (data)
+        setor.value = data
     } catch (error) {
       erro.value = error;
     } finally {
@@ -76,7 +79,8 @@ export const useSetoresStore = defineStore('setores', () => {
     try {
       carregando.value = true
       const { data } = await useCustomFetch(`setor`)
-      setores.value = data || [];
+      if (data)
+        setores.value = data
     } catch (error) {
       erro.value = error;
     } finally {
@@ -88,7 +92,8 @@ export const useSetoresStore = defineStore('setores', () => {
     try {
       carregando.value = true
       const data = await useCustomFetch(`inventario/setor/dependencia/${idInventario}`)
-      setoresDependencias.value = data || [];
+      if (data)
+        setoresDependencias.value = data;
     } catch (error) {
       erro.value = error;
     } finally {

@@ -32,12 +32,11 @@ export const useAuthStore = defineStore('auth', () => {
     const usuarioStorage = JSON.parse(localStorage.getItem('usuarioLogado'))
     if (usuarioStorage && verificarValidadeToken(usuarioStorage.dataExt)) {
       usuario.value = usuarioStorage
-      return true
     } else {
       localStorage.removeItem('usuarioLogado')
       usuario.value = null
-      return false
     }
+    return !!usuario.value
   }
 
   function verificarValidadeToken(dataExp) {
@@ -46,7 +45,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function deslogar() {
     try {
-      await useCustomFetch(`logout`, { method: 'POST' }, { isRestrito: true, hasVersao: false })
+      await useCustomFetch(`logout`, { method: 'POST' }, { hasVersao: false })
       return navigateTo('/auth/login')
     } catch (error) {
       throw new Error(error.message)
@@ -59,7 +58,7 @@ export const useAuthStore = defineStore('auth', () => {
   async function trocarSenha(idUsuario, login, novaSenha) {
     try {
       carregando.value = true
-      const response = await api.put(`v1/restrito/usuarios/novasenhasemCPF`, { id: idUsuario, login, senha: novaSenha })
+      const response = await useCustomFetch(`usuarios/novasenhasemCPF`, { body: { id: idUsuario, login, senha: novaSenha }, method: 'put' })
       return response
     } catch (error) {
       throw new Error(error.message)
