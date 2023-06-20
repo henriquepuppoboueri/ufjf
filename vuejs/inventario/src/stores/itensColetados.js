@@ -152,7 +152,6 @@ export const useItensColetadosStore = defineStore({
         this.carregandoTodos = false;
       }
     },
-
     // async buscarItensColetadosPaginados(idInventario, FiltroItensColetadosModel) {
     async buscarItensColetadosPaginados(idInventario, filtroItensColetados = filtroItensColetadosModel) {
       try {

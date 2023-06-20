@@ -592,7 +592,7 @@ fetchData();
         color="green"
         label="Exportar"
         :disabled="carregandoTodos"
-        @click="exportTable(colunasItens, itensColetados, 'itens-coletados')"
+        @click="gerarCSV"
       />
 
       <q-btn
