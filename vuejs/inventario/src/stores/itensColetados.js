@@ -136,10 +136,16 @@ export const useItensColetadosStore = defineStore({
     async buscarItensColetados(idInventario) {
       try {
         this.carregandoTodos = true
-        const response = await api.get(`v1/restrito/item/coleta/${idInventario}`)
-        if (response.data.length > 0)
-          this.itensColetadosTodos = await response.data
-        console.log(this.itensColetadosTodos);
+        // const response = await api.get(`v1/restrito/item/coleta/${idInventario}`)
+        const { data } = await api.get(`v1/restrito/coleta/inventario/page/${idInventario}`, {
+          params: {
+            paginaAtual: 0,
+            tamanho: this.paginacaoMeta.totalElements
+          }
+        })
+        if (data && data.content.length > 0) {
+          this.itensColetadosTodos = await data.content
+        }
       } catch (error) {
         this.erro = error;
       } finally {

@@ -325,10 +325,9 @@ watch(
   }
 );
 
-function gerarCSV() {
-  // await buscarItensColetados(idInventario.value);
-  // console.log("carregado");
-  exportTable(colunasItens, itensColetados, "itens-coletados");
+async function gerarCSV() {
+  await buscarItensColetados(idInventario.value);
+  exportTable(colunasItens, itensColetadosTodos.value, "itens-coletados");
 }
 
 function clearFilter() {
@@ -548,6 +547,9 @@ fetchData();
           </q-tr>
         </template>
       </q-table>
+    </q-card-section>
+    <q-card-section v-if="carregandoTodos" class="text-center">
+      <q-spinner color="primary" size="3em" />
     </q-card-section>
     <q-card-actions class="q-gutter-sm">
       <q-btn
