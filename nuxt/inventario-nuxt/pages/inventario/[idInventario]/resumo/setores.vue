@@ -6,6 +6,7 @@ definePageMeta({
 const estatisticasStore = useEstatisticasStore();
 const { carregando, dados } = storeToRefs(estatisticasStore);
 const { buscarTotaisSetores } = estatisticasStore;
+
 const route = useRoute();
 const resumo = ref([]);
 const temDados = ref(false);
@@ -40,7 +41,7 @@ const colunas = [
   },
 ];
 
-onMounted(async () => {
+onBeforeMount(async () => {
   if ('idInventario' in route.params) {
     // modo de edição ou visualização
     const id = +route.params.idInventario;

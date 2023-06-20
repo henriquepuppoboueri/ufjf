@@ -1,6 +1,10 @@
 <script setup>
 import QrEtiqueta from '/components/utils/QrEtiqueta.vue';
 
+definePageMeta({
+  name: 'printLabel',
+});
+
 const route = useRoute();
 const prefix = route.query.prefix;
 const firstSequence = +route.query.start;

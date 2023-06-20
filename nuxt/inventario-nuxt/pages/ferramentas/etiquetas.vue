@@ -1,12 +1,5 @@
 <script setup>
-import { ref, computed } from "vue";
-import { useRouter } from "vue-router";
-import { format } from "quasar";
-
-const { pad } = format;
-
-const router = useRouter();
-const prefix = ref("");
+const prefix = ref('');
 const nrCasasSequencia = ref(7);
 const start = ref(1);
 const qtEtiquetas = ref(100);
@@ -20,21 +13,21 @@ const etiquetaMargemX = ref(0);
 const mostrarBorda = ref(0);
 
 const nrCasasZeros = computed(() => {
-  return geraStringConcat("0");
+  return geraStringConcat('0');
 });
 
 const nrCasasCerquilha = computed(() => {
-  return geraStringConcat("#");
+  return geraStringConcat('#');
 });
 
 const geraStringConcat = (val) =>
   new Array(+nrCasasSequencia.value)
     .fill(val, 0, nrCasasSequencia.value)
-    .join("");
+    .join('');
 
 function onGerarEtiquetas() {
-  router.push({
-    name: "printLabel",
+  navigateTo({
+    name: 'printLabel',
     query: {
       prefix: prefix.value,
       start: start.value,
