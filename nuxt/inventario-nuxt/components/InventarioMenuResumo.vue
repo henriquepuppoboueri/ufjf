@@ -1,3 +1,13 @@
+<script setup>
+const { inventario } = defineProps({ inventario: { type: Object } });
+const resumoLista = [
+  { name: 'Por setor', to: 'resumo-setores' },
+  { name: 'Por usuário', to: 'resumo-usuarios' },
+  { name: 'Por semana', to: 'resumo-semanal' },
+  { name: 'Por dia', to: 'resumo-diario' },
+];
+</script>
+
 <template>
   <q-btn-dropdown
     v-if="inventario && inventario.situacaoInventario.nome !== 'Preparando'"
@@ -19,15 +29,5 @@
     </q-list>
   </q-btn-dropdown>
 </template>
-
-<script setup>
-const props = defineProps({ inventario: { type: Object } });
-const resumoLista = [
-  { name: 'Por setor', to: 'resumo-setores' },
-  { name: 'Por usuário', to: 'resumo-usuarios' },
-  { name: 'Por semana', to: 'resumo-semanal' },
-  { name: 'Por dia', to: 'resumo-diario' },
-];
-</script>
 
 <style scoped></style>

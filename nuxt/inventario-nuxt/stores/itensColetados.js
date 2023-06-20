@@ -72,9 +72,8 @@ export const useItensColetadosStore = defineStore({
   actions: {
     async vincularItemPatrimonio(idColeta, idItem) {
       try {
-        this.erro = null
         this.carregando = true
-        const response = await api.patch(`v1/restrito/coleta/vincular/${idColeta}&${idItem}`)
+        const response = await useCustomFetch(`coleta/vincular/${idColeta}&${idItem}`, { method: 'patch' })
         return response
       } catch (error) {
         this.erro = error

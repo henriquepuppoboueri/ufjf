@@ -66,6 +66,12 @@ function addDelMostrarUsuario(idUsuario) {
 </script>
 
 <template>
+  <div v-if="!temDados && !carregando">
+    <p>Nada a exibir.</p>
+  </div>
+  <div v-if="carregando" class="text-center q-mt-md">
+    <q-spinner-gears color="primary" size="5em" />
+  </div>
   <div v-if="temDados" class="col q-gutter-y-md">
     <div v-for="item in resumo" :key="item.usuario">
       <q-table
@@ -107,8 +113,5 @@ function addDelMostrarUsuario(idUsuario) {
       </q-table>
       <q-separator class="no-margin" spaced />
     </div>
-  </div>
-  <div v-if="!temDados">
-    <p>Nada a exibir.</p>
   </div>
 </template>

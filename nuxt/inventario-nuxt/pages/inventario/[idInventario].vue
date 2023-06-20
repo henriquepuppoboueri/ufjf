@@ -1,24 +1,18 @@
 <script setup>
 const inventariosStore = useInventariosStore();
-const { buscarInventario } = inventariosStore;
 const { inventario } = storeToRefs(inventariosStore);
+const { buscarInventario } = inventariosStore;
 
-const idInventario = ref(0);
-const _route = useRoute();
-
-onMounted(async () => {
-  if ('idInventario' in _route.params) {
-    idInventario.value = +_route.params.idInventario;
-
-    await buscarInventario(idInventario.value);
-  }
+onBeforeMount(async () => {
+  const { idInventario } = useRoute().params;
+  await buscarInventario(idInventario);
 });
 </script>
 
 <template>
   <div class="menu-inventario">
     <inventario-header :nome="inventario?.nome"></inventario-header>
-    <inventario-menu></inventario-menu>
+    <inventario-menu :inventario="inventario"></inventario-menu>
     <div class="q-px-none">
       <NuxtPage />
     </div>

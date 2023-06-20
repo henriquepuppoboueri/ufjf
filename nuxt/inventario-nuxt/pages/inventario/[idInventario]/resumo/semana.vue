@@ -1,6 +1,4 @@
 <script setup>
-import { onMounted, ref, computed } from 'vue';
-import { useRoute } from 'vue-router';
 import { Line } from 'vue-chartjs';
 import {
   Chart as ChartJS,
@@ -13,7 +11,6 @@ import {
   PointElement,
   LineElement,
 } from 'chart.js';
-import { storeToRefs } from 'pinia';
 import ColorHash from 'color-hash';
 
 definePageMeta({
@@ -83,7 +80,10 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div v-if="temDados" class="col q-gutter-y-md">
+  <div v-if="carregando" class="text-center q-mt-md">
+    <q-spinner-gears size="5em" color="primary" />
+  </div>
+  <div v-if="temDados && !carregando" class="col q-gutter-y-md">
     <Line :width="width" height="150" :data="generateChart()" />
     <q-toggle
       v-model="acumularPeriodos"

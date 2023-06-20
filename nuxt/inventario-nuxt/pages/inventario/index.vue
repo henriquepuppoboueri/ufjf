@@ -7,11 +7,16 @@ import { paginacaoOpcoes } from '/helper/qtableOpcoes';
 definePageMeta({ name: 'inventario' });
 
 const mostrarDialog = ref(false);
+
 const inventariosStore = useInventariosStore();
-const usuariosStore = useUsuariosStore();
 const { inventarios, carregando, erro } = storeToRefs(inventariosStore);
-const { buscarInventarios, delInventario } = inventariosStore;
+const { buscarInventarios, delInventario, buscarUsuariosInventario } =
+  inventariosStore;
+
+const usuariosStore = useUsuariosStore();
 const { usuarioInventarios } = storeToRefs(usuariosStore);
+const { buscarUsuarioInventarios } = usuariosStore;
+
 const $q = useQuasar();
 const inventarioSelecionado = ref([]);
 const colunas = ref([
@@ -72,12 +77,11 @@ const statusInventarioBtn = computed(() => {
 });
 
 onBeforeMount(async () => {
-  await usuariosStore.buscarUsuarioInventarios();
+  await buscarUsuarioInventarios();
   const usuarioInventariosId = usuarioInventarios.value.map(
     (inventario) => inventario.idInventario
   );
   await buscarInventarios(usuarioInventariosId);
-  await buscarInventarios();
 });
 
 async function mudarSituacaoInventario() {

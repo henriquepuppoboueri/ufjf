@@ -189,7 +189,6 @@ async function onDecode(data) {
 </script>
 
 <template>
-  {{ itemColetado }}
   <div v-if="mostrarCamera" class="camera-container flex flex-center">
     <StreamBarcodeReader @decode="onDecode"></StreamBarcodeReader>
   </div>

@@ -54,7 +54,7 @@ onMounted(async () => {
 });
 
 function corBarra(percValor) {
-  if (percValor === 100) return 'green';
+  if (percValor > 90) return 'green';
   if (percValor > 75) return 'light-green';
   if (percValor > 50) return 'yellow';
   if (percValor > 25) return 'orange';
@@ -63,6 +63,12 @@ function corBarra(percValor) {
 </script>
 
 <template>
+  <div v-if="!temDados && !carregando" class="text-center">
+    <p>Nada a exibir.</p>
+  </div>
+  <div class="text-center q-mt-md" v-if="carregando">
+    <q-spinner-gears color="primary" size="5em" />
+  </div>
   <div v-if="temDados" class="col q-gutter-y-md">
     <div v-for="item in resumo.setores" :key="item.setor.id">
       <q-table
@@ -128,9 +134,5 @@ function corBarra(percValor) {
       </q-table>
       <q-separator class="no-margin" spaced />
     </div>
-  </div>
-  <div v-if="!temDados">
-    <p v-if="!carregando">Nada a exibir.</p>
-    <q-spinner-dots v-if="carregando" color="primary" size="2em" />
   </div>
 </template>

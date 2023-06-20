@@ -1,6 +1,4 @@
 <script setup>
-import { onMounted, reactive, ref, watch } from 'vue';
-import { useRoute } from 'vue-router';
 import { Line } from 'vue-chartjs';
 import {
   Chart as ChartJS,
@@ -13,7 +11,6 @@ import {
   PointElement,
   LineElement,
 } from 'chart.js';
-import { storeToRefs } from 'pinia';
 import ColorHash from 'color-hash';
 
 definePageMeta({
@@ -35,6 +32,7 @@ const estatisticasStore = useEstatisticasStore();
 const { carregando, dados, somenteDiasUsuariosComColeta } =
   storeToRefs(estatisticasStore);
 const { buscarResumoDia } = estatisticasStore;
+
 const labels = [];
 const chartWidth = { type: Number, default: 400 };
 const chartData = reactive({
@@ -87,16 +85,13 @@ async function montarGrafico() {
 </script>
 
 <template>
+  <div v-if="carregando" class="text-center q-mt-md">
+    <q-spinner-gears color="primary" size="5em" />
+  </div>
   <div v-if="temDados" class="col q-gutter-y-md">
     <Line :width="400" :height="150" :data="chartData"></Line>
+    <p class="text-italic text-grey-8 text-caption q-mt-md">
+      Dias e usuários sem coletas não são exibidos.
+    </p>
   </div>
-  <!-- <q-toggle
-    v-model="esconderUsuariosDiasSemColeta"
-    color="green"
-    label="Ocultar usuários e dias sem coleta"
-  />
-  {{ chartData }} -->
-  <p class="text-italic text-grey-8 text-caption q-mt-md">
-    Dias e usuários sem coletas não são exibidos.
-  </p>
 </template>

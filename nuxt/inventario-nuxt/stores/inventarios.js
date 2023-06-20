@@ -1,48 +1,47 @@
-export const useInventariosStore = defineStore({
-  id: 'inventarios',
-  state: () => ({
-    inventarios: [],
-    usuariosInventario: [],
-    carregando: false,
-    erro: null,
-    inventario: null
-  }),
-  // persist: true,
-  getters: {
-    presidentes(state) {
-      if (state.inventario && state.usuariosInventario) {
-        return state.usuariosInventario.filter(usuario => usuario.presidente).map(_usuario => _usuario.nome)
+export const useInventariosStore = defineStore(
+  'inventarios',
+  () => {
+    const inventarios = ref([])
+    const usuariosInventario = ref([])
+    const carregando = ref(false)
+    const erro = ref(null)
+    const inventario = ref(null)
+
+    const presidentes = computed(() => {
+      if (inventario.value && usuariosInventario.value) {
+        return usuariosInventario.value.filter(usuario => usuario.presidente).map(_usuario => _usuario.nome)
       } else
         return []
+    })
+
+    async function liberarInventario(idInventario) {
+      try {
+        carregando.value = true
+        const { status } = await useCustomFetch(`liberar/${idInventario}`, { method: 'patch' })
+        await buscarInventarios();
+        return status
+      } catch (error) {
+        this.erro.value = error
+      } finally {
+        carregando.value = false
+      }
     }
-  },
-  actions: {
-    async liberarInventario(idInventario) {
+    async function fecharInventario(idInventario) {
       try {
-        const inventarioResponse = await api
-          .patch(`v1/restrito/inventario/liberar/${idInventario}`)
-        this.buscarInventarios();
-        return inventarioResponse.status
+        const { status } = await useCustomFetch(`inventario/fechar/${idInventario}`, { method: 'patch' })
+        return status
       } catch (error) {
-        throw new Error(error.response.data)
-
+        this.erro.value = error
+      } finally {
+        carregando.value = false
       }
-    },
-    async fecharInventario(idInventario) {
-      try {
-        const inventarioResponse = await api
-          .patch(`v1/restrito/inventario/fechar/${idInventario}`)
-        return inventarioResponse.status
-      } catch (error) {
-        throw new Error(error.message)
-      }
-    },
+    }
 
-    async addInventario(inventario) {
+    async function addInventario(inventario) {
       const { status } = await useCustomFetch(`inventario`, { body: inventario, method: 'post' }, { raw: true })
-    },
+    }
 
-    async delInventario(idInventario) {
+    async function delInventario(idInventario) {
       try {
         const index = this.inventarios.findIndex(inventario => inventario.id === idInventario)
         const response = await useCustomFetch(`inventario/${idInventario}`, { method: 'delete' }, { raw: true })
@@ -51,35 +50,49 @@ export const useInventariosStore = defineStore({
         }
         return response
       } catch (error) {
-        this.erro = error
-        throw new Error(error.data)
+        this.erro.value = error
+      } finally {
+        carregando.value = false
       }
-    },
+    }
 
-    async editInventario(idInventario, inventario) {
+    async function editInventario(idInventario, inventario) {
       await useCustomFetch(`inventario/${idInventario}`, { method: 'put', body: inventario })
-    },
+    }
 
-    async buscarInventario(idInventario) {
-      const data = await useCustomFetch(
-        `inventario/${idInventario}`
-      );
-      if (data)
-        this.inventario = data
-    },
-
-    async buscarInventarios(usuarioInventarios = []) {
-      const inventariosData = await useCustomFetch(`inventario`)
-
-      if (usuarioInventarios.length > 0 && inventariosData.value) {
-        const filtro = inventariosData.filter(inventario => usuarioInventarios.includes(inventario.id))
-        this.inventarios = filtro
-      } else {
-        this.inventarios = inventariosData
+    async function buscarInventario(idInventario) {
+      try {
+        carregando.value = true
+        const data = await useCustomFetch(
+          `inventario/${idInventario}`
+        );
+        if (data)
+          inventario.value = data
+      } catch (error) {
+        erro.value = error
+      } finally {
+        carregando.value = false
       }
-    },
+    }
 
-    async definirPresidente(idInventario, idUsuario) {
+    async function buscarInventarios(usuarioInventarios = []) {
+      try {
+        carregando.value = true
+        const data = await useCustomFetch('inventario')
+        if (data)
+          inventarios.value = data
+      } catch (error) {
+        erro.value = error
+      } finally {
+        carregando.value = false
+      }
+
+      if (usuarioInventarios.length && inventarios.value) {
+        inventarios.value = inventarios.value.filter(inventario => usuarioInventarios.includes(inventario.id))
+      }
+    }
+
+    async function definirPresidente(idInventario, idUsuario) {
       try {
         this.carregando = true
         const { data } = await useCustomFetch(`inventario/usuario/presidente/${idInventario}&${idUsuario}`)
@@ -90,15 +103,15 @@ export const useInventariosStore = defineStore({
       } finally {
         this.carregando = false
       }
-    },
+    }
 
-    async buscarInventariosEmPreparacao() {
+    async function buscarInventariosEmPreparacao() {
       const data = await useCustomFetch(`inventario_preparando`)
       if (data)
         this.inventarios = await data
-    },
+    }
 
-    async addUsuarioInventario(idInventario, usuario) {
+    async function addUsuarioInventario(idInventario, usuario) {
       try {
         const response = await useCustomFetch(`inventario/usuario/${idInventario}`, { method: 'post', body: usuario }, { raw: true })
         await this.buscarUsuariosInventario(idInventario);
@@ -106,9 +119,9 @@ export const useInventariosStore = defineStore({
       } catch (error) {
         this.erro = error
       }
-    },
+    }
 
-    async delUsuarioInventario(idInventario, idUsuario) {
+    async function delUsuarioInventario(idInventario, idUsuario) {
       try {
         const response = await useCustomFetch(`inventario/usuario/${idInventario}&${idUsuario}`, { method: 'delete' }, { raw: true })
         await this.buscarUsuariosInventario(idInventario);
@@ -116,51 +129,94 @@ export const useInventariosStore = defineStore({
       } catch (error) {
         this.erro = error
       }
-    },
+    }
 
-    async buscarUsuariosInventario(idInventario) {
+    async function buscarUsuariosInventario(idInventario) {
       const data = await useCustomFetch(
         `inventario/usuario/${idInventario}`
       );
       if (data)
         this.usuariosInventario = data;
-    },
+    }
 
-    async setUsuarioInventarioPresidente(idInventario, idUsuario) {
+    async function setUsuarioInventarioPresidente(idInventario, idUsuario) {
       await useCustomFetch(`inventario/usuario/presidente/${idInventario}&${idUsuario}`, { method: 'patch' })
       await this.buscarUsuariosInventario(idInventario);
-    },
+    }
 
-    async setUsuarioInventarioNormal(idInventario, idUsuario) {
+    async function setUsuarioInventarioNormal(idInventario, idUsuario) {
       await useCustomFetch(`inventario/usuario/normal/${idInventario}&${idUsuario}`, { method: 'patch' })
       await this.buscarUsuariosInventario(idInventario);
-    },
+    }
 
-    async setUsuarioInventarioAdmin(idInventario, idUsuario) {
-      const response = await useCustomFetch(`inventario/usuario/admin/${idInventario}&${idUsuario}`, { method: 'patch' })
-      await this.buscarUsuariosInventario(idInventario);
-    },
+    async function setUsuarioInventarioAdmin(idInventario, idUsuario) {
+      try {
+        const response = await useCustomFetch(`inventario/usuario/admin/${idInventario}&${idUsuario}`, { method: 'patch' })
+        await this.buscarUsuariosInventario(idInventario);
+      } catch (error) {
+        this.erro = error
 
-    async setUsuarioInventarioNaoAdmin(idInventario, idUsuario) {
-      const response = await useCustomFetch(`inventario/usuario/naoadmin/${idInventario}&${idUsuario}`, { method: 'patch' })
-      await this.buscarUsuariosInventario(idInventario);
-    },
+      }
+    }
 
-    async setUsuarioEmitenteRel(idInventario, idUsuario) {
-      await useCustomFetch(`inventario/usuario/emitente/${idInventario}&${idUsuario}`, { method: 'patch' })
-    },
+    async function setUsuarioInventarioNaoAdmin(idInventario, idUsuario) {
+      try {
+        const response = await useCustomFetch(`inventario/usuario/naoadmin/${idInventario}&${idUsuario}`, { method: 'patch' })
+        await this.buscarUsuariosInventario(idInventario);
+      } catch (error) {
+        this.erro = error
 
-    async setUsuarioNaoEmitenteRel(idInventario, idUsuario) {
+      }
+    }
+
+    async function setUsuarioEmitenteRel(idInventario, idUsuario) {
+      try {
+        await useCustomFetch(`inventario/usuario/emitente/${idInventario}&${idUsuario}`, { method: 'patch' })
+      } catch (error) {
+        this.erro = error
+      }
+    }
+
+    async function setUsuarioNaoEmitenteRel(idInventario, idUsuario) {
       try {
         const response = await useCustomFetch(`inventario/usuario/naoemitente/${idInventario}&${idUsuario}`, { method: 'patch' })
         console.log(response);
       } catch (error) {
         this.erro = error
       }
-    },
+    }
 
-    $initInventario() {
+    function $initInventario() {
       this.inventario = { id: 0, nome: '', idSituacaoInventario: 1, descricao: '' }
     }
+
+    return {
+      inventario,
+      inventarios,
+      usuariosInventario,
+      carregando,
+      erro,
+      presidentes,
+      liberarInventario,
+      fecharInventario,
+      buscarInventarios,
+      buscarInventariosEmPreparacao,
+      addInventario,
+      delInventario,
+      editInventario,
+      buscarInventario,
+      definirPresidente,
+      buscarUsuariosInventario,
+      addUsuarioInventario,
+      delUsuarioInventario,
+      setUsuarioInventarioPresidente,
+      setUsuarioInventarioNormal,
+      setUsuarioInventarioAdmin,
+      setUsuarioInventarioNaoAdmin,
+      setUsuarioEmitenteRel,
+      setUsuarioNaoEmitenteRel,
+      $initInventario
+    }
   }
-})
+
+)

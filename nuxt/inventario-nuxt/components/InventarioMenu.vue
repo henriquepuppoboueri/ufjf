@@ -1,6 +1,9 @@
 <script setup>
-const inventariosStore = useInventariosStore();
-const { inventario } = storeToRefs(inventariosStore);
+const { inventario } = defineProps({
+  inventario: {
+    type: Object,
+  },
+});
 </script>
 
 <template>
