@@ -477,7 +477,7 @@ fetchData();
               >
                 <q-item v-bind="itemProps">
                   <q-item-section>
-                    <q-item-label v-html="opt.label" />
+                    <q-item-label>{{ opt.label }}"</q-item-label>
                   </q-item-section>
                   <q-item-section side>
                     <q-toggle
@@ -541,7 +541,7 @@ fetchData();
           <q-tr v-show="props.expand" :props="props">
             <q-td colspan="100%">
               <div class="text-left">
-                <span v-html="props.row.descricao"></span>
+                <span>{{ props.row.descricao }}</span>
               </div>
             </q-td>
           </q-tr>
