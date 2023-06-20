@@ -60,7 +60,7 @@ export const useItensImportadosStore = defineStore('itensImportados', () => {
   async function buscarItemImportadoPorPatrimonio(patrimonio, idInventario) {
     try {
       carregando.value = true
-      const data = await useCustomFetch(`item/itens/${patrimonio}`)
+      const data = await useCustomFetch(`item/patrimonio/${patrimonio}&${idInventario}`)
       if (data)
         itemImportado.value = data
     } catch (error) {

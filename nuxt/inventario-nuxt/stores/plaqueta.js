@@ -1,33 +1,39 @@
-import { defineStore } from 'pinia';
+export const usePlaquetaStore = defineStore('plaqueta', () => {
+  const estadosPlaquetas = ref([]);
+  const estadoPlaqueta = ref(null);
+  const carregando = ref(false);
+  const erro = ref(null);
 
-
-export const usePlaquetaStore = defineStore({
-  id: 'plaqueta',
-  state: () => ({
-    estadosPlaquetas: [],
-    estadoPlaqueta: null,
-    carregando: false,
-    erro: null,
-  }),
-  actions: {
-    async buscarEstadosPlaquetas() {
-      try {
-        this.carregando = true
-        const response = await api.get(`v1/restrito/estadoplaqueta`)
-        if (response.data.length > 0)
-          this.estadosPlaquetas = await response.data
-      } catch (error) {
-        this.error = error
-      } finally {
-        this.carregando = false
-      }
-    },
-    buscarEstadoPlaqueta(idEstadoPlaqueta) {
-      if (this.estadosPlaquetas.length > 0) {
-        const estado = this.estadosPlaquetas.find(estado => estado.id === idEstadoPlaqueta)
-        this.estadoPlaqueta = estado
-        return estado || null
-      }
+  async function buscarEstadosPlaquetas() {
+    try {
+      const data = await useCustomFetch('estadoplaqueta')
+      carregando.value = true
+      if (data)
+        estadosPlaquetas.value = data
+    } catch (error) {
+      erro.value = error
+    } finally {
+      carregando.value = false
     }
   }
-});
+
+  async function buscarEstadoPlaqueta(idEstadoPlaqueta) {
+    try {
+      if (!estadosPlaquetas.value.length)
+        await buscarEstadosPlaquetas()
+
+      estadoPlaqueta.value = estadosPlaquetas.value.find(estado => estado.id === idEstadoPlaqueta) || null
+    } catch (error) {
+      erro.value = error
+    }
+  }
+
+  return {
+    estadosPlaquetas,
+    estadoPlaqueta,
+    carregando,
+    erro,
+    buscarEstadosPlaquetas,
+    buscarEstadoPlaqueta
+  }
+})

@@ -86,7 +86,7 @@ export const useItensColetadosStore = defineStore({
     async addItemColetado(item) {
       try {
         this.carregando = true
-        const response = await api.post(`v1/restrito/coleta`, item)
+        const response = useCustomFetch(`coleta`, { method: 'post', body: item })
         return response
       } catch (error) {
         this.erro = error
@@ -98,7 +98,7 @@ export const useItensColetadosStore = defineStore({
     async editItemColetado(idItem, item) {
       try {
         this.carregando = true
-        const response = await api.put(`v1/restrito/coleta/${idItem}`, item)
+        const response = await useCustomFetch(`coleta/${idItem}`, { method: 'put', body: item })
         return response;
       } catch (error) {
         this.erro = error.response.data || null;
@@ -153,17 +153,9 @@ export const useItensColetadosStore = defineStore({
       try {
         this.carregando = true
         const data = await useCustomFetch(`coleta/${idItem}`)
-        if (!data)
-          return
-
-        this.itemColetado = await data
-        const setor = await useSetoresStore().buscarSetor(this.itemColetado?.idSetor)
-        const dependencia = await useDependenciasStore().buscarDependencia(this.itemColetado?.idDependencia)
-        const situacao_ = await useSituacaoStore().buscarSituacao(this.itemColetado?.situacao)
-        const estadoPlaqueta = usePlaquetaStore().buscarEstadoPlaqueta(this.itemColetado?.idEstadoPlaqueta)
-        this.itemColetado = { ...this.itemColetado, setor, dependencia, situacao_, estadoPlaqueta }
+        if (data)
+          this.itemColetado = data
         return this.itemColetado
-
       } catch (error) {
         this.erro = error;
       } finally {
@@ -176,10 +168,18 @@ export const useItensColetadosStore = defineStore({
 
     $novo() {
       this.itemColetado = {
-        patrimonio: '', identificador: '', descricao: '',
-        setor: { id: null, nome: null, dependencias: [] },
-        dependencia: null, localizacao: "",
-        situacao: '', estadoPlaqueta: null, observacao: '', usuario: ''
+        descricao: '',
+        id: 0,
+        idDependencia: 0,
+        idEstadoPlaqueta: 0,
+        idItem: 0,
+        idSetor: 0,
+        situacao: 0,
+        identificador: '',
+        localizacao: "",
+        observacao: '',
+        patrimonio: '',
+        usuario: 0
       }
     }
   }

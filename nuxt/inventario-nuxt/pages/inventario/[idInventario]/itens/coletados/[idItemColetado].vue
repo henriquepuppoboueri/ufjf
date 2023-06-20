@@ -20,7 +20,7 @@ const { situacoes } = storeToRefs(situacaoStore);
 const { buscarSituacoes, buscarSituacao } = situacaoStore;
 
 const plaquetaStore = usePlaquetaStore();
-const { estadosPlaquetas } = storeToRefs(plaquetaStore);
+const { estadosPlaquetas, estadoPlaqueta } = storeToRefs(plaquetaStore);
 const { buscarEstadosPlaquetas, buscarEstadoPlaqueta } = plaquetaStore;
 
 const itensImportadosStore = useItensImportadosStore();
@@ -58,7 +58,8 @@ const dependencias = computed(() => {
 });
 
 onBeforeMount(async () => {
-  const { idItemColetado, idInventario } = route.params;
+  const { idItemColetado, idInventario: idInventario_ } = route.params;
+  if (idInventario) idInventario.value = idInventario_;
 
   if (!idItemColetado) return;
 
@@ -66,7 +67,7 @@ onBeforeMount(async () => {
 
   await buscarSituacoes();
   await buscarEstadosPlaquetas();
-  await buscarSetoresDependencias(idInventario);
+  await buscarSetoresDependencias(idInventario.value);
 
   if (isModoEdicao.value) await montaFormEditar(idItemColetado);
   else montaFormAdd();
@@ -110,10 +111,9 @@ async function buscarItemPorPatrimonio() {
     idInventario.value
   );
   if (itemImportado.value) {
-    pularWatch.value = true;
     itemColetado.value.descricao = itemImportado.value.descricao;
-    itemColetado.value.setor = itemImportado.value.setor;
-    itemColetado.value.dependencia = itemImportado.value.dependencia;
+    itemColetado.value.idSetor = itemImportado.value.setor.id;
+    itemColetado.value.idDependencia = itemImportado.value.dependencia.id;
   } else {
     Notify.create({
       color: 'red',
@@ -124,30 +124,20 @@ async function buscarItemPorPatrimonio() {
 async function onSubmit() {
   const item = {
     ...itemColetado.value,
-    idInventario: idInventario.value,
-    idSetor: itemColetado.value.setor.id,
-    idDependencia: itemColetado.value.dependencia.id,
-    idEstadoPlaqueta: itemColetado.value.estadoPlaqueta.id,
-    idSituacao: itemColetado.value.situacao_.id,
-    identificador: itemColetado.value.identificador,
+    idSituacao: itemColetado.value.situacao,
+    usuario: usuario.value.id,
   };
-  item.usuario = usuario.value.id;
-  delete item.dependencia;
-  delete item.setor;
-  delete item.estadoPlaqueta;
-  delete item.situacao_;
-  delete item.situacao;
 
   if (isModoEdicao.value) {
     try {
-      item.id = itemColetado.value.id;
-      item.idItem = itemColetado.value.item;
+      item.id = itemColetado?.value?.id;
+      item.idItem = itemColetado?.value?.item;
       const response = await editItemColetado(item.id, item);
       if (!!erro.value) {
         $q.notify({ message: erro.value, color: 'red', icon: 'warning' });
       } else {
-        router.replace({
-          path: routeUrl.value,
+        navigateTo({
+          name: 'itensColetados',
         });
         Notify.create({
           type: 'info',
@@ -199,13 +189,7 @@ async function onDecode(data) {
 </script>
 
 <template>
-  idSetor: {{ itemColetado?.idSetor }}
-  <br />
-  idDependencia: {{ itemColetado?.idDependencia }}
-  <br />
-  setores: {{ setores }}
-  <br />
-  dependencias: {{ dependencias }}
+  {{ itemColetado }}
   <div v-if="mostrarCamera" class="camera-container flex flex-center">
     <StreamBarcodeReader @decode="onDecode"></StreamBarcodeReader>
   </div>
@@ -271,6 +255,8 @@ async function onDecode(data) {
         :options="setores"
         :option-label="(setor) => setor.nome"
         :option-value="(setor) => setor.id"
+        emit-value
+        map-options
         label="Setor"
         dense
       />
@@ -280,6 +266,8 @@ async function onDecode(data) {
         :options="dependencias"
         :option-label="(dependencia) => dependencia.nome"
         :option-value="(dependencia) => dependencia.id"
+        emit-value
+        map-options
         label="Dependência"
         dense
       />
@@ -290,18 +278,24 @@ async function onDecode(data) {
         dense
       />
       <q-select
-        v-model="itemColetado.situacao_"
+        v-model="itemColetado.situacao"
         outlined
         :options="situacoes"
         :option-label="(item) => item.nome"
+        :option-value="(item) => item.id"
+        emit-value
+        map-options
         label="Situação"
         dense
       />
       <q-select
-        v-model="itemColetado.estadoPlaqueta"
+        v-model="itemColetado.idEstadoPlaqueta"
         outlined
         :options="estadosPlaquetas"
         :option-label="(item) => item.nome"
+        :option-value="(item) => item.id"
+        emit-value
+        map-options
         label="Estado da plaqueta"
         dense
       />
@@ -328,7 +322,12 @@ async function onDecode(data) {
         type="submit"
         :disabled="false"
       />
-      <q-btn dense color="primary" label="Cancelar" @click="router.back()" />
+      <q-btn
+        dense
+        color="primary"
+        label="Cancelar"
+        :to="{ name: 'itensColetados' }"
+      />
     </section>
   </q-form>
 </template>
