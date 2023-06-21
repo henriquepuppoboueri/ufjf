@@ -290,7 +290,7 @@ const onRequest = async (props) => {
     idUsuario: props.filter.usuario ? props.filter.usuario.id : 0,
     numIdentificador: props.filter.identificador
       ? props.filter.identificador
-      : 0,
+      : "",
   });
 };
 
