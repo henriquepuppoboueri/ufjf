@@ -44,8 +44,13 @@ const dependencias = computed(() => {
 });
 
 const itensColetadosStore = useItensColetadosStore();
-const { itensColetados, carregando, carregandoTodos, paginacaoMeta } =
-  storeToRefs(itensColetadosStore);
+const {
+  itensColetados,
+  itensColetadosTodos,
+  carregando,
+  carregandoTodos,
+  paginacaoMeta,
+} = storeToRefs(itensColetadosStore);
 const { buscarItensColetados } = itensColetadosStore;
 
 const itensSelecionados = ref([]);
@@ -323,30 +328,9 @@ function clearFilter() {
   Object.keys(filter).forEach((key) => delete filter[key]);
 }
 
-function editItem() {
-  if (itensSelecionados.value.length === 1) {
-    router.push({
-      path: `${route.path}/${itensSelecionados.value[0].id}`,
-      query: route.query,
-    });
-  }
-}
-
-function verItem() {
-  if (itensSelecionados.value.length === 1) {
-    router.push({
-      name: 'itemColetado',
-      params: { idItem: itensSelecionados.value[0].id },
-    });
-  }
-}
-
-function novoItem() {
-  if (itensSelecionados.value.length === 0) {
-    router.push({
-      name: 'itemColetadoNovo',
-    });
-  }
+async function gerarCSV() {
+  await buscarItensColetados(idInventario.value);
+  exportTable(colunasItens, itensColetadosTodos.value, 'itens-coletados');
 }
 
 function delItens() {
@@ -535,6 +519,9 @@ fetchData();
         </template>
       </q-table>
     </q-card-section>
+    <q-card-section v-if="carregandoTodos" class="text-center">
+      <q-spinner-gears color="primary" size="3em" />
+    </q-card-section>
     <q-card-actions class="q-gutter-sm">
       <q-btn
         v-if="qtItensSelec && qtItensSelec === 1"
@@ -576,7 +563,7 @@ fetchData();
         color="green"
         label="Exportar"
         :disabled="carregandoTodos"
-        @click="exportTable(colunasItens, itensColetados, 'itens-coletados')"
+        @click="gerarCSV"
       />
 
       <q-btn
