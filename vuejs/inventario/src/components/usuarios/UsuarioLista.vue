@@ -1,14 +1,14 @@
 <template>
-  <q-card square>
+  <q-card flat>
     <q-card-section>
       <q-table
+        v-model:selected="usuarioSelecionado"
         flat
         title="Usuários"
         :rows="usuarios"
         :columns="colunas"
         row-key="id"
         selection="single"
-        v-model:selected="usuarioSelecionado"
         :pagination="paginacaoOpcoes"
         :bordered="false"
         :selected-rows-label="registroPortugues"
@@ -41,15 +41,18 @@
       />
     </q-card-actions>
   </q-card>
+  <q-separator inset />
 </template>
 
 <script setup>
 import { computed, onMounted, onUnmounted, reactive, ref } from "vue";
+
+import { Notify, useQuasar } from "quasar";
+import { storeToRefs } from "pinia";
+
 import { registroPortugues } from "src/helper/functions";
 import { paginacaoOpcoes } from "src/helper/qtableOpcoes";
 import { useUsuariosStore } from "src/stores/usuarios";
-import { storeToRefs } from "pinia";
-import { Notify, useQuasar } from "quasar";
 
 const $q = useQuasar();
 const usuariosStore = useUsuariosStore();

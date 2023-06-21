@@ -9,21 +9,13 @@ export const useUsuariosStore = defineStore({
     usuarios: [],
     carregando: false,
     erro: null,
+    usuarioInventarios: [],
   })
   ,
   getters: {
-    async usuarioInventarios(state) {
-      try {
-        state.carregando = true
-        const response = await api.get(`v1/restrito/usuarios/inventarios`)
-        return await response.data
-      } catch (error) {
 
-      } finally {
-        state.carregando = false
-      }
-    }
   },
+
   actions: {
     async addUsuario(usuario) {
       try {
@@ -42,7 +34,7 @@ export const useUsuariosStore = defineStore({
       try {
         this.carregando = true
         const response = await api.put(`v1/restrito/usuarios/${idUsuario}`, usuario)
-        this.buscarUsuarios()
+        await this.buscarUsuarios()
         return response;
       } catch (error) {
         this.error = error
@@ -77,7 +69,6 @@ export const useUsuariosStore = defineStore({
         this.carregando = false
       }
     },
-
     async buscarUsuarios() {
       try {
         this.carregando = true
@@ -90,7 +81,21 @@ export const useUsuariosStore = defineStore({
         this.carregando = false
       }
     },
-
-
+    async buscarUsuarioInventarios() {
+      try {
+        this.carregando = true
+        const { data } = await api.get(`v1/restrito/usuarios/inventarios`)
+        this.usuarioInventarios = await data
+        return data
+      } catch (error) {
+        this.erro = error
+      } finally {
+        this.carregando = false
+      }
+    },
+    async podeAcessarInventario(idInventario) {
+      await this.buscarUsuarioInventarios()
+      return this.usuarioInventarios.map(inventario => inventario.idInventario).includes(+idInventario)
+    }
   }
 })

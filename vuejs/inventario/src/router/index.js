@@ -3,6 +3,7 @@ import { createRouter, createMemoryHistory, createWebHistory, createWebHashHisto
 import routes from './routes'
 import { useAuthStore } from 'src/stores/auth'
 import { api } from 'boot/axios'
+import { storeToRefs } from 'pinia'
 
 /*
  * If not building with SSR mode, you can
@@ -28,24 +29,34 @@ export default route(function (/* { store, ssrContext } */) {
     history: createHistory(process.env.VUE_ROUTER_BASE)
   })
 
-  Router.beforeEach((to, from, next) => {
+  Router.beforeEach((to, _from, next) => {
     // to and from are both route objects. must call `next`.
-    const authStore = useAuthStore();
+    // console.log(from.query.redirect, '=>', to.query.redirect)
 
-    if (to.meta.restrito && !authStore.usuario) {
-      next('/login')
-    } else {
-      api.interceptors.request.use(config => {
+    if (to.meta.restrito) {
+      const authStore = useAuthStore();
+      const { isUsuarioLogado } = storeToRefs(authStore)
+      if (!isUsuarioLogado.value) {
+        next({ name: 'Login', replace: true, })
+      } else {
         const usuarioLogado = localStorage.getItem('usuarioLogado')
-        if (usuarioLogado) {
-          const json = JSON.parse(usuarioLogado)
+        const json = JSON.parse(usuarioLogado)
+        api.interceptors.request.use(config => {
           config.headers.Authorization = `Bearer ${json.token}`
-        }
-        return config
-      })
+          return config
+        })
+        next()
+      }
+    } else
       next()
+  })
+  Router.afterEach((to, _from, failure) => {
+    if (!failure) {
+      if (to.path.includes('auth')) {
+        return
+      }
+      sessionStorage.setItem('lastUrl', JSON.stringify({ path: to.path, query: to.query }))
     }
   })
-
   return Router
 })

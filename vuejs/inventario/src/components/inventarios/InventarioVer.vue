@@ -1,5 +1,33 @@
+<script setup>
+import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
+
+import { storeToRefs } from "pinia";
+
+import { useInventariosStore } from "stores/inventarios";
+
+const inventariosStore = useInventariosStore();
+const { buscarInventario } = useInventariosStore();
+const { inventario } = storeToRefs(inventariosStore);
+
+const tabSelecionada = ref("itens_coletados");
+const idInventario = ref(0);
+const _route = useRoute();
+
+const nomeInventario = ref("");
+
+onMounted(async () => {
+  if ("idInventario" in _route.params) {
+    idInventario.value = +_route.params.idInventario;
+
+    await buscarInventario(idInventario.value);
+    nomeInventario.value = inventario.value.nome;
+  }
+});
+</script>
+
 <template>
-  <div>
+  <div class="menu-inventario">
     <p class="text-h4 text-center q-mt-md">{{ nomeInventario }}</p>
     <q-tabs
       v-model="tabSelecionada"
@@ -7,13 +35,13 @@
       class="bg-red text-white shadow-none"
     >
       <q-btn-dropdown
+        v-if="
+          !!inventario && inventario.situacaoInventario.nome !== 'Preparando'
+        "
         auto-close
         stretch
         flat
         label="Resumo"
-        v-if="
-          !!inventario && inventario.situacaoInventario.nome !== 'Preparando'
-        "
       >
         <q-list>
           <q-item clickable :to="{ name: 'resumoSetores' }" exact>
@@ -44,13 +72,13 @@
       <q-btn class="btn-nav" :to="{ name: 'Unidades' }">DEPENDÊNCIAS</q-btn>
       <q-btn class="btn-nav" :to="{ name: 'Permissoes' }">PERMISSÕES</q-btn>
       <q-btn-dropdown
+        v-if="
+          !!inventario && inventario.situacaoInventario.nome !== 'Preparando'
+        "
         auto-close
         stretch
         flat
         label="Relatórios"
-        v-if="
-          !!inventario && inventario.situacaoInventario.nome !== 'Preparando'
-        "
       >
         <q-list>
           <q-item
@@ -103,13 +131,23 @@
           >
             <q-item-section>Coletas sem itens</q-item-section>
           </q-item>
+          <q-item
+            clickable
+            :to="{
+              name: 'relatorioBase',
+              query: { relatorio: 'repetidos' },
+            }"
+            exact
+          >
+            <q-item-section>Coletas repetidas</q-item-section>
+          </q-item>
         </q-list>
       </q-btn-dropdown>
     </q-tabs>
     <div class="q-px-none">
       <router-view v-slot="{ Component, route }">
         <transition name="fade">
-          <div class="router-view-inventario" :key="route.path">
+          <div :key="route.path" class="router-view-inventario">
             <component :is="Component" />
           </div>
         </transition>
@@ -117,69 +155,6 @@
     </div>
   </div>
 </template>
-
-<script setup>
-import { ref, onMounted, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
-
-import { Notify } from "quasar";
-import { storeToRefs } from "pinia";
-
-import { useInventariosStore } from "stores/inventarios";
-import { useUsuariosStore } from "src/stores/usuarios";
-
-const inventariosStore = useInventariosStore();
-const { buscarInventario, buscarUsuariosInventario } = useInventariosStore();
-const { inventario, usuariosInventario } = storeToRefs(inventariosStore);
-
-const usuariosStore = useUsuariosStore();
-const { usuarioInventarios } = storeToRefs(usuariosStore);
-
-const tabSelecionada = ref("itens_coletados");
-const idInventario = ref(0);
-const route = useRoute();
-const router = useRouter();
-
-const nomeInventario = ref("");
-const usuInventarios = ref([]);
-
-onMounted(async () => {
-  if ("idInventario" in route.params) {
-    await usuarioPodeVerInventario();
-
-    await buscarInventario(idInventario.value);
-    nomeInventario.value = inventario.value.nome;
-  }
-});
-
-const usuarioPodeVerInventario = async () => {
-  idInventario.value = +route.params.idInventario;
-  usuInventarios.value = await usuarioInventarios.value;
-
-  if (
-    !usuInventarios.value
-      .map((inventario) => inventario.idInventario)
-      .includes(idInventario.value)
-  ) {
-    Notify.create({
-      color: "red",
-      message: `Usuário não tem permissão ao inventário.`,
-    });
-    router.replace({
-      path: `/inventario`,
-    });
-  }
-};
-
-watch(
-  () => route.path,
-  (to, from) => {
-    if (to.includes("/inventario/v")) {
-      usuarioPodeVerInventario();
-    }
-  }
-);
-</script>
 
 <style>
 .q-btn:before {

@@ -1,15 +1,16 @@
 <script setup>
-import { ref, watch } from "vue";
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "src/stores/auth";
 import { storeToRefs } from "pinia";
 import { Notify } from "quasar";
+import moment from "moment";
 
 const usuarioForm = ref("");
 const senha = ref("");
 const router = useRouter();
 const authStore = useAuthStore();
-// const { usuario } = storeToRefs(authStore);
+const { usuario } = storeToRefs(authStore);
 const { logar } = authStore;
 
 async function onLogar() {
@@ -19,17 +20,38 @@ async function onLogar() {
   try {
     await logar(data);
     if (authStore.isUsuarioLogado) {
-      router.push("/inventario");
+      const lastUrl = JSON.parse(sessionStorage.getItem("lastUrl"));
+      const lastUrlFull = lastUrl
+        ? { path: lastUrl.path, query: lastUrl.query }
+        : { name: "inventarioIndex" };
+      router.replace(lastUrlFull);
       Notify.create({
         color: "green",
-        message: `Bem vindo de volta!`,
+        message: `Bem vindo de volta, ${
+          usuario.value.nome
+        }! Sua sessão expira em ${moment(usuario.value.dataExt).format(
+          "DD/MM/YYYY HH:mm a."
+        )}`,
+        timeout: 5000,
       });
     }
   } catch (error) {
+    let message = error.message;
+    if (error.response && error.response.status) {
+      switch (error.response.status) {
+        case 401:
+          message = "Usuário ou senha inválidos!";
+          break;
+        default:
+          message = "Erro desconhecido!";
+          break;
+      }
+    }
+
     Notify.create({
       icon: "report",
       color: "red",
-      message: `${error}`,
+      message,
     });
   }
 }
@@ -44,16 +66,16 @@ async function onLogar() {
             <q-card-section class="q-gutter-md">
               <p class="text-grey-6">Entre com suas credenciais</p>
               <q-input
+                v-model="usuarioForm"
                 outlined
                 clearable
-                v-model="usuarioForm"
                 type="text"
                 label="Usuário"
               />
               <q-input
+                v-model="senha"
                 outlined
                 clearable
-                v-model="senha"
                 type="password"
                 label="Senha"
               />

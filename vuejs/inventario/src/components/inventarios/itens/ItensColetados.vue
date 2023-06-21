@@ -164,9 +164,7 @@ const colunasItens = reactive([
     label: "IDENTIFICADOR",
     field: "identificador",
     sortable: true,
-    component: {
-      name: "input",
-    },
+    component: { name: "input" },
   },
 ]);
 const colunasFiltro = ref([]);
@@ -288,9 +286,7 @@ const onRequest = async (props) => {
       : 0,
     idSituacao: props.filter.situacao ? props.filter.situacao.id : 0,
     idUsuario: props.filter.usuario ? props.filter.usuario.id : 0,
-    numIdentificador: props.filter.identificador
-      ? props.filter.identificador
-      : "",
+    numIdentificador: props.filter.identificador,
   });
 };
 
@@ -402,6 +398,7 @@ fetchData();
   <q-card square>
     <q-card-section>
       <q-table
+        v-model:pagination="pagination"
         flat
         :loading="carregando"
         title="Itens coletados"
@@ -419,12 +416,11 @@ fetchData();
         loading-label="Carregando"
         no-data-label="Não foram encontrados dados."
         rows-per-page-label="Registros por página:"
-        v-model:pagination="pagination"
         :filter="filter"
         @request="onRequest"
       >
         <!-- header -->
-        <template v-slot:header="props">
+        <template #header="props">
           <q-tr :props="props">
             <q-th auto-width></q-th>
             <q-th v-for="col in props.cols" :key="col.name" :props="props">
@@ -434,13 +430,13 @@ fetchData();
         </template>
 
         <!-- pesquisa -->
-        <template v-slot:top-right>
+        <template #top-right>
           <div class="row q-gutter-sm fit full-width">
             <q-select
+              v-model="colunasFiltro"
               class="fit"
               dense
               filled
-              v-model="colunasFiltro"
               :options="colunasItens"
               multiple
               stack-label
@@ -448,12 +444,10 @@ fetchData();
               clearable
               @clear="clearFilter"
             >
-              <template
-                v-slot:option="{ itemProps, opt, selected, toggleOption }"
-              >
+              <template #option="{ itemProps, opt, selected, toggleOption }">
                 <q-item v-bind="itemProps">
                   <q-item-section>
-                    <q-item-label>{{ opt.label }}</q-item-label>
+                    <q-item-label> {{ opt.label }}</q-item-label>
                   </q-item-section>
                   <q-item-section side>
                     <q-toggle
@@ -464,27 +458,27 @@ fetchData();
                 </q-item>
               </template>
             </q-select>
-            <div class="col" v-for="col in colunasFiltro" :key="col.name">
+            <div v-for="col in colunasFiltro" :key="col.name" class="col">
               <q-input
-                dense
                 v-if="col.component.name === 'input'"
+                v-model="filter[col.name]"
+                dense
                 borderless
                 filled
                 debounce="300"
-                v-model="filter[col.name]"
                 :placeholder="`Filtrar por ${col.label}`"
                 clearable
                 :label="col.label"
                 @clear="() => (filter[col.name] = '')"
               >
-                <template v-slot:append>
+                <template #append>
                   <q-icon name="search" />
                 </template>
               </q-input>
               <q-select
-                dense
                 v-if="col.component.name === 'select'"
                 v-model="filter[col.name]"
+                dense
                 :option-value="col.component.idField"
                 :options="col.component.dataSource"
                 :option-label="col.component.labelField"
@@ -495,13 +489,19 @@ fetchData();
           </div>
         </template>
 
+        <template #loading>
+          <q-inner-loading :showing="carregando">
+            <q-spinner-gears size="50px" color="primary" />
+          </q-inner-loading>
+        </template>
+
         <!-- corpo da tabela -->
-        <template v-slot:body="props">
+        <template #body="props">
           <q-tr :props="props">
             <q-td>
               <q-checkbox
-                left-label
                 v-model="itensSelecionados"
+                left-label
                 :val="props.row"
               />
             </q-td>
@@ -511,7 +511,7 @@ fetchData();
               :props="props"
               @click="props.expand = !props.expand"
             >
-              <span v-html="diminuiTexto(col.value)"></span>
+              <span>{{ diminuiTexto(col.value) }}"</span>
             </q-td>
           </q-tr>
           <q-tr v-show="props.expand" :props="props">
@@ -577,10 +577,10 @@ fetchData();
           qtItensSelec === 1 &&
           itensSelecionados[0].patrimonio === ''
         "
-        @click="vincularPatrimonio"
         dense
         color="purple"
         label="Vincular patrimônio"
+        @click="vincularPatrimonio"
       />
     </q-card-actions>
   </q-card>

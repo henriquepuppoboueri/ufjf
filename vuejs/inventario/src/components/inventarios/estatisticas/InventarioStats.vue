@@ -3,7 +3,7 @@
     <div class="row justify-between">
       <h3 class="q-my-md">Estatísticas</h3>
       <div v-if="!carregando" class="column q-pa-sm items-end">
-        <span class="text-grey-8" v-if="dados"
+        <span v-if="dados" class="text-grey-8"
           >Data dos dados: {{ dados.data }} - solicitado por:
           {{ dados.solicitadoPor }}
         </span>

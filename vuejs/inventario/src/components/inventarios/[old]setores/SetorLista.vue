@@ -11,7 +11,7 @@
     rows-per-page-label="Registros por página:"
     :selected-rows-label="registroPortugues"
   >
-    <template v-slot:header="props">
+    <template #header="props">
       <q-tr :props="props">
         <q-th auto-width />
         <q-th v-for="col in props.cols" :key="col.name" :props="props">
@@ -19,7 +19,7 @@
         </q-th>
       </q-tr>
     </template>
-    <template v-slot:body="props">
+    <template #body="props">
       <q-tr :props="props" style="'backgroundcolor: lightGrey'">
         <q-td auto-width>
           <q-btn
@@ -27,8 +27,8 @@
             :color="props.row.id === idInventarioSelecionado ? 'red' : 'green'"
             round
             dense
-            @click="selecionaInventario(props.row.id)"
             :icon="props.row.id === idInventarioSelecionado ? 'remove' : 'add'"
+            @click="selecionaInventario(props.row.id)"
           />
         </q-td>
         <q-td v-for="col in props.cols" :key="col.name" :props="props">
@@ -59,7 +59,7 @@
     rows-per-page-label="Registros por página:"
     :selected-rows-label="registroPortugues"
   >
-    <template v-slot:header="props">
+    <template #header="props">
       <q-tr :props="props">
         <q-th auto-width />
         <q-th v-for="col in props.cols" :key="col.name" :props="props">
@@ -68,7 +68,7 @@
       </q-tr>
     </template>
 
-    <template v-slot:body="props">
+    <template #body="props">
       <q-tr :props="props">
         <q-td auto-width>
           <q-btn
@@ -76,8 +76,8 @@
             :color="props.row.id === idSetorSelecionado ? 'red' : 'green'"
             round
             dense
-            @click="selecionaSetor(props.row.id)"
             :icon="props.row.id === idSetorSelecionado ? 'remove' : 'add'"
+            @click="selecionaSetor(props.row.id)"
           />
         </q-td>
         <q-td
@@ -111,7 +111,7 @@
     rows-per-page-label="Registros por página:"
     :selected-rows-label="registroPortugues"
   >
-    <template v-slot:header="props">
+    <template #header="props">
       <q-tr :props="props">
         <q-th auto-width />
         <q-th v-for="col in props.cols" :key="col.name" :props="props">
@@ -120,7 +120,7 @@
       </q-tr>
     </template>
 
-    <template v-slot:body="props">
+    <template #body="props">
       <q-tr :props="props">
         <q-td auto-width>
           <q-btn
@@ -128,8 +128,8 @@
             :color="props.row.id === idDependenciaSelecionada ? 'red' : 'green'"
             round
             dense
-            @click="selecionaDependencia(props.row.id)"
             :icon="props.row.id === idDependenciaSelecionada ? 'remove' : 'add'"
+            @click="selecionaDependencia(props.row.id)"
           />
         </q-td>
         <q-td

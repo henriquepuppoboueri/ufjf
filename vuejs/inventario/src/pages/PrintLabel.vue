@@ -28,9 +28,9 @@ const nrPaginas = Math.round(
       :style="{ marginTop: `${paginaMargemTop}mm` }"
     >
       <div
-        class="etiqueta flex"
         v-for="(label, index) in etiquetasPorPagina"
         :key="index + indexPagina * etiquetasPorPagina"
+        class="etiqueta flex"
         :style="{
           minHeight: `${etiquetaAltura}mm`,
           border: mostrarBorda === '1' ? 'solid 0.1mm black' : 'none',

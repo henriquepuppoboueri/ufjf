@@ -1,30 +1,30 @@
 <template>
-  <div class="q-pa-md">
-    <q-form @submit.prevent="onSubmit" class="q-gutter-sm">
+  <div class="q-pa-sm">
+    <q-form class="q-gutter-sm" @submit.prevent="onSubmit">
       <q-input
+        v-model="usuarioTemp.email"
         stack-label
         type="e-mail"
         outlined
-        v-model="usuarioTemp.email"
         label="E-mail (@ufjf.br)"
         :disable="isModoEdicao"
         :rules="[(v) => v.includes('@ufjf.br') || 'E-mail não pertence à UFJF']"
       />
-      <q-input stack-label outlined v-model="usuarioTemp.nome" label="Nome" />
-      <q-input stack-label outlined v-model="usuarioTemp.login" label="Login" />
+      <q-input v-model="usuarioTemp.nome" stack-label outlined label="Nome" />
+      <q-input v-model="usuarioTemp.login" stack-label outlined label="Login" />
       <div v-if="!isModoEdicao" class="q-gutter-y-sm">
         <q-separator></q-separator>
         <q-input
+          v-model="senha"
           type="password"
           outlined
-          v-model="senha"
           label="Senha"
           stack-label
         />
         <q-input
+          v-model="senhaConfirmacao"
           type="password"
           outlined
-          v-model="senhaConfirmacao"
           label="Repetir senha"
           stack-label
         />
@@ -49,6 +49,7 @@
       </div>
     </q-form>
   </div>
+  <q-separator inset class="q-mt-sm" />
 </template>
 
 <script setup>
@@ -107,12 +108,14 @@ onMounted(async () => {
 async function onSubmit() {
   if (isModoEdicao.value) {
     try {
-      const response = await usuariosStore.editUsuario(
+      const { status } = await usuariosStore.editUsuario(
         id.value,
         usuarioTemp.value
       );
-      Notify.create({ color: "green", message: "Usuário atualizado!" });
-      router.push({ path: "/usuario" });
+      if (status === 200) {
+        Notify.create({ color: "green", message: "Usuário atualizado!" });
+        router.push({ path: "/usuario" });
+      }
     } catch (err) {
       Notify.create({ color: "red", message: `Erro: ${err}` });
     }
@@ -130,16 +133,4 @@ async function onSubmit() {
     }
   }
 }
-
-// temporário, até arrumar a API
-// watch(usuario, (nv) => {
-//   if (!isModoEdicao.value) {
-//     usuario.login = nv.email.split("@")[0];
-//     const nomeSeparado = nv.login.split(".").map((palavra) => {
-//       if (palavra && typeof palavra === "string")
-//         return `${palavra[0].toUpperCase()}${palavra.slice(1)}`;
-//     });
-//     usuario.nome = nomeSeparado.join(" ");
-//   }
-// });
 </script>

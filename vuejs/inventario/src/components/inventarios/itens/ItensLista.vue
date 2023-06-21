@@ -1,11 +1,11 @@
 <template>
   <q-table
+    v-model:selected="inventarioSelecionado"
     title="Inventários"
     :rows="inventarios"
     :columns="colunasInventarios"
     row-key="id"
     selection="single"
-    v-model:selected="inventarioSelecionado"
   />
   <q-table
     v-if="idSelecionado"

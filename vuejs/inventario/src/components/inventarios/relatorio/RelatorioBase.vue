@@ -85,6 +85,13 @@ const colunasItens = [
     field: "estadoPlaqueta",
     sortable: true,
   },
+  {
+    name: "qtde",
+    align: "left",
+    label: "QUANTIDADE",
+    field: "qtde",
+    sortable: true,
+  },
 ];
 
 const colunasVisiveis = ref([]);
@@ -97,7 +104,7 @@ const relatoriosOpcoes = ref([
     fn: null,
   },
   {
-    nome: "nao-coletados",
+    nome: "bens-nao-coletados",
     titulo: "Bens não coletados",
     itemTipo: "itemImportado",
     fn: relatoriosStore.bensNaoEncontrados,
@@ -160,6 +167,13 @@ const relatoriosOpcoes = ref([
       "dependenciaPrevista",
     ],
   },
+  {
+    nome: "repetidos",
+    titulo: "Coletas repetidas",
+    itemTipo: "itemColetado",
+    fn: relatoriosStore.coletasRepetidas,
+    colunasVisiveis: ["patrimonio", "qtde"],
+  },
 ]);
 
 const relatorioSelec = computed(() => {
@@ -171,9 +185,11 @@ const relatorioSelec = computed(() => {
 watch(
   () => route.query,
   (query) => {
-    // limparFiltro();
-    relatorio.value = [];
     nomeRelatorio.value = query.relatorio;
+    relatorio.value = [];
+    if (nomeRelatorio.value === "repetidos") {
+      filtrarSetorDep();
+    }
   }
 );
 
@@ -209,14 +225,16 @@ watch(setor, (nv, ov) => {
 onMounted(async () => {
   idInventario = route.params["idInventario"];
   nomeRelatorio.value = route.query["relatorio"];
-  await setoresStore.buscarSetoresDependencias(idInventario);
+  if (nomeRelatorio.value !== "repetidos") {
+    await setoresStore.buscarSetoresDependencias(idInventario);
+  } else filtrarSetorDep();
 });
 
 function verItem() {
   if (itensSelecionados.value.length === 1) {
     router.push({
       name: relatorioSelec.value.itemTipo,
-      params: { idItem: itensSelecionados.value[0] },
+      params: { idItem: itensSelecionados.value[0].id },
     });
   }
 }
@@ -249,10 +267,10 @@ function limparFiltro() {
 
 <template>
   <q-card bordered>
-    <q-card-section class="q-gutter-sm">
+    <q-card-section v-if="nomeRelatorio !== 'repetidos'" class="q-gutter-sm">
       <q-select
-        outlined
         v-model="setor"
+        outlined
         :options="setoresDependencias"
         :option-label="(item) => item.nome"
         :option-value="(item) => item.nome"
@@ -260,8 +278,8 @@ function limparFiltro() {
         dense
       />
       <q-select
-        outlined
         v-model="dependencia"
+        outlined
         :options="dependencias"
         :option-label="(item) => item.nome"
         :option-value="(item) => item.nome"
@@ -307,7 +325,7 @@ function limparFiltro() {
         no-data-label="Não foram encontrados dados."
         rows-per-page-label="Registros por página:"
       >
-        <template v-slot:header="props">
+        <template #header="props">
           <q-tr :props="props">
             <q-th auto-width></q-th>
             <q-th v-for="col in props.cols" :key="col.name" :props="props">
@@ -316,28 +334,35 @@ function limparFiltro() {
           </q-tr>
         </template>
 
-        <template v-slot:top-right>
+        <template #top-right>
           <q-input
+            v-model="filtro"
             borderless
             dense
             filled
             debounce="300"
-            v-model="filtro"
             placeholder="Filtrar"
           >
-            <template v-slot:append>
+            <template #append>
               <q-icon name="search" />
             </template>
           </q-input>
         </template>
 
-        <template v-slot:body="props">
+        <template #loading>
+          <q-inner-loading :showing="carregando">
+            <q-spinner-gears size="50px" color="primary" />
+          </q-inner-loading>
+        </template>
+
+        <template #body="props">
           <q-tr :props="props">
             <q-td>
               <q-checkbox
-                left-label
+                v-if="nomeRelatorio !== 'repetidos'"
                 v-model="itensSelecionados"
-                :val="props.row.id"
+                left-label
+                :val="props.row"
               />
             </q-td>
             <q-td
@@ -346,13 +371,13 @@ function limparFiltro() {
               :props="props"
               @click="props.expand = !props.expand"
             >
-              <span v-html="diminuiTexto(col.value)"></span>
+              <span>{{ diminuiTexto(col.value) }}</span>
             </q-td>
           </q-tr>
-          <q-tr v-show="props.expand" :props="props">
+          <q-tr v-if="props.expand && props.row.descricao" :props="props">
             <q-td colspan="100%">
               <div class="text-left">
-                <span v-html="props.row.descricao"></span>
+                <span>{{ props.row.descricao }}></span>
               </div>
             </q-td>
           </q-tr>

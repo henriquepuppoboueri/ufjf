@@ -100,5 +100,17 @@ export const useRelatoriosStore = defineStore({
         this.carregando = false
       }
     },
+    async coletasRepetidas(idInventario, idSetor, idDependencia) {
+      try {
+        this.carregando = true
+        const { data } = await api.get(`v1/restrito/relatorios/repetidos/${idInventario}?idSetor=${idSetor}&idDependencia=${idDependencia}`)
+        // const data = await response.data
+        this.relatorio = await data
+        this.carregando = false
+      } catch (error) {
+        this.erro = error
+        this.carregando = false
+      }
+    },
   }
 })

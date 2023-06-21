@@ -1,11 +1,11 @@
 <template>
   <div class="q-pa-md q-gutter-sm">
     <label for="select_inventarios">Selecione o Inventário: </label>
-    <select v-model="pes_selecionada" id="select_inventarios">
+    <select id="select_inventarios" v-model="pes_selecionada">
       <option
         v-for="item in inventariosNaoFechados"
-        :value="item"
         :key="item.nome"
+        :value="item"
       >
         {{ item.nome }}
       </option>
@@ -13,11 +13,11 @@
 
     <br />
     <label for="select_inventarios">Setor: </label
-    ><input type="text" v-model="vSetor" />
+    ><input v-model="vSetor" type="text" />
 
     <br />
     <label for="select_inventarios">Dependência: </label
-    ><input type="text" v-model="depend" />
+    ><input v-model="depend" type="text" />
     <br />
     <label class="text-reader">
       Selecionar arquivo
@@ -28,15 +28,15 @@
     <b
       ><label>{{ mensagem }}</label></b
     >
-    <br /><button v-on:click="limpar()">Limpar</button> <br /><button
-      v-on:click="importar()"
+    <br /><button @click="limpar()">Limpar</button> <br /><button
+      @click="importar()"
     >
       Importar Dados</button
     ><label>{{ vmensagem }}</label>
 
     <div v-if="retorno.length > 0">
       <hr />
-      <table border="1" id="table_detail">
+      <table id="table_detail" border="1">
         <br />Inventario:
         {{
           pes_selecionada.nome
@@ -59,8 +59,8 @@
     <hr />
 
     <table
-      border="1"
       id="table_detail"
+      border="1"
       align="center"
       cellpadding="10"
       class="novo"
@@ -71,8 +71,8 @@
       <template v-for="linha in linhas2" :key="linha.id">
         <tr>
           <template v-for="campo in linha" :key="campo.linha">
-            <td style="color: blue" v-if="linha.length == 12">{{ campo }}</td>
-            <td style="color: red" v-if="linha.length != 12">{{ campo }}</td>
+            <td v-if="linha.length == 12" style="color: blue">{{ campo }}</td>
+            <td v-if="linha.length != 12" style="color: red">{{ campo }}</td>
           </template>
         </tr>
       </template>

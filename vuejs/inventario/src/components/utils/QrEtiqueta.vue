@@ -3,7 +3,10 @@ import { computed } from "vue";
 
 import VueQrious from "vue-qrious";
 
-const props = defineProps({ labelText: Object, pageOptions: Object });
+const props = defineProps({
+  labelText: { type: Object, required: true },
+  pageOptions: { type: Object, required: true },
+});
 const fullLabel = computed(() => {
   const paddedSequence = String(props.labelText.sequence).padStart(
     props.pageOptions.nrCasasSequencia,
