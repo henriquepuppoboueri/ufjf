@@ -21,6 +21,13 @@ export const relatoriosLista = [
     nome: 'localizacoes',
     descricao: 'Localizações dos itens coletados',
     url: 'relatorios/localizacoes/${idInventario}?idSetor=${idSetor}&idDependencia=${idDependencia}',
+    colunasVisiveis: [
+      'patrimonio',
+      'identificador',
+      'descricao',
+      'localizacao',
+    ],
+    componente: 'RelLocalizacoesItens'
   },
   {
     nome: 'por-situacao',
@@ -47,13 +54,15 @@ export const relatoriosLista = [
       'dependenciaEncontrada',
       'estadoPlaqueta',
     ],
+    filtros: ['setor', 'dependencia', 'estadoPlaqueta']
+
   },
   {
     nome: 'repetidos',
     descricao: 'Coletas repetidas',
     url: 'relatorios/repetidos/${idInventario}?idSetor=${idSetor}&idDependencia=${idDependencia}',
     itemTipo: 'itemColetado',
-    colunasVisiveis: ['patrimonio', 'qtde'],
+    colunasVisiveis: [],
   },
   {
     nome: 'sem-coleta',
@@ -61,6 +70,7 @@ export const relatoriosLista = [
     url: 'relatorios/semColeta/${idInventario}?idSetor=${idSetor}&idDependencia=${idDependencia}',
     itemTipo: 'itemImportado',
     colunasVisiveis: ['patrimonio', 'descricao'],
+    filtros: ['setor', 'dependencia']
   },
   {
     nome: 'coletas-sem-itens',
@@ -76,6 +86,7 @@ export const relatoriosLista = [
       'dependenciaEncontrada',
       'dependenciaPrevista',
     ],
+    filtros: ['setor', 'dependencia']
   },
   {
     nome: 'sem-patrimonio',
@@ -88,6 +99,7 @@ export const relatoriosLista = [
       'setorEncontrado',
       'dependenciaEncontrada',
     ],
+    filtros: ['setor', 'dependencia']
   },
 ]
 

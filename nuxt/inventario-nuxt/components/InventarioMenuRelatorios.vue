@@ -10,16 +10,29 @@ const props = defineProps({ inventario: { type: Object } });
     flat
     label="Relatórios"
   >
-    <q-list v-for="relatorio in relatoriosLista" :key="relatorio.descricao">
+    <q-list>
       <q-item
+        v-for="relatorio in relatoriosLista"
+        :key="relatorio.descricao"
         clickable
         :to="{
           name: 'relatorios',
-          query: { relatorio: relatorio.nome },
+          query: { nome: relatorio.nome },
         }"
         exact
       >
         <q-item-section>{{ relatorio.descricao }}</q-item-section>
+      </q-item>
+      <q-item
+        key="localizacoes"
+        clickable
+        :to="{
+          name: 'relatorios',
+          query: { nome: 'localizacoes' },
+        }"
+        exact
+      >
+        <q-item-section>Localizações</q-item-section>
       </q-item>
     </q-list>
   </q-btn-dropdown>

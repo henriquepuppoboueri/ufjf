@@ -11,32 +11,35 @@ import { paginacaoOpcoes } from '/helper/qtableOpcoes';
 const $q = useQuasar();
 const route = useRoute();
 const idInventario = ref(0);
+
 const setoresStore = useSetoresStore();
 const { setoresDependencias, setor, setorDependencias, dependencia } =
   storeToRefs(setoresStore);
 const { buscarSetoresDependencias, buscarDepsDoSetor, $resetSetores } =
   setoresStore;
+
 const situacaoStore = useSituacaoStore();
 const { situacao, situacoes } = storeToRefs(situacaoStore);
 const { buscarSituacoes, $resetSituacao } = situacaoStore;
-const itensSelecionados = ref([]);
-const filtro = ref('');
-const nomeRelatorio = ref('1212');
+
 const relatoriosStore = useRelatoriosStore();
 const { relatorio, carregando, erro } = storeToRefs(relatoriosStore);
 const { buscarDadosRelatorio, $resetRelatorio } = relatoriosStore;
+
+const itensSelecionados = ref([]);
+const filtro = ref('');
+const nomeRelatorio = ref('1212');
 
 const itemSelecionado = computed(() => {
   return itensSelecionados.value[0] || null;
 });
 
-const relatorioSelec = computed(() => {
-  return (
+const relatorioSelec = computed(
+  () =>
     relatoriosLista.find(
       (relatorio) => relatorio.nome === nomeRelatorio.value
     ) || null
-  );
-});
+);
 
 const qtItensSelec = computed(() => {
   if (itensSelecionados.value && itensSelecionados?.value?.length) {
@@ -88,7 +91,7 @@ watch(setor, async (nv, ov) => {
 
 onBeforeMount(async () => {
   idInventario.value = route.params['idInventario'];
-  nomeRelatorio.value = route.query['relatorio'];
+  nomeRelatorio.value = route.query['nome'];
   await buscarSetoresDependencias(idInventario.value);
   await buscarSituacoes();
 });
@@ -105,7 +108,7 @@ async function filtrarSetorDep() {
       params: {
         idInventario: idInventario.value,
         idSetor: idSetor.value,
-        idDependencia: idDependencia.value,
+        idDependencia: idDependencia?.value,
         idSituacao: situacao?.value?.id || null,
       },
     });
@@ -126,11 +129,12 @@ function limparFiltro() {
 
 <template>
   <q-card bordered>
-    <q-card-section v-if="relatorioSelec" align="center" class="text-h5">
-      {{ relatorioSelec.descricao }}
+    <q-card-section class="text-center text-h5">
+      {{ relatorioSelec?.descricao }}
     </q-card-section>
     <q-card-section v-if="!carregando" class="q-gutter-sm">
       <q-select
+        v-if="relatorioSelec?.filtros?.includes('setor')"
         v-model="setor"
         outlined
         :options="setoresDependencias"
@@ -140,6 +144,7 @@ function limparFiltro() {
         dense
       />
       <q-select
+        v-if="relatorioSelec?.filtros?.includes('dependencia')"
         v-model="dependencia"
         outlined
         :options="setorDependencias"
@@ -158,6 +163,10 @@ function limparFiltro() {
         label="Situação"
         dense
       />
+      <p v-if="!relatorioSelec?.filtros?.length">
+        Este relatório não possui filtros adicionais. Clique em Pesquisar para
+        continuar.
+      </p>
       <q-btn
         :disable="carregando"
         dense
@@ -168,6 +177,7 @@ function limparFiltro() {
         @click="filtrarSetorDep"
       />
       <q-btn
+        v-if="relatorioSelec.filtros?.length"
         :disable="carregando"
         dense
         size="0.7rem"
