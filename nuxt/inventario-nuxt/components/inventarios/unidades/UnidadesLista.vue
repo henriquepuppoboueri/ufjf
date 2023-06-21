@@ -1,37 +1,32 @@
 <script setup>
-import { computed, onMounted, ref, watch } from "vue";
-import { useRoute } from "vue-router";
-import { api } from "boot/axios";
-
-import { API_URL } from "src/helper/constants";
-import { Notify } from "quasar";
+import { Notify } from 'quasar';
 
 const route = useRoute();
 const idInventario = ref(null);
 const mostrarDialogAdicao = ref(false);
 const mostrarDialogEdicao = ref(false);
-const name = ref("");
+const name = ref('');
 const setores = ref([]);
 const keySelecionada = ref(null);
 const unidadeSelecionada = ref({
   id: 0,
-  nome: "",
+  nome: '',
   dependencias: [],
   isSetor: true,
 });
 const novaUnidade = ref({
   id: 0,
-  nome: "",
+  nome: '',
   dependencias: [],
   isSetor: true,
 });
 
 function addUnidade() {
-  let url = "";
+  let url = '';
   if (unidadeSelecionada.value.id === 0) {
     unidadeSelecionada.value = {
       id: 0,
-      nome: "",
+      nome: '',
       dependencias: [],
       isSetor: true,
     };
@@ -67,12 +62,12 @@ function deletarUnidade() {
     .delete(`v1/restrito/setor/${unidadeSelecionada.value.id}`)
     .then((res) => {
       Notify.create({
-        color: "green",
+        color: 'green',
         message: `Unidade excluída. \nAtualize a página!`,
       });
     })
     .catch((err) => {
-      Notify.create({ color: "red", message: `Erro: ${err}` });
+      Notify.create({ color: 'red', message: `Erro: ${err}` });
     });
 }
 
@@ -104,13 +99,13 @@ function salvarAddUnidade(isEditando) {
     .post(`v1/restrito/setor`, unidade)
     .then((res) => {
       Notify.create({
-        color: "green",
+        color: 'green',
         message: `Unidade criada! Atualize a página.`,
       });
       mostrarDialog.value = false;
     })
     .catch((err) => {
-      Notify.create({ color: "red", message: `Erro: ${err}` });
+      Notify.create({ color: 'red', message: `Erro: ${err}` });
     });
 }
 onMounted(() => {
@@ -125,10 +120,10 @@ onMounted(() => {
         const novoSetor = {
           ...setor,
           key: JSON.stringify({ idSetor: setor.id, idDep: 0 }),
-          icon: "fa-solid fa-building",
+          icon: 'fa-solid fa-building',
           isSetor: true,
         };
-        if (novoSetor.hasOwnProperty("dependencias")) {
+        if (novoSetor.hasOwnProperty('dependencias')) {
           novoSetor.dependencias = novoSetor.dependencias.map((dependencia) => {
             return {
               ...dependencia,
@@ -145,9 +140,9 @@ onMounted(() => {
 
 const dialogLbl = computed(() => {
   if (unidadeSelecionada.value.id === 0) {
-    return "Nova unidade";
+    return 'Nova unidade';
   }
-  return "Nova dependência";
+  return 'Nova dependência';
 });
 
 const isUnidade = computed(() => {
@@ -172,7 +167,7 @@ function onSelecionaUnidade(selected) {
   } else {
     unidadeSelecionada.value = {
       id: 0,
-      nome: "",
+      nome: '',
       dependencias: [],
       isSetor: true,
     };

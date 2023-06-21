@@ -27,7 +27,11 @@ export const relatoriosLista = [
       'descricao',
       'localizacao',
     ],
-    componente: 'RelLocalizacoesItens'
+    filtros: [],
+    componente: {
+      padrao: false,
+      nome: 'RelLocalizacoesItens'
+    }
   },
   {
     nome: 'por-situacao',

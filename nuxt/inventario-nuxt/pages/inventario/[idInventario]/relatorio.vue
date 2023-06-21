@@ -6,15 +6,16 @@ definePageMeta({
   name: 'relatorios',
 });
 
-const mapRelComps = { localizacoes: RelLocalizacoesItens };
-const relComp = computed(
-  () => mapRelComps[nomeRelatorio.value] || RelatorioBase
-);
+// const mapRelComps = {};
+// relatoriosLista.forEach((rel) => {
+//   mapRelComps[rel?.nome] = `/components/inventarios/relatorio/${
+//     rel?.componente || 'RelatorioBase'
+//   }.vue`;
+// });
+// const relComp = computed(() => mapRelComps[nomeRelatorio.value]);
+
 const route = useRoute();
 const nomeRelatorio = ref(null);
-const relatorioSelec = computed(() =>
-  relatoriosLista.find((relatorio) => relatorio.nome === nomeRelatorio.value)
-);
 
 onBeforeMount(() => {
   nomeRelatorio.value = route.query?.nome;
@@ -29,12 +30,16 @@ watch(
 </script>
 
 <template>
+  <div v-if="nomeRelatorio === 'localizacoes'">
+    <rel-localizacoes-itens></rel-localizacoes-itens>
+  </div>
+  <div v-if="nomeRelatorio !== 'localizacoes'">
+    <relatorio-base :nome="nomeRelatorio"></relatorio-base>
+  </div>
   <!-- <div v-if="isRelatorioPadrao">
     <relatorio-base :nome="nomeRelatorio"></relatorio-base>
   </div>
   <div v-else-if="nomeRelatorio === 'localizacoes'"></div> -->
-  <div>
-    <!-- <component ref="comp" :is="mapRelComps[nomeRelatorio]"></component> -->
-    <rel-localizacoes-itens :nome="nomeRelatorio"></rel-localizacoes-itens>
-  </div>
+  <!-- <component v-if="relComp" :is="relComp" /> -->
+  <!-- <rel-localizacoes-itens :nome="nomeRelatorio"></rel-localizacoes-itens> -->
 </template>

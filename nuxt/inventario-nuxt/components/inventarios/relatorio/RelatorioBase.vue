@@ -28,7 +28,10 @@ const { buscarDadosRelatorio, $resetRelatorio } = relatoriosStore;
 
 const itensSelecionados = ref([]);
 const filtro = ref('');
-const nomeRelatorio = ref('1212');
+
+const { nome: nomeRelatorio } = defineProps({
+  nome: String,
+});
 
 const itemSelecionado = computed(() => {
   return itensSelecionados.value[0] || null;
@@ -71,15 +74,15 @@ watch(itensSelecionados, (nv, ov) => {
   }
 });
 
-watch(
-  () => route.query,
-  (query) => {
-    nomeRelatorio.value = query.relatorio;
-    $resetRelatorio();
-    $resetSetores();
-    $resetSituacao();
-  }
-);
+// watch(
+//   () => route.query,
+//   (query) => {
+//     nomeRelatorio.value = query.relatorio;
+//     $resetRelatorio();
+//     $resetSetores();
+//     $resetSituacao();
+//   }
+// );
 
 watch(setor, async (nv, ov) => {
   if (nv) {
@@ -91,9 +94,12 @@ watch(setor, async (nv, ov) => {
 
 onBeforeMount(async () => {
   idInventario.value = route.params['idInventario'];
-  nomeRelatorio.value = route.query['nome'];
   await buscarSetoresDependencias(idInventario.value);
   await buscarSituacoes();
+});
+
+onUnmounted(() => {
+  $resetRelatorio();
 });
 
 function exportarDados() {
