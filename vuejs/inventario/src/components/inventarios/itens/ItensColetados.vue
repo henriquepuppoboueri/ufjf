@@ -158,45 +158,18 @@ const colunasItens = reactive([
       dataSource: usuarios,
     },
   },
+  {
+    name: "identificador",
+    align: "left",
+    label: "IDENTIFICADOR",
+    field: "identificador",
+    sortable: true,
+    component: {
+      name: "input",
+    },
+  },
 ]);
 const colunasFiltro = ref([]);
-const colunasMostrar = ref([
-  {
-    name: "patrimonio",
-    align: "left",
-    label: "PATRIMÔNIO",
-    field: "patrimonio",
-    sortable: true,
-  },
-  {
-    name: "descricao",
-    align: "left",
-    label: "DESCRIÇÃO",
-    field: "descricao",
-    sortable: true,
-  },
-  {
-    name: "setor",
-    align: "left",
-    label: "SETOR",
-    field: "setor",
-    sortable: true,
-  },
-  {
-    name: "dependencia",
-    align: "left",
-    label: "DEPENDÊNCIA",
-    field: "dependencia",
-    sortable: true,
-  },
-  {
-    name: "situacao",
-    align: "left",
-    label: "SITUAÇÃO",
-    field: "situacao",
-    sortable: true,
-  },
-]);
 const idInventario = ref(route.params.idInventario || false);
 
 function filtroAvancado(row, terms, cols, getCellValue) {
@@ -315,6 +288,9 @@ const onRequest = async (props) => {
       : 0,
     idSituacao: props.filter.situacao ? props.filter.situacao.id : 0,
     idUsuario: props.filter.usuario ? props.filter.usuario.id : 0,
+    numIdentificador: props.filter.identificador
+      ? props.filter.identificador
+      : 0,
   });
 };
 
@@ -477,7 +453,7 @@ fetchData();
               >
                 <q-item v-bind="itemProps">
                   <q-item-section>
-                    <q-item-label>{{ opt.label }}"</q-item-label>
+                    <q-item-label>{{ opt.label }}</q-item-label>
                   </q-item-section>
                   <q-item-section side>
                     <q-toggle
