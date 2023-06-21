@@ -333,9 +333,9 @@ watch(
     renderPage();
   }
 );
-
-function gerarCSV() {
-  exportTable(colunasItens, itensColetados, "itens-coletados");
+async function gerarCSV() {
+  await buscarItensColetados(idInventario.value);
+  exportTable(colunasItens, itensColetadosTodos.value, "itens-coletados");
 }
 
 function clearFilter() {
@@ -560,6 +560,9 @@ fetchData();
         </template>
       </q-table>
     </q-card-section>
+    <q-card-section v-if="carregandoTodos" class="text-center">
+      <q-spinner color="primary" size="3em" />
+    </q-card-section>
     <q-card-actions class="q-gutter-sm">
       <q-btn
         v-if="qtItensSelec && qtItensSelec === 1"
@@ -601,7 +604,7 @@ fetchData();
         color="green"
         label="Exportar"
         :disabled="carregandoTodos"
-        @click="exportTable(colunasItens, itensColetados, 'itens-coletados')"
+        @click="gerarCSV"
       />
 
       <q-btn
