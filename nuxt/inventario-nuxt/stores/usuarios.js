@@ -10,6 +10,16 @@ export const useUsuariosStore = defineStore('usuarios', () => {
     carregando.value = false;
     erro.value = null;
   }
+  function $novoUsuario() {
+    usuario.value = {
+      id: 0,
+      nome: '',
+      login: '',
+      senha: '',
+      email: '',
+      nascimento: '',
+    };
+  }
 
   async function addUsuario(usuario) {
     try {
@@ -105,6 +115,7 @@ export const useUsuariosStore = defineStore('usuarios', () => {
     erro,
     usuarioInventarios,
     $resetUsuario,
+    $novoUsuario,
     addUsuario,
     editUsuario,
     delUsuario,

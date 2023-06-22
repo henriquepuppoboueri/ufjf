@@ -1,8 +1,5 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue';
-
 import { Notify, useQuasar } from 'quasar';
-import { storeToRefs } from 'pinia';
 
 import { registroPortugues } from '/helper/functions';
 import { paginacaoOpcoes } from '/helper/qtableOpcoes';

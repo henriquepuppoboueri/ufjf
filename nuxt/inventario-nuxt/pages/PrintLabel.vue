@@ -3,6 +3,7 @@ import QrEtiqueta from '/components/utils/QrEtiqueta.vue';
 
 definePageMeta({
   name: 'printLabel',
+  layout: 'print',
 });
 
 const route = useRoute();

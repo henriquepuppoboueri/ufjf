@@ -1,16 +1,19 @@
 <script setup>
 const props = defineProps({ inventario: { type: Object } });
+
+const relatoriosStore = useRelatoriosStore();
+const { carregando } = storeToRefs(relatoriosStore);
 </script>
 
 <template>
   <q-btn-dropdown
-    v-if="inventario && inventario?.situacaoInventario?.nome !== 'Preparando'"
+    v-if="inventario?.situacaoInventario?.nome !== 'Preparando'"
     auto-close
     stretch
     flat
     label="Relatórios"
   >
-    <q-list>
+    <q-list v-show="!carregando">
       <q-item
         v-for="relatorio in relatoriosLista"
         :key="relatorio.descricao"

@@ -78,7 +78,7 @@ onUnmounted(() => {
 });
 
 // watch(
-//   itemColetado,
+//   () => itemColetado?.value?.setor,
 //   () => {
 //     if (itemColetado.value?.setor?.id) {
 //       dependencias.value = setoresDependencias.value.find(
@@ -192,143 +192,147 @@ async function onDecode(data) {
   <div v-if="mostrarCamera" class="camera-container flex flex-center">
     <StreamBarcodeReader @decode="onDecode"></StreamBarcodeReader>
   </div>
-  <q-form @submit.prevent="onSubmit">
-    <section v-if="itemColetado" class="col q-ma-sm q-gutter-y-sm">
-      <div class="row q-gutter-x-sm justify-between no-wrap">
-        <q-input
-          v-model="itemColetado.patrimonio"
-          outlined
-          label="Patrimônio"
-          dense
-          class="fit"
-        >
-        </q-input>
-        <q-btn
-          v-if="!isModoEdicao"
-          color="blue"
-          label="Buscar"
-          type="button"
-          @click="buscarItemPorPatrimonio"
-        />
-        <q-btn
-          v-if="!isModoEdicao"
-          class="btn_camera"
-          :color="mostrarCamera === 'patrimonio' ? 'red' : 'green'"
-          icon="fa-solid fa-camera"
-          type="button"
-          @click="onMostrarCamera('patrimonio')"
-        />
-      </div>
-      <div class="row q-gutter-x-sm justify-between no-wrap">
-        <q-input
-          v-model="itemColetado.identificador"
-          class="fit"
-          outlined
-          label="Identificador"
-          dense
-          :rules="[
-            (val) => isNumber(val, 'Identificador'),
-            (val) => notStartWith(val, '0', 'Identificador'),
-          ]"
-        >
-        </q-input>
-        <q-btn
-          v-if="!isModoEdicao"
-          :style="{ maxHeight: '40px' }"
-          class="btn_camera"
-          :color="mostrarCamera === 'identificador' ? 'red' : 'green'"
-          icon="fa-solid fa-camera"
-          type="button"
-          @click="onMostrarCamera('identificador')"
-        />
-      </div>
-      <q-editor
-        v-model="itemColetado.descricao"
-        min-height="5rem"
-        placeholder="Descrição"
-        dense
-      />
-      <q-select
-        v-model="itemColetado.idSetor"
-        outlined
-        :options="setores"
-        :option-label="(setor) => setor.nome"
-        :option-value="(setor) => setor.id"
-        emit-value
-        map-options
-        label="Setor"
-        dense
-      />
-      <q-select
-        v-model="itemColetado.idDependencia"
-        outlined
-        :options="dependencias"
-        :option-label="(dependencia) => dependencia.nome"
-        :option-value="(dependencia) => dependencia.id"
-        emit-value
-        map-options
-        label="Dependência"
-        dense
-      />
-      <q-editor
-        v-model="itemColetado.localizacao"
-        min-height="2rem"
-        placeholder="Localização"
-        dense
-      />
-      <q-select
-        v-model="itemColetado.situacao"
-        outlined
-        :options="situacoes"
-        :option-label="(item) => item.nome"
-        :option-value="(item) => item.id"
-        emit-value
-        map-options
-        label="Situação"
-        dense
-      />
-      <q-select
-        v-model="itemColetado.idEstadoPlaqueta"
-        outlined
-        :options="estadosPlaquetas"
-        :option-label="(item) => item.nome"
-        :option-value="(item) => item.id"
-        emit-value
-        map-options
-        label="Estado da plaqueta"
-        dense
-      />
-      <q-editor
-        v-model="itemColetado.observacao"
-        min-height="5rem"
-        placeholder="Observação"
-        dense
-      />
-      <q-input
-        v-model="itemColetado.usuario"
-        outlined
-        disabled
-        label="Usuário"
-        dense
-        disable
-      />
-    </section>
-    <section class="row q-gutter-x-sm q-px-sm q-my-md">
-      <q-btn
-        dense
-        color="green"
-        label="Salvar"
-        type="submit"
-        :disabled="false"
-      />
-      <q-btn
-        dense
-        color="primary"
-        label="Cancelar"
-        :to="{ name: 'itensColetados' }"
-      />
-    </section>
-  </q-form>
+  <q-card>
+    <q-card-section>
+      <q-form @submit.prevent="onSubmit">
+        <section v-if="itemColetado" class="col q-ma-sm q-gutter-y-sm">
+          <div class="row q-gutter-x-sm justify-between no-wrap">
+            <q-input
+              v-model="itemColetado.patrimonio"
+              outlined
+              label="Patrimônio"
+              dense
+              class="fit"
+            >
+            </q-input>
+            <q-btn
+              v-if="!isModoEdicao"
+              color="blue"
+              label="Buscar"
+              type="button"
+              @click="buscarItemPorPatrimonio"
+            />
+            <q-btn
+              v-if="!isModoEdicao"
+              class="btn_camera"
+              :color="mostrarCamera === 'patrimonio' ? 'red' : 'green'"
+              icon="fa-solid fa-camera"
+              type="button"
+              @click="onMostrarCamera('patrimonio')"
+            />
+          </div>
+          <div class="row q-gutter-x-sm justify-between no-wrap">
+            <q-input
+              v-model="itemColetado.identificador"
+              class="fit"
+              outlined
+              label="Identificador"
+              dense
+              :rules="[
+                (val) => isNumber(val, 'Identificador'),
+                (val) => notStartWith(val, '0', 'Identificador'),
+              ]"
+            >
+            </q-input>
+            <q-btn
+              v-if="!isModoEdicao"
+              :style="{ maxHeight: '40px' }"
+              class="btn_camera"
+              :color="mostrarCamera === 'identificador' ? 'red' : 'green'"
+              icon="fa-solid fa-camera"
+              type="button"
+              @click="onMostrarCamera('identificador')"
+            />
+          </div>
+          <q-editor
+            v-model="itemColetado.descricao"
+            min-height="5rem"
+            placeholder="Descrição"
+            dense
+          />
+          <q-select
+            v-model="itemColetado.idSetor"
+            outlined
+            :options="setores"
+            :option-label="(setor) => setor.nome"
+            :option-value="(setor) => setor.id"
+            emit-value
+            map-options
+            label="Setor"
+            dense
+          />
+          <q-select
+            v-model="itemColetado.idDependencia"
+            outlined
+            :options="dependencias"
+            :option-label="(dependencia) => dependencia.nome"
+            :option-value="(dependencia) => dependencia.id"
+            emit-value
+            map-options
+            label="Dependência"
+            dense
+          />
+          <q-editor
+            v-model="itemColetado.localizacao"
+            min-height="2rem"
+            placeholder="Localização"
+            dense
+          />
+          <q-select
+            v-model="itemColetado.situacao"
+            outlined
+            :options="situacoes"
+            :option-label="(item) => item.nome"
+            :option-value="(item) => item.id"
+            emit-value
+            map-options
+            label="Situação"
+            dense
+          />
+          <q-select
+            v-model="itemColetado.idEstadoPlaqueta"
+            outlined
+            :options="estadosPlaquetas"
+            :option-label="(item) => item.nome"
+            :option-value="(item) => item.id"
+            emit-value
+            map-options
+            label="Estado da plaqueta"
+            dense
+          />
+          <q-editor
+            v-model="itemColetado.observacao"
+            min-height="5rem"
+            placeholder="Observação"
+            dense
+          />
+          <q-input
+            v-model="itemColetado.usuario"
+            outlined
+            disabled
+            label="Usuário"
+            dense
+            disable
+          />
+        </section>
+        <section class="row q-gutter-x-sm q-pa-sm q-my-md">
+          <q-btn
+            dense
+            color="green"
+            label="Salvar"
+            type="submit"
+            :disabled="false"
+          />
+          <q-btn
+            dense
+            color="primary"
+            label="Cancelar"
+            :to="{ name: 'itensColetados' }"
+          />
+        </section>
+      </q-form>
+    </q-card-section>
+  </q-card>
 </template>
 <style lang="sass">
 

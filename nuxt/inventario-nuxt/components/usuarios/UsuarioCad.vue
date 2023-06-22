@@ -3,7 +3,8 @@ import { Notify } from 'quasar';
 
 const usuariosStore = useUsuariosStore();
 const { usuario, erro, carregando } = storeToRefs(usuariosStore);
-const { $resetUsuario } = usuariosStore;
+const { $resetUsuario, buscarUsuario, $novoUsuario } = usuariosStore;
+
 const isModoEdicao = ref(false);
 const route = useRoute();
 const senhaConfirmacao = ref(null);
@@ -31,20 +32,11 @@ onBeforeMount(async () => {
 
   if (isModoEdicao.value) {
     try {
-      await usuariosStore.buscarUsuario(id);
+      await buscarUsuario(id);
     } catch (error) {
       erro.value = error;
     }
-  } else {
-    usuario.value = {
-      id: 0,
-      nome: '',
-      login: '',
-      senha: '',
-      email: '',
-      nascimento: '',
-    };
-  }
+  } else $novoUsuario();
 });
 
 onUnmounted(() => {

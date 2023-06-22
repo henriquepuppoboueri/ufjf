@@ -39,8 +39,7 @@ const { buscarSetoresDependencias } = setoresStore;
 const dependencias = computed(() => {
   if (filter.setor) {
     return filter.setor.dependencias;
-  }
-  return [];
+  } else return [];
 });
 
 const itensColetadosStore = useItensColetadosStore();

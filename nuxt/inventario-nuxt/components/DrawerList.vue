@@ -1,8 +1,4 @@
 <script setup>
-import { storeToRefs } from 'pinia';
-
-// import { useAuthStore } from "src/stores/auth";
-
 const authStore = useAuthStore();
 const { usuario } = storeToRefs(authStore);
 </script>
