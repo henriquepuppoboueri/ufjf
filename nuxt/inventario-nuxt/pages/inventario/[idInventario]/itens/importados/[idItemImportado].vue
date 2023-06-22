@@ -1,6 +1,4 @@
 <script setup>
-import { useRouter, useRoute } from 'vue-router';
-
 definePageMeta({ name: 'itemImportado' });
 
 const router = useRouter();

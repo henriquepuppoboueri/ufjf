@@ -1,9 +1,4 @@
 <script setup>
-import { ref, reactive, watch, computed, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-
-import { storeToRefs } from 'pinia';
-
 import { diminuiTexto, registroPortugues } from '/helper/functions';
 import { paginacaoOpcoes } from '/helper/qtableOpcoes';
 import { exportTable } from '/helper/functions';

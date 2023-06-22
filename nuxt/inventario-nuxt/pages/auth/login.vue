@@ -1,12 +1,6 @@
 <script setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-
-import { storeToRefs } from 'pinia';
 import { Notify } from 'quasar';
 import moment from 'moment';
-
-import { useAuthStore } from '/stores/auth';
 
 const usuarioForm = ref('');
 const senha = ref('');

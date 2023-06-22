@@ -1,85 +1,3 @@
-<template>
-  <div class="q-pa-md q-gutter-sm">
-    <label for="select_inventarios">Selecione o Inventário: </label>
-    <select id="select_inventarios" v-model="pes_selecionada">
-      <option
-        v-for="item in inventariosNaoFechados"
-        :key="item.nome"
-        :value="item"
-      >
-        {{ item.nome }}
-      </option>
-    </select>
-
-    <br />
-    <label for="select_inventarios">Setor: </label
-    ><input v-model="vSetor" type="text" />
-
-    <br />
-    <label for="select_inventarios">Dependência: </label
-    ><input v-model="depend" type="text" />
-    <br />
-    <label class="text-reader">
-      Selecionar arquivo
-      <input type="file" @change="loadTextFromFile" />
-    </label>
-    <br />
-    <br />
-    <b
-      ><label>{{ mensagem }}</label></b
-    >
-    <br /><button @click="limpar()">Limpar</button> <br /><button
-      @click="importar()"
-    >
-      Importar Dados</button
-    ><label>{{ vmensagem }}</label>
-
-    <div v-if="retorno.length > 0">
-      <hr />
-      <table id="table_detail" border="1">
-        <br />Inventario:
-        {{
-          pes_selecionada.nome
-        }}
-        <br />Arquivo...:
-        {{
-          nomeArquivo
-        }}
-        <caption></caption>
-
-        <template v-for="linhaRetorno in retorno" :key="linhaRetorno.nome">
-          <tr>
-            <td>{{ linhaRetorno.nome }}</td>
-            <td>{{ linhaRetorno.qtde }}</td>
-          </tr>
-        </template>
-      </table>
-    </div>
-
-    <hr />
-
-    <table
-      id="table_detail"
-      border="1"
-      align="center"
-      cellpadding="10"
-      class="novo"
-    >
-      <caption>
-        LISTA DE REGISTROS
-      </caption>
-      <template v-for="linha in linhas2" :key="linha.id">
-        <tr>
-          <template v-for="campo in linha" :key="campo.linha">
-            <td v-if="linha.length == 12" style="color: blue">{{ campo }}</td>
-            <td v-if="linha.length != 12" style="color: red">{{ campo }}</td>
-          </template>
-        </tr>
-      </template>
-    </table>
-  </div>
-</template>
-
 <script>
 const api = { get: $fetch.native };
 
@@ -360,6 +278,88 @@ export default {
   },
 };
 </script>
+
+<template>
+  <div class="q-pa-md q-gutter-sm">
+    <label for="select_inventarios">Selecione o Inventário: </label>
+    <select id="select_inventarios" v-model="pes_selecionada">
+      <option
+        v-for="item in inventariosNaoFechados"
+        :key="item.nome"
+        :value="item"
+      >
+        {{ item.nome }}
+      </option>
+    </select>
+
+    <br />
+    <label for="select_inventarios">Setor: </label
+    ><input v-model="vSetor" type="text" />
+
+    <br />
+    <label for="select_inventarios">Dependência: </label
+    ><input v-model="depend" type="text" />
+    <br />
+    <label class="text-reader">
+      Selecionar arquivo
+      <input type="file" @change="loadTextFromFile" />
+    </label>
+    <br />
+    <br />
+    <b
+      ><label>{{ mensagem }}</label></b
+    >
+    <br /><button @click="limpar()">Limpar</button> <br /><button
+      @click="importar()"
+    >
+      Importar Dados</button
+    ><label>{{ vmensagem }}</label>
+
+    <div v-if="retorno.length > 0">
+      <hr />
+      <table id="table_detail" border="1">
+        <br />Inventario:
+        {{
+          pes_selecionada.nome
+        }}
+        <br />Arquivo...:
+        {{
+          nomeArquivo
+        }}
+        <caption></caption>
+
+        <template v-for="linhaRetorno in retorno" :key="linhaRetorno.nome">
+          <tr>
+            <td>{{ linhaRetorno.nome }}</td>
+            <td>{{ linhaRetorno.qtde }}</td>
+          </tr>
+        </template>
+      </table>
+    </div>
+
+    <hr />
+
+    <table
+      id="table_detail"
+      border="1"
+      align="center"
+      cellpadding="10"
+      class="novo"
+    >
+      <caption>
+        LISTA DE REGISTROS
+      </caption>
+      <template v-for="linha in linhas2" :key="linha.id">
+        <tr>
+          <template v-for="campo in linha" :key="campo.linha">
+            <td v-if="linha.length == 12" style="color: blue">{{ campo }}</td>
+            <td v-if="linha.length != 12" style="color: red">{{ campo }}</td>
+          </template>
+        </tr>
+      </template>
+    </table>
+  </div>
+</template>
 
 <style>
 .text-reader {

@@ -1,6 +1,4 @@
 <script setup>
-import { storeToRefs } from 'pinia';
-
 const authStore = useAuthStore();
 const { carregando } = storeToRefs(authStore);
 const { deslogar } = authStore;

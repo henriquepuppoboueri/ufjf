@@ -1,5 +1,4 @@
 <script setup>
-import { onMounted, ref } from 'vue';
 import { paginacaoOpcoes } from '/helper/qtableOpcoes';
 
 definePageMeta({ name: 'ferramentasConfig' });
