@@ -17,23 +17,23 @@ const props = defineProps({ inventario: { type: Object } });
         clickable
         :to="{
           name: 'relatorios',
-          query: { nome: relatorio.nome },
+          params: { nome: relatorio.nome },
         }"
         exact
       >
         <q-item-section>{{ relatorio.descricao }}</q-item-section>
       </q-item>
-      <q-item
+      <!-- <q-item
         key="localizacoes"
         clickable
         :to="{
           name: 'relatorios',
-          query: { nome: 'localizacoes' },
+          params: { nome: 'localizacoes' },
         }"
         exact
       >
         <q-item-section>Localizações</q-item-section>
-      </q-item>
+      </q-item> -->
     </q-list>
   </q-btn-dropdown>
 </template>

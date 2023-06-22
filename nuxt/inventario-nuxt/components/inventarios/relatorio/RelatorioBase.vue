@@ -29,7 +29,7 @@ const { buscarDadosRelatorio, $resetRelatorio } = relatoriosStore;
 const itensSelecionados = ref([]);
 const filtro = ref('');
 
-const { nome: nomeRelatorio } = defineProps({
+const { nome } = defineProps({
   nome: String,
 });
 
@@ -38,10 +38,7 @@ const itemSelecionado = computed(() => {
 });
 
 const relatorioSelec = computed(
-  () =>
-    relatoriosLista.find(
-      (relatorio) => relatorio.nome === nomeRelatorio.value
-    ) || null
+  () => relatoriosLista.find((relatorio) => relatorio.nome === nome) || null
 );
 
 const qtItensSelec = computed(() => {
@@ -74,16 +71,6 @@ watch(itensSelecionados, (nv, ov) => {
   }
 });
 
-// watch(
-//   () => route.query,
-//   (query) => {
-//     nomeRelatorio.value = query.relatorio;
-//     $resetRelatorio();
-//     $resetSetores();
-//     $resetSituacao();
-//   }
-// );
-
 watch(setor, async (nv, ov) => {
   if (nv) {
     setorDependencias.value = [];
@@ -110,7 +97,7 @@ async function filtrarSetorDep() {
   try {
     erro.value = null;
     await buscarDadosRelatorio({
-      nome: nomeRelatorio.value,
+      nome: nome,
       params: {
         idInventario: idInventario.value,
         idSetor: idSetor.value,
@@ -195,7 +182,7 @@ function limparFiltro() {
     </q-card-section>
     <q-card-section v-if="carregando">
       <q-inner-loading :showing="carregando">
-        <q-spinner-gears size="50px" color="primary" />
+        <q-spinner-gears size="5rem" color="primary" />
       </q-inner-loading>
     </q-card-section>
     <q-card-section>

@@ -1,6 +1,4 @@
 <script setup>
-import { exportTable } from '/helper/functions';
-
 const route = useRoute();
 const idInventario = ref(0);
 const filtro = ref('');
@@ -9,30 +7,40 @@ const relatoriosStore = useRelatoriosStore();
 const { relatorio, carregando, erro } = storeToRefs(relatoriosStore);
 const { buscarDadosRelatorio, $resetRelatorio } = relatoriosStore;
 
-const relatorioFormatado = computed(() =>
-  relatorio.value
-    .map((item) => ({
-      id: item.setor.id,
-      label: `${item.setor.nome} [${item.qtde}]`,
-      icon: 'apartment',
-      qtde: item.qtde,
-      children: item.localizacoesDependencias
-        .map((dep) => ({
-          qtde: dep.qtde,
-          id: dep.dependencia.id,
-          label: `${dep.dependencia.nome} [${dep.qtde}]`,
-          icon: 'home',
-          children: dep.localizacoes
-            .map((localizacao) => ({
-              label: `${localizacao.localizacao} [${localizacao.qtde}]`,
-              qtde: localizacao.qtde,
-            }))
-            .filter((localizacao) => localizacao.qtde > 0),
+const relatorioFormatado = computed(() => {
+  return !relatorio.value
+    ? null
+    : relatorio.value
+        .map((item) => ({
+          id: item.setor.id,
+          key: `set-${item.setor.id}`,
+          label: `${item.setor.nome} [${item.qtde}]`,
+          icon: 'apartment',
+          qtde: item.qtde,
+          children: item.localizacoesDependencias
+            .map((dep) => {
+              const dep_ = {
+                id: dep.dependencia.id,
+                key: `set-${item.setor.id}-dep-${dep.dependencia.id}`,
+                qtde: dep.qtde,
+                label: `${dep.dependencia.nome} [${dep.qtde}]`,
+                icon: 'home',
+              };
+              if (dep.localizacoes.length > 0) {
+                dep_.children = dep.localizacoes
+                  .map((localizacao) => ({
+                    key: `${dep_.key}-loc-${randomInt()}`,
+                    label: `${localizacao.localizacao} [${localizacao.qtde}]`,
+                    qtde: localizacao.qtde,
+                  }))
+                  .filter((localizacao) => localizacao.qtde > 0);
+              }
+              return dep_;
+            })
+            .filter((dep) => dep.qtde > 0),
         }))
-        .filter((dep) => dep.qtde > 0),
-    }))
-    .filter((item) => item.qtde > 0)
-);
+        .filter((item) => item.qtde > 0);
+});
 
 onBeforeMount(async () => {
   idInventario.value = route.params['idInventario'];
@@ -40,16 +48,11 @@ onBeforeMount(async () => {
     nome: 'localizacoes',
     params: { idInventario: idInventario.value },
   });
-  console.log('carregando relatorio', relatorio);
 });
 
 onUnmounted(() => {
   $resetRelatorio();
 });
-
-function exportarDados() {
-  exportTable(tabelaColunas, relatorio.value, 'bens-sem-patrimonios');
-}
 </script>
 
 <template>
@@ -78,17 +81,8 @@ function exportarDados() {
           <q-icon name="search" />
         </template>
       </q-input>
-      <q-tree :filter="filtro" :nodes="relatorioFormatado" node-key="label" />
+      <q-tree :filter="filtro" :nodes="relatorioFormatado" node-key="key" />
     </q-card-section>
-    <q-card-actions v-if="!carregando && relatorio" class="q-gutter-sm">
-      <q-btn
-        dense
-        color="red"
-        class="text-white"
-        label="Exportar"
-        @click="exportarDados"
-      />
-    </q-card-actions>
   </q-card>
 </template>
 
